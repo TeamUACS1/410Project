@@ -1,14 +1,13 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
     <head>
         <title>Bookmarks</title>
         <link href='http://fonts.googleapis.com/css?family=Amarante' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Frijole' type="text/css" />
-       
-        <link rel="stylesheet" href="/css/style.css" media="all" />
-  
-        <script src="static/js/jquery-1.11.0.min.js"></script>
-        <script src="static/js/script.js"></script>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" media="all" />
+        <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+        <script src="{% static 'js/script.js' %}"></script>
     </head>
     <body>
         <div id="wrapper">
@@ -20,32 +19,23 @@
                     <ul>
                         <li class="active" id="home">
                             <a href="#">My Links</a>
+                            {% if tag_name %}
+                                {{ tag_name }}
+                            {% endif %}
                         </li>
-                     
-                        <li><a href="#">Tags</a></li>
+                        <li><a href="javascript:;" id="addLink">Add a link</a></li>
+                        <li><a href="/bookmarks/tags/">Tags</a></li>
                     </ul>
-                </div><div id="content">
+                </div>
+                <div id="content">
+                    {% for post in posts %}
                     <div class="link">
-                        <h4><a href="http://www.google.com">Google</a></h4>
+                        <h4>{{ post.post }}</a></h4>
                         <p class="tags">
-                            <a href="#">tag1</a>
-                            <a href="#">tag2</a>
-                            <a href="#">tag3</a>
+                        
                         </p>
                     </div>
-                    <div class="link other">
-                        <h4><a href="http://www.facebook.com">Facebook</a></h4>
-                        <p class="tags">
-                            <a href="#">tag1</a>
-                        </p>
-                    </div>
-                    <div class="link">
-                        <h4><a href="http://www.twitter.com">Twitter</a></h4>
-                        <p class="tags">
-                            <a href="#">tag1</a>
-                            <a href="#">tag2</a>
-                        </p>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -53,6 +43,7 @@
         <div class="popBackground">&nbsp;</div>
         <div class="popWindow">
             <form id="addForm" method="POST" action="/bookmarks/add_link/">
+                {% csrf_token %}
                 <div class="winHead">
                     <h2>Add a link</h2>
                 </div>
@@ -72,3 +63,4 @@
         </div>
     </body>
 </html>
+

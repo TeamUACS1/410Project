@@ -7,7 +7,7 @@ class Post(models.Model):
 	privacy = models.IntegerField(max_length=32)
 	extra = models.CharField(max_length=32)
 
-def __unicode__(self):
-	return self.title
+	def __unicode__(self):
+		return self.title
 
 	
