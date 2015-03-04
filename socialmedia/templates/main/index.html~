@@ -5,7 +5,7 @@
         <link href='http://fonts.googleapis.com/css?family=Amarante' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Frijole' type="text/css" />
         <!-- rewrite paths with {% static 'css/...' %} -->
-        <link rel="stylesheet" href="static/css/style.css" media="all" />
+        <link rel="stylesheet" href="/css/style.css" media="all" />
         <!-- rewrite paths with {% static 'js/...' %} -->
         <script src="static/js/jquery-1.11.0.min.js"></script>
         <script src="static/js/script.js"></script>
@@ -21,11 +21,10 @@
                         <li class="active" id="home">
                             <a href="#">My Links</a>
                         </li>
-                        <li><a href="javascript:;" id="addLink">Add a link</a></li>
+                     
                         <li><a href="#">Tags</a></li>
                     </ul>
-                </div><!--
-                --><div id="content">
+                </div><div id="content">
                     <div class="link">
                         <h4><a href="http://www.google.com">Google</a></h4>
                         <p class="tags">
