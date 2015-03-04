@@ -1,0 +1,161 @@
+body, header, footer, h1, h2, h3, h4, a, table, tr, td, th,
+tbody, thead, div, ul, li, dl, dd, dt, p {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	vertical-align: baseline;
+}
+
+body,html {
+	height: 100%;
+	width: 100%;
+	font-family: 'Amarante','Frijole', Arial, serif;
+	position: absolute;
+}
+
+a {
+	text-decoration: none;
+	color: #fff;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+h1 {
+	font-size: 2.5em;
+}
+
+li {
+	list-style: none outside none;
+	display: block;
+	width: 235px;
+	padding: 3px 0 3px 15px;
+}
+li.active {
+	background: #fff;
+}
+	li.active a {
+		color: #ff7247;
+	}
+#wrapper {
+	min-height: 100%;
+	height: 100%;
+	width: 800px;
+	position: relative;
+	margin: 0 auto;
+}
+header {
+	height: 80px;
+	width: 800px;
+	position: fixed;
+	background: #fff;
+	z-index: 2;
+	top: 0;
+	border-bottom: 2px solid #ff7247;
+}
+	header h1 {
+		padding: 15px;
+	}
+
+#main {
+	height: 100%;
+	position: relative;
+	margin-top: 80px;
+}
+#sidebar {
+	position: fixed;
+	display: inline-block;
+	width: 250px;
+	vertical-align: top;
+	background: #ff7247;
+	padding: 15px 0;
+	height: 700px; 
+}
+
+#content {
+	display: inline-block;
+	width: 550px;
+	vertical-align: top;
+	height: 700px;
+	overflow-y: scroll;
+	margin-left: 250px;
+	/*background: #efefef;*/
+}
+	#content a {
+		color: #ff7247;
+	}
+
+	#content .tags a {
+		color: #777;
+	}
+
+#content .link {
+	padding: 15px;
+	border-bottom: 2px dotted #bbb;
+}
+#content .link.other {
+	background: #efefef;
+}
+	#content .link h4 {
+		padding: 3px; 
+	}
+
+/*popupWindow*/
+.popBackground {
+	width: 100%;
+	height: 120%;
+	background: #333;
+	z-index: 10;
+	position: absolute;
+	top: 0;
+	opacity: 0.5;
+	display: none;
+	
+}
+.popWindow {
+	display: none;
+	z-index: 100;
+	position: absolute;
+	width: 500px;
+	height: 200px;
+	left: 50%;
+	margin-left: -250px;
+	top: 200px;
+	background: #fff;
+}
+	.winHead {
+		height: 48px;
+		border-bottom: 2px solid #ff7247;
+	}
+		.winHead h2{
+			padding-top: 10px;
+			padding-left: 15px;
+		}
+	.winBody {
+		border-bottom: 2px solid #ff7247;
+	}
+		.winBody p {
+			padding: 5px 15px;
+		}
+			.winBody p label {
+				display: inline-block;
+				width: 50px;
+				text-align: left;
+			}
+			.winBody .text {
+				width: 400px;
+			}
+	.winFoot {
+		float: right;
+		padding-top: 6px; 
+		padding-right: 10px;
+	}
+	.btn {
+		background: #ff7247;
+		display: inline-block;
+		width: 50px;
+		padding: 5px;
+		text-align: center;
+		vertical-align: middle;
+	}
