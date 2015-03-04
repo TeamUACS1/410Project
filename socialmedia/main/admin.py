@@ -1,3 +1,3 @@
 from django.contrib import admin
-from main.models import Post
-admin.site.register(Post)
+from main.models import Posts
+admin.site.register(Posts)

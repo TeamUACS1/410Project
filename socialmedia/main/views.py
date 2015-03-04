@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.shortcuts import redirect
 
-from main.models import Post 
+from main.models import Posts 
 
 def index(request):
 	#Request the context of the request.
@@ -12,7 +12,7 @@ def index(request):
 
 	#Get all links
 
-	posts = Post.objects.all()
+	posts = Posts.objects.all()
 	return render_to_response('main/index.html', {'posts': posts}, context)
 
 def tags(request):

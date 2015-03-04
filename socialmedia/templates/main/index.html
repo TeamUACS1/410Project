@@ -19,18 +19,15 @@
                     <ul>
                         <li class="active" id="home">
                             <a href="#">My Links</a>
-                            {% if tag_name %}
-                                {{ tag_name }}
-                            {% endif %}
                         </li>
                         <li><a href="javascript:;" id="addLink">Add a link</a></li>
                         <li><a href="/bookmarks/tags/">Tags</a></li>
                     </ul>
                 </div>
                 <div id="content">
-                    {% for post in posts %}
+                    {% for posts in posts %}
                     <div class="link">
-                        <h4>{{ post.post }}</a></h4>
+                        <h4>{{ posts.post }}</a></h4>
                         <p class="tags">
                         
                         </p>
@@ -43,7 +40,7 @@
         <div class="popBackground">&nbsp;</div>
         <div class="popWindow">
             <form id="addForm" method="POST" action="/bookmarks/add_link/">
-                {% csrf_token %}
+
                 <div class="winHead">
                     <h2>Add a link</h2>
                 </div>
