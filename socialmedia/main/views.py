@@ -21,5 +21,13 @@ def tags(request):
 def tag(request, tag_name):
 	return render_to_response('main/index.html', {'posts': posts}, context)
 
-def add_link(request):
-	return render_to_response('main/index.html', {'posts': posts}, context)
+def add_post(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		postss = request.POST.get("post", "")
+
+	# create and save link
+		post =Posts(post=postss)
+		post.save()
+	# add tag to link
+	return redirect(index)
