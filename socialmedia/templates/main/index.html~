@@ -21,10 +21,11 @@
                         <li class="active" id="home">
                             <a href="#">My Links</a>
                         </li>
-                     
+                        <li><a href="javascript:;" id="addLink">Add a link</a></li>
                         <li><a href="#">Tags</a></li>
                     </ul>
-                </div><div id="content">
+                </div><!--
+                --><div id="content">
                     <div class="link">
                         <h4><a href="http://www.google.com">Google</a></h4>
                         <p class="tags">
