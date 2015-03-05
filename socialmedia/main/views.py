@@ -11,10 +11,12 @@ from main.models import Users
 def index(request):
 	context =RequestContext(request)
 	posts = Posts.objects.all()
-	return render_to_response('main/show_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'session':'session',}))
+	session=request.session['logged_in']
+	return render_to_response('main/show_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def login(request):
 	context =RequestContext(request)
+	session=request.session['logged_in']
 	error =None
 	if request.method=='POST':
 		users=Users.objects.filter(username=request.POST.get("username", ""))
@@ -26,10 +28,12 @@ def login(request):
 		elif encrypted_pass!=password:
 			error='Invalid Password'
 		else:
-			request.session['logged_in']=True
+			request.session['logged_in']="T"
 			session=request.session['logged_in']
+			print(request.session['logged_in'])
+			print(session)
 			return redirect(index)
-	return render_to_response('main/login.html',{'error': error}, context)
+	return render_to_response('main/login.html',{'error': error}, context_instance=RequestContext(request, {'sessions':session,}))
 
 
 

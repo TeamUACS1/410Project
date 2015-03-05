@@ -4,17 +4,20 @@
 <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
 <div class="page">
-
     <div>
-    {% if not session %}
-        <a href="main/login"> Log in</a>
+	{% for session in sessions %}
+    {% if session != "T" %}
+        <a href="main/login"> Login</a>
         <a href="signup"> Sign up</a>
+	
+	<p> {{session}}</p>
+	
 
     {% else %}
         <a href="signup"> Log out</a>
     {% endif %}
     </div>
-   
+   {%endfor%}
     
     {% block body%} {%endblock%}
     </div>
