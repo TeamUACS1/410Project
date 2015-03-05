@@ -100,7 +100,7 @@ header {
 	/*background: #efefef;*/
 }
 	#content a {
-		color: black;
+		color: #ff7247;
 	}
 
 	#content .tags a {
