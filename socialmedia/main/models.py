@@ -11,7 +11,8 @@ class Posts(models.Model):
 		return self.author
 
 class Users(models.Model):
-	username = models.CharField(max_length=256, null=Flase)
+	username = models.CharField(max_length=256, null=False)
+	password = forms.CharField(max_length=32)
 	#image = models.ImageField(upload_to = 'images/profile_Img/')
 
 class Friends(models.Model):
