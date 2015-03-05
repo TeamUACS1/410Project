@@ -10,9 +10,13 @@ from main.models import Users
 
 def index(request):
 	context =RequestContext(request)
+	request.session['logged_in']='f'
+	session=request.session['logged_in']
+	return render_to_response('main/welcome.html',context_instance=RequestContext(request, {'sessions':session,}))
+
+def showposts(request):
+	context =RequestContext(request)
 	posts = Posts.objects.all()
-	if not request.session['logged_in']:
-		request.session['logged_in']='F'
 	session=request.session['logged_in']
 	return render_to_response('main/show_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
@@ -34,7 +38,7 @@ def login(request):
 			session=request.session['logged_in']
 			print(request.session['logged_in'])
 			print(session)
-			return redirect(index)
+			return redirect(showposts)
 	return render_to_response('main/login.html',{'error': error}, context_instance=RequestContext(request, {'sessions':session,}))
 
 
