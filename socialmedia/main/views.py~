@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.shortcuts import redirect
 
 from main.models import Posts 
+from main.models import Users
 
 def index(request):
 	context =RequestContext(request)
@@ -14,8 +15,8 @@ def login(request):
 	context =RequestContext(request)
 	error =None
 	if request.method=='POST':
-		users=Users.object.filter(username=[request.form['username']])
-		encrypted_pass = hashlib.sha1(request.form['password'].encode('utf-8')).hexdigest()
+		users=Users.objects.filter(username=request.POST.get("username", ""))
+		encrypted_pass =request.POST.get("password", ""))
 		if not users:
 			error='Not a used username'
 		elif encrypted_pass!=users[0]['password']:
