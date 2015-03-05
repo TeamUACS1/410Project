@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block body %}
+
+{% if session.logged_in %}
+	<form id="addForm" method="POST" action="/socialmedia/add_post/">
+	{% csrf_token %}
+		<div class="winHead">
+			<h2>Add a post</h2>
+		</div>
+		<div class="winBody">
+			<p><label for="post">Post</label>
+			<input type="text" class="text" id="post" name="post"/></p>
+		</div>
+		<div class="winFoot">
+			<a href="javascript:document.forms['addForm'].submit();" class="btn addBtn">Add</a>
+			<a href="javascript:;" class="btn cancelBtn">Cancel</a>
+		</div>
+	</form>
+{% endif %}
+<div id="wrapper">
+            <header>
+                <h1>Welcome</h1>
+            </header>
+			
+            <div id="main">
+                <div id="sidebar">
+                    <ul>
+                        <li class="active" id="home">
+                            <a href="#">My Links</a>
+                        </li>
+                        <li><a href="javascript:;" id="addLink">Add a link</a></li>
+                        <li><a href="/bookmarks/tags/">Tags</a></li>
+                    </ul>
+                </div>
+                <div id="content">
+                    {% for posts in posts %}
+                    <div class="link">
+                        <h4>{{ posts.post }}</a></h4>
+                        <p class="tags">
+                        
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+{%endblock%}

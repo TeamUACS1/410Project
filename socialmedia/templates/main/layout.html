@@ -1,0 +1,19 @@
+<!doctype html>
+<title> CMPUT 410 -Lab 5</title>
+
+<div class="page">
+    <h1> TODO-list</h1>
+    <div class="metanav">
+    {% if not session.logged_in %}
+        <a href="{{url_for('login')}}"> Log in</a>
+        <a href="{{url_for('signup')}}"> Sign up</a>
+    {% else %}
+        <a href="{{url_for('logout')}}"> Log out</a>
+    {% endif %}
+    </div>
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
+    
+    {% block body%} {%endblock%}
+    </div>

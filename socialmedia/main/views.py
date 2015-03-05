@@ -6,20 +6,54 @@ from django.shortcuts import redirect
 from main.models import Posts 
 
 def index(request):
-	#Request the context of the request.
-	#The context contains information such as the client's machine details for example.
 	context =RequestContext(request)
-
-	#Get all links
-
 	posts = Posts.objects.all()
-	return render_to_response('main/index.html', {'posts': posts}, context)
+	return render_to_response('main/show_entries.html', {'posts': posts}, context)
 
-def tags(request):
-	return render_to_response('main/index.html', {'posts': posts}, context)
+def login(request):
+	context =RequestContext(request)
+	error =None
+	if request.method=='POST':
+		users=User.object.filter(username=[request.form['username']])
+		encrypted_pass = hashlib.sha1(request.form['password'].encode('utf-8')).hexdigest()
+		if not users:
+			error='Not a used username'
+		elif encrypted_pass!=users[0]['password']:
+			error='Invalid Password'
+		else:
+			session['logged_in']=True
+			return redirect(url_for('task'))
+	return render_to_response('main/login.html',{'error': error}, context)
 
-def tag(request, tag_name):
-	return render_to_response('main/index.html', {'posts': posts}, context)
+
+
+def signup():
+	error =None
+	if request.method=='POST':
+		users=query_db('select * from users where username=?',		[request.form['username']])
+		encrypted_pass = hashlib.sha1(request.form['password'].encode('utf-8')).hexdigest()
+	if not users:
+		error='Not a used username'
+	elif encrypted_pass!=users[0]['password']:
+		error='Invalid Password'
+	else:
+		session['logged_in']=True
+		return redirect(url_for('task'))
+	return render_template('login.html',error=error)
+
+def logout():
+	error =None
+	if request.method=='POST':
+		users=query_db('select * from users where username=?',		[request.form['username']])
+		encrypted_pass = hashlib.sha1(request.form['password'].encode('utf-8')).hexdigest()
+	if not users:
+		error='Not a used username'
+	elif encrypted_pass!=users[0]['password']:
+		error='Invalid Password'
+	else:
+		session['logged_in']=True
+		return redirect(url_for('task'))
+	return render_template('login.html',error=error)
 
 def add_post(request):
 	context = RequestContext(request)

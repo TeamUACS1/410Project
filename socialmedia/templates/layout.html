@@ -1,0 +1,19 @@
+<!doctype html>
+{% load static %}
+
+<script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+<div class="page">
+
+    <div>
+    {% if not session.logged_in %}
+        <a href="login"> Log in</a>
+        <a href="signup"> Sign up</a>
+    {% else %}
+        <a href="signup"> Log out</a>
+    {% endif %}
+    </div>
+   
+    
+    {% block body%} {%endblock%}
+    </div>
