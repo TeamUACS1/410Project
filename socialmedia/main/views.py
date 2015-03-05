@@ -16,10 +16,14 @@ def index(request):
 
 def showposts(request):
 	context =RequestContext(request)
-	posts = Posts.objects.all()
+	posts = Posts.objects.filter(author=request.session['user'])
 	session=request.session['logged_in']
 	return render_to_response('main/show_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
-
+def seeAllPosts(request):
+	context =RequestContext(request)
+	posts = Posts.objects.filter(privateFlag=0)
+	session=request.session['logged_in']
+	return render_to_response('main/show_all_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 def login(request):
 	context =RequestContext(request)
 	session=request.session['logged_in']
