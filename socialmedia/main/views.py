@@ -6,10 +6,12 @@ from django.shortcuts import redirect
 from main.models import Posts 
 from main.models import Users
 
+
+
 def index(request):
 	context =RequestContext(request)
 	posts = Posts.objects.all()
-	return render_to_response('main/show_entries.html', {'posts': posts}, context)
+	return render_to_response('main/show_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'session':'session',}))
 
 def login(request):
 	context =RequestContext(request)
@@ -17,13 +19,16 @@ def login(request):
 	if request.method=='POST':
 		users=Users.objects.filter(username=request.POST.get("username", ""))
 		encrypted_pass =request.POST.get("password", "")
+		for user in users:
+			password=user.password
 		if not users:
 			error='Not a used username'
-		elif encrypted_pass!=users[0]['password']:
+		elif encrypted_pass!=password:
 			error='Invalid Password'
 		else:
-			session['logged_in']=True
-			return redirect(url_for('task'))
+			request.session['logged_in']=True
+			session=request.session['logged_in']
+			return redirect(index)
 	return render_to_response('main/login.html',{'error': error}, context)
 
 
