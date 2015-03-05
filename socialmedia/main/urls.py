@@ -8,4 +8,5 @@ url(r'^seeAllPosts/$', views.seeAllPosts, name='seeAllPosts'),
 url(r'^main/signup', views.signup, name='signup'),
 url(r'^main/login', views.login, name='login'),
 url(r'^main/logout', views.logout, name='logout'),
+url(r'^delete/', views.delete, name='delete'),
 )

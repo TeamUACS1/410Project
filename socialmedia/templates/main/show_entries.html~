@@ -22,15 +22,20 @@
 					<p>
 					<textarea class="text" id="post" name="post" placeholder="what are you thinking?"></textarea></p><p>
 					<select name="privacy">
-  						<option value="0" selected="selected">Public</option>
-						<option value="1">Private</option>
+  						<option value=0 selected="selected">Public</option>
+						<option value=1>Private</option>
 					</select>
 					<input type=submit class="btn addBtn" value="Add"></p>
 				</div>
 			</form>
 			{% for posts in posts %}
 			<div class="link">
-				<h4>{{ posts.post }}</a></h4>
+				<h4>{{ posts.id }}<form class="operation_from" action="/socialmedia/delete/" method=post>{% csrf_token %}
+<input type="hidden" id="ID" name="ID" value="{{ post.id }}">
+
+
+<input type="submit" value=Delete>
+</form></h4>
 				<p class="tags"> </p>
 			</div>
 			{% endfor %}

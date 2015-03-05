@@ -79,3 +79,11 @@ def add_post(request):
 		post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
 		post.save()
 	return redirect(showposts)
+def delete(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		post= request.POST.get("ID", "")
+		print post
+		post =Posts(id=post)
+		post.delete()
+	return redirect(showposts)

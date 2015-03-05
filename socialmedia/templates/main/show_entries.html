@@ -30,7 +30,12 @@
 			</form>
 			{% for posts in posts %}
 			<div class="link">
-				<h4>{{ posts.post }}</a></h4>
+				<h4>{{ posts.post }}<form class="operation_from" action="/socialmedia/delete/" method=post>{% csrf_token %}
+<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+
+
+<input type="submit" value=Delete>
+</form></h4>
 				<p class="tags"> </p>
 			</div>
 			{% endfor %}
