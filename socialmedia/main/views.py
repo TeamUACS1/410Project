@@ -11,6 +11,8 @@ from main.models import Users
 def index(request):
 	context =RequestContext(request)
 	posts = Posts.objects.all()
+	if not request.session['logged_in']:
+		request.session['logged_in']='F'
 	session=request.session['logged_in']
 	return render_to_response('main/show_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
