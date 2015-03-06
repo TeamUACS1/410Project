@@ -79,3 +79,27 @@ def add_post(request):
 		post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
 		post.save()
 	return redirect(showposts)
+
+def add_friend(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		username2= request.POST.get("add_friend", "")
+		post_friend = Users(username2=username2,username1=request.session['user'])
+		post_friend.save()
+	return redirect()
+
+def showFriends(request):
+	context =RequestContext(request)
+	friendList = Friends.objects.filter(username1=request.session['user'])
+	session=request.session['logged_in']
+	return render_to_response('main/search.html', {'friends': friendList}, context_instance=RequestContext(request, {'sessions':session,}))
+
+def seeAllSearches(request):
+	context =RequestContext(request)
+	searchResult = ""
+	session = ""
+	if(request.method == 'POST'):
+		username2 = request.POST.get("searchUser", "")
+		searchResult = Users.objects.filter(username=username2)
+		session=request.session['logged_in']
+	return render_to_response('main/search.html', {'searchResults': searchResult}, context_instance=RequestContext(request, {'sessions':session,}))	

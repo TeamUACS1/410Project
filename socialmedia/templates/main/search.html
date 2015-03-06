@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block body %}
+<div id="wrapper">
+	<header>
+		<h1>Search</h1>
+	</header>	
+	<div id="main">
+		<div id="content">
+			<form id="addForm" method="POST" action="/socialmedia/search/">{% csrf_token %}
+				<div class="winHead">
+					<h2>Search for a User</h2>
+				</div>
+				<div class="winBody">
+					<p>
+					<textarea class="text" id="searchUser" name="searchUser" placeholder="Enter username"></textarea></p><p>
+					<input type=submit class="btn addBtn" value="Search"></p>
+				</div>
+			</form>
+			{% for result in searchResults %}
+			<div class="searchResults">
+				<h4>{{ result.username }}</a></h4>
+				
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{%endblock%}
