@@ -18,8 +18,12 @@
 			</form>
 			{% for result in searchResults %}
 			<div class="searchResults">
-				<h4>{{ result.username }}</a></h4>
-				
+				<h4>{{ result.username }}<form class="adding_friend" action="/socialmedia/addfriend" method=post>{% csrf_token %}
+
+				<input type="hidden" name="adduser" value={{result.username}}>
+				<input type="submit" value="Add as friend">
+				</form></h4>
+
 			</div>
 			{% endfor %}
 		</div>

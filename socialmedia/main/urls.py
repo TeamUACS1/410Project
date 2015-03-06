@@ -9,5 +9,6 @@ url(r'^main/signup', views.signup, name='signup'),
 url(r'^main/login', views.login, name='login'),
 url(r'^main/logout', views.logout, name='logout'),
 url(r'^search', views.seeAllSearches, name='search'),
+url(r'^addfriend', views.addFriend, name='addFriend'),
 url(r'^delete/', views.delete, name='delete'),
 )

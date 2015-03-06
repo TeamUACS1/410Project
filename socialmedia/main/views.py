@@ -6,6 +6,7 @@ from datetime import datetime
 import hashlib
 from main.models import Posts 
 from main.models import Users
+from main.models import Friends
 
 def index(request):
 	context =RequestContext(request)
@@ -81,13 +82,13 @@ def add_post(request):
 	return redirect(showposts)
 
 
-def add_friend(request):
+def addFriend(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
-		username2= request.POST.get("add_friend", "")
-		post_friend = Users(username2=username2,username1=request.session['user'])
+		username2= request.POST.get("adduser", "")
+		post_friend = Friends(username1=username2,username2=request.session['user'])
 		post_friend.save()
-	return redirect()
+	return redirect(seeAllSearches)
 
 def showFriends(request):
 	context =RequestContext(request)
