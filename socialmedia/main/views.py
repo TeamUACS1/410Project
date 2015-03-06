@@ -80,6 +80,7 @@ def add_post(request):
 		post.save()
 	return redirect(showposts)
 
+
 def add_friend(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -103,3 +104,13 @@ def seeAllSearches(request):
 		searchResult = Users.objects.filter(username=username2)
 		session=request.session['logged_in']
 	return render_to_response('main/search.html', {'searchResults': searchResult}, context_instance=RequestContext(request, {'sessions':session,}))	
+
+def delete(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		post= request.POST.get("ID", "")
+		print post
+		post =Posts(id=post)
+		post.delete()
+	return redirect(showposts)
+
