@@ -1,8 +1,14 @@
 {% extends "layout.html" %}
 {% block body %}
 <div id ="wrapper">
-	<header>
-		<h1>Profile</h1>
-	</header>
+	<h1>Profile</h1>
+	<form action="/socialmedia/profile/" method=post>{% csrf_token%}
+	<dl>
+		<dt>Change Password:
+		<dd><input type=text name=newpassword>
+		<dd><input type=submit value=changepass>
+
+	</dl>
+	</form>
 </div>
 {%endblock%}

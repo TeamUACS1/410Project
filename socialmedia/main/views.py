@@ -118,9 +118,21 @@ def seeAllSearches(request):
 
 def profile(request):
 	context =RequestContext(request)
-	posts = Posts.objects.filter(author=request.session['user'])
+	#posts = Posts.objects.filter(author=request.session['user'])
 	session=request.session['logged_in']
-	return render_to_response('main/profile.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+	error = None
+	if request.method=='POST':
+		#username=username.POST.get("username","")
+		current_user=request.session['user']
+		password = request.POST.get("newpassword","")
+		#user = Users.objects.filter(username=current_user)
+		user = Users.objects.get(username=current_user)
+		encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
+		user.password = encrypted_pass
+		user.save()
+		
+
+	return render_to_response('main/profile.html', {'error':error}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def delete(request):
 	context = RequestContext(request)
