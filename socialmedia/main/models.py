@@ -13,6 +13,7 @@ class Posts(models.Model):
 class Users(models.Model):
 	username = models.CharField(max_length=256, null=False)
 	password = models.CharField(max_length=32)
+	githubUsername = models.CharField(max_length=256)
 	#image = models.ImageField(upload_to = 'images/profile_Img/')
 
 class Friends(models.Model):
