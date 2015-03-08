@@ -140,7 +140,11 @@ def profile(request):
 	return render_to_response('main/profile.html', {'error':error}, context_instance=RequestContext(request, {'sessions':session,}))
 
 
-	return render_to_response('main/profile.html', {'error':error}, context_instance=RequestContext(request, {'sessions':session,}))
+def myStream(request):
+	context =RequestContext(request)
+	posts = Posts.objects.filter(privateFlag=0)
+	session=request.session['logged_in']
+	return render_to_response('main/myStream.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def delete(request):
 	context = RequestContext(request)
