@@ -115,6 +115,13 @@ def seeAllSearches(request):
 		session=request.session['logged_in']
 	return render_to_response('main/search.html', {'searchResults': searchResult}, context_instance=RequestContext(request, {'sessions':session,}))	
 
+
+def profile(request):
+	context =RequestContext(request)
+	posts = Posts.objects.filter(author=request.session['user'])
+	session=request.session['logged_in']
+	return render_to_response('main/profile.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+
 def delete(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
