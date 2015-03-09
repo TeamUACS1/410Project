@@ -14,4 +14,5 @@ url(r'^search', views.seeAllSearches, name='search'),
 url(r'^addfriend', views.addFriend, name='addFriend'),
 url(r'^delete/', views.delete, name='delete'),
 url(r'^profile', views.profile, name='profile'),
+url(r'^myStream/$', views.myStream, name='myStream'),
 )

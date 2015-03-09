@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.shortcuts import redirect
+import urllib2
+import json
 from datetime import datetime
 import hashlib
 from main.models import Posts 
@@ -142,9 +144,48 @@ def seeAllSearches(request):
 
 def profile(request):
 	context =RequestContext(request)
-	posts = Posts.objects.filter(author=request.session['user'])
+	#posts = Posts.objects.filter(author=request.session['user'])
 	session=request.session['logged_in']
-	return render_to_response('main/profile.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+	error = None
+	
+	if request.method=='POST':
+
+		current_user=request.session['user']
+		password = request.POST.get("newpassword","")
+		githubUser = request.POST.get("githubname","")
+		user = Users.objects.get(username=current_user)
+		if password:
+			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
+			user.password = encrypted_pass
+			user.save()
+		
+		if githubUser:
+			user.githubUsername = githubUser
+			user.save()
+	
+	return render_to_response('main/profile.html', {'error':error}, context_instance=RequestContext(request, {'sessions':session,}))
+
+
+def myStream(request):
+	context = RequestContext(request)
+	session = request.session['logged_in']
+	error = None
+	posts = Posts.objects.filter(privateFlag=0)
+	current_user=request.session['user']
+	user = Users.objects.get(username=current_user)
+	if user.githubUsername:
+		#urlString = "http://api.github.com/users/" + user.githubUsername + "/events"
+		urlString = "http://api.github.com/users/curopium/events"
+
+		gitreq = urllib2.Request("http://api.github.com/users/curopium/events")
+		#try:
+		#	gitresp = urllib2.urlopen(gitreq)
+		#except urllib2.URLError, e:
+		#	raise MyException("there was an error: %r" % e)
+		#posts = json.loads(gitresp.read())
+		#print(posts)
+
+	return render_to_response('main/myStream.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def delete(request):
 	context = RequestContext(request)
