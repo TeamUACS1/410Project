@@ -1,0 +1,8 @@
+bcrypt
+docutils
+numpy < 1.9
+Pillow
+PyYAML
+pytz > dev
+selenium
+sqlparse

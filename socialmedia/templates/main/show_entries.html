@@ -3,12 +3,24 @@
 <div id="wrapper">
 	<header>
 		<h1>Welcome</h1>
+		<script>
+			function addname(o) {
+				var info = document.getElementById("privacy");
+				var select = info.options[info.selectedIndex].value;
+				
+				if (select== "3"){
+					
+				}
+			}
+		</script>
 	</header>	
 	<div id="main">
 		<div id="sidebar">
 			<ul>
   				<li class="active" id="home"><a href="#">My Posts</a></li>
 				<li><a href="/socialmedia/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
+				<li><a href="/socialmedia/seefriendPosts" id="seefriendPosts">Friend's Posts</a></li>
+				<li><a href="/socialmedia/friendOfFriend" id="friendOfFriend">Friends of friends</a></li>
 				<li><a href="/socialmedia/search" id="search">Search</a></li>
 				<li><a href="/bookmarks/tags/">Tags</a></li>
 				<li><a href="/socialmedia/profile">Profile</a></li>
@@ -22,10 +34,12 @@
 				<div class="winBody">
 					<p>
 					<textarea class="text" id="post" name="post" placeholder="what are you thinking?"></textarea></p><p>
-					<select name="privacy">
+					<select name="privacy" id = "privacy" onchange = "addname(this)">
   						<option value=0 selected="selected">Public</option>
 						<option value=1>Private</option>
 						<option value=2>Friends</option>
+						<option value=3>Private author post</option>
+						<option value=4>Friend of friend</option>
 					</select>
 					<input type=submit class="btn addBtn" value="Add"></p>
 				</div>

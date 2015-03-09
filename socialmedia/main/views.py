@@ -30,9 +30,30 @@ def seeAllPosts(request):
 def seeAllFriendPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
-	posts = Posts.objects.raw("select id from main_posts p, main_friends f where p.privateFlag = 2 and ((f.username2 = p.author and " + user +" = f.username1) or (f.username1 = p.author and "+ user +" = f.username2));")
+	posts = Posts.objects.raw("select p.id from main_posts p, main_friends f where p.privateFlag = 2 and ((f.username2 = p.author and '" + user + "' = f.username1) or (f.username1 = p.author and '"+ user +"' = f.username2));")
 	session=request.session['logged_in']
-	return render_to_response('main/show_all_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/show_friend_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+
+def seeAllFoFPosts(request):
+	context =RequestContext(request)
+	user = request.session['user']
+	authors = Posts.objects.raw("select distinct p.id, p.author from main_posts p, main_friends f where p.privateFlag = 4;")
+	user_friend = Friends.objects.raw("select id, username1, username2 from main_friends where username1 = '" + user + "' or username2 = '"+ user +"'; ")
+	total_posts = []
+	looked_up = []
+	looked_up.append(user)
+
+	for auth in authors:
+		if(str(auth.author) not in looked_up):
+			for fid in user_friend:
+				total = Friends.objects.raw("select count(*) from main_friends where ((f.username2 = '"+ str(fid.username1) +"' and '" + str(auth.author) + "' = f.username1) or (f.username1 = '"+ str(fid.username1) +"' and '"+ str(auth.author) +"' = f.username2)); ")	
+				totalf = Friends.objects.raw("select count(*) from main_friends where ((f.username2 = '"+ str(fid.username2) +"' and '" + str(auth.author) + "' = f.username1) or (f.username1 = '"+ str(fid.username2) +"' and '"+ str(auth.author) +"' = f.username2)); ")	
+				looked_up.append(str(auth.author))
+				if (total or totalf):
+					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"'")
+
+	session=request.session['logged_in']
+	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def login(request):
 	context =RequestContext(request)
@@ -85,8 +106,11 @@ def add_post(request):
 	if(request.method == 'POST'):
 		post2= request.POST.get("post", "")
 		flag = request.POST.get("privacy", "")
-		print flag
-		post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
+		if(flag == 3):
+			#FASDF'SJDS'ADJF FIGURE IT OUT WHO USER IS
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
+		else:
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
 		post.save()
 	return redirect(showposts)
 
