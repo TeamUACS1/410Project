@@ -23,6 +23,12 @@ def showposts(request):
 	session=request.session['logged_in']
 	return render_to_response('main/show_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
+def showpostsUserProfile(request):
+	context =RequestContext(request)
+	posts = Posts.objects.filter(author=request.session['user'])
+	session=request.session['logged_in']
+	return redirect(userProfile)
+
 def seeAllPosts(request):
 	context =RequestContext(request)
 	posts = Posts.objects.filter(privateFlag=0)
@@ -116,6 +122,35 @@ def add_post(request):
 		post.save()
 	return redirect(showposts)
 
+def addPostUserProfile(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		post2= request.POST.get("post", "")
+		flag = request.POST.get("privacy", "")
+		if(flag == 3):
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
+		else:
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
+		post.save()
+	return redirect(userProfile)
+
+def delete(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		post= request.POST.get("ID", "")
+		print post
+		post =Posts(id=post)
+		post.delete()
+	return redirect(showposts)
+
+def deletePostUserProfile(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		post= request.POST.get("deleteID", "")
+		print post
+		post =Posts(id=post)
+		post.delete()
+	return redirect(userProfile)
 
 def addFriend(request):
 	context = RequestContext(request)
@@ -124,6 +159,14 @@ def addFriend(request):
 		post_friend = Friends(username1=username2,username2=request.session['user'])
 		post_friend.save()
 	return redirect(seeAllSearches)
+
+def removeFriend(request):
+	context = RequestContext(request)
+	if (request.method == 'POST'):
+		friendId= request.POST.get("IDS", "")
+		friendInfo = Friends(id=friendId)
+		friendInfo.delete()
+	return redirect(userProfile)
 
 def showFriends(request):
 	context =RequestContext(request)
@@ -141,10 +184,17 @@ def seeAllSearches(request):
 		session=request.session['logged_in']
 	return render_to_response('main/search.html', {'searchResults': searchResult}, context_instance=RequestContext(request, {'sessions':session,}))	
 
+def userProfile(request):
+	context = RequestContext(request)
+	session = request.session['logged_in']
+	friendList = Friends.objects.filter(username2 = request.session['user'])
+	current_user = request.session['user']
 
-def profile(request):
+	return render_to_response('main/userProfile.html', {'friends': friendList}, context_instance=RequestContext(request, {'sessions':session,}))
+
+
+def profileSettings(request):
 	context =RequestContext(request)
-	#posts = Posts.objects.filter(author=request.session['user'])
 	session=request.session['logged_in']
 	error = None
 	
@@ -163,7 +213,7 @@ def profile(request):
 			user.githubUsername = githubUser
 			user.save()
 	
-	return render_to_response('main/profile.html', {'error':error}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/profileSettings.html', {'error':error}, context_instance=RequestContext(request, {'sessions':session,}))
 
 
 def myStream(request):
@@ -187,12 +237,4 @@ def myStream(request):
 
 	return render_to_response('main/myStream.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
-def delete(request):
-	context = RequestContext(request)
-	if(request.method == 'POST'):
-		post= request.POST.get("ID", "")
-		print post
-		post =Posts(id=post)
-		post.delete()
-	return redirect(showposts)
 
