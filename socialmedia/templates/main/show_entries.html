@@ -59,6 +59,12 @@
 
 					<input type="submit" value=Delete>
 					</form>
+					<form class="operation_from" action="/socialmedia/edit/" method=post>{% csrf_token %}
+					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+
+
+					<input type="submit" value=Edit>
+					</form>
 				</h4>
 				<p class="tags"> </p>
 			</div>
