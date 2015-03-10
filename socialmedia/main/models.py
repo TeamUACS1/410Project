@@ -18,6 +18,5 @@ class Users(models.Model):
 
 class Friends(models.Model):
 	username1=models.CharField(max_length=256, null=False)
-	#username1=models.ForeignKey(Users, null=False)
 	username2=models.CharField(max_length=256, null=False)
-	#username2=models.ForeignKey(Users, null=False)
+	followflag= models.CharField(max_length=3, null=False)

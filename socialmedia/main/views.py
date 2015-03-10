@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.shortcuts import redirect
+from django.db.models import Q
 import urllib2
 import json
 from datetime import datetime
@@ -156,7 +157,7 @@ def addFriend(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		username2= request.POST.get("adduser", "")
-		post_friend = Friends(username1=username2,username2=request.session['user'])
+		post_friend = Friends(username1=request.session['user'],username2=username2, followflag=0)
 		post_friend.save()
 	return redirect(seeAllSearches)
 
@@ -167,12 +168,6 @@ def removeFriend(request):
 		friendInfo = Friends(id=friendId)
 		friendInfo.delete()
 	return redirect(userProfile)
-
-def showFriends(request):
-	context =RequestContext(request)
-	friendList = Friends.objects.filter(username1=request.session['user'])
-	session=request.session['logged_in']
-	return render_to_response('main/search.html', {'friends': friendList}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def seeAllSearches(request):
 	context =RequestContext(request)
@@ -187,9 +182,13 @@ def seeAllSearches(request):
 def userProfile(request):
 	context = RequestContext(request)
 	session = request.session['logged_in']
-	friendList = Friends.objects.filter(username2 = request.session['user'])
-	current_user = request.session['user']
-
+	user = request.session['user']
+	print user
+	friendList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag=1 and (username1='" + user +"' or username2= '"+ user +"')")
+	for friend in friendList:
+		if friend.username1 != user:
+			friend.username2 = friend.username1;
+			friend.username1 = user;
 	return render_to_response('main/userProfile.html', {'friends': friendList}, context_instance=RequestContext(request, {'sessions':session,}))
 
 
