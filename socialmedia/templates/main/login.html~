@@ -1,18 +1,18 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>Sign up</h2>
+<h2>Login</h2>
     {% if error %}
         <p class=error>
         <strong>Error:</strong> {{error}}
         </p>
     {%endif%}
-    <form action="/socialmedia/signup/" method=post>{% csrf_token %}
+    <form action="/socialmedia/main/login/" method='post'>{% csrf_token %}
     <dl>
         <dt>Username:
         <dd><input type=text name=username>
         <dt>Password:
         <dd><input type=password name=password>
-        <dd><input type=submit value=Signup>
+        <dd><input type=submit value=Login>
     </dl>
     </form>
 {%endblock%}

@@ -6,7 +6,7 @@
         <strong>Error:</strong> {{error}}
         </p>
     {%endif%}
-    <form action="/socialmedia/main/signup/" method=post>
+    <form action="/socialmedia/main/signup/" method=post>{% csrf_token %}
     <dl>
         <dt>Username:
         <dd><input type=text name=username>

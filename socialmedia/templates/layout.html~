@@ -7,10 +7,10 @@
     <div>
 	{% for session in sessions %}
     {% if session != "T" %}
-        <a class="top" href="main/login"> Login</a>
-        <a class="top" href="main/signup"> Sign up</a>
+        <a class="log" href="main/login"> Login</a>
+        <a class="sign" href="main/signup"> Sign up</a>
     {% else %}
-        <a class="top" href="main/logout"> Log out</a>
+        <a class="log" href="main/logout"> Log out</a>
     {% endif %}
     </div>
    {%endfor%}
