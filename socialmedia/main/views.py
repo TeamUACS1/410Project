@@ -216,7 +216,6 @@ def profileSettings(request):
 	
 	return render_to_response('main/profileSettings.html', {'error':error}, context_instance=RequestContext(request, {'sessions':session,}))
 
-
 def myStream(request):
 	context = RequestContext(request)
 	session = request.session['logged_in']
@@ -224,18 +223,38 @@ def myStream(request):
 	posts = Posts.objects.filter(privateFlag=0)
 	current_user=request.session['user']
 	user = Users.objects.get(username=current_user)
-	if user.githubUsername:
-		#urlString = "http://api.github.com/users/" + user.githubUsername + "/events"
-		urlString = "http://api.github.com/users/curopium/events"
 
-		gitreq = urllib2.Request("http://api.github.com/users/curopium/events")
-		#try:
-		#	gitresp = urllib2.urlopen(gitreq)
-		#except urllib2.URLError, e:
-		#	raise MyException("there was an error: %r" % e)
-		#posts = json.loads(gitresp.read())
-		#print(posts)
+	posts = getGithubActivity(user)
 
 	return render_to_response('main/myStream.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
 
+def getGithubActivity(user):
+	posts = ""
+	if user.githubUsername:
+		#urlString = "http://api.github.com/users/" + user.githubUsername + "/events"
+		activityList = []
+		try:
+			resp = urllib2.urlopen("https://api.github.com/users/"+user.githubUsername+"/events").read()
+			jsonresp = json.loads(resp)
+			#good tool for looking at the raw JSON: jsonformatter.curiousconcept.com
+			for element in jsonresp:
+				if element["type"] == "PushEvent":
+					activityelem = ""
+					activityelem += " At: "
+					#date = ""
+					date = element["created_at"]
+					#TODO this is not working as intended
+					date = date.replace('Z', '')
+					date = date.replace('T', '')
+					activityelem += date
+					activityelem += " Pushed at repo: "
+					activityelem += element["repo"]["name"]
+					activityList.append(activityelem)	
+			#print(activityList)
+			posts = activityList
+		except urllib2.URLError, e:
+			#TODO handle this better
+			print("there was an error: %r" % e)
+
+	return posts
