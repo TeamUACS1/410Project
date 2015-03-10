@@ -7,9 +7,13 @@
 			function addname(o) {
 				var info = document.getElementById("privacy");
 				var select = info.options[info.selectedIndex].value;
-				
 				if (select== "3"){
-					
+					doc = document.getElementById("private_auth");
+					doc.setAttribute("type", "text");
+				}
+				else {
+					field = document.getElementById("private_auth");
+					doc.setAttribute("type", "hidden");
 				}
 			}
 		</script>
@@ -42,6 +46,8 @@
 						<option value=3>Private author post</option>
 						<option value=4>Friend of friend</option>
 					</select>
+					<p>
+					<input type=hidden class="text" id="private_auth" name="private_auth" placeholder="Type another username"></p>
 					<input type=submit class="btn addBtn" value="Add"></p>
 				</div>
 			</form>

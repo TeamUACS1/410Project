@@ -32,7 +32,8 @@ def showpostsUserProfile(request):
 
 def seeAllPosts(request):
 	context =RequestContext(request)
-	posts = Posts.objects.filter(privateFlag=0)
+	user = request.session['user']
+	posts = Posts.objects.filter(Q(privateFlag=0) | Q(extra=user))
 	session=request.session['logged_in']
 	return render_to_response('main/show_all_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
@@ -52,9 +53,9 @@ def seeAllFoFPosts(request):
 	looked_up = []
 	looked_up.append(user)
 
-	for auth in authors:
-		if(str(auth.author) not in looked_up):
-			for fid in user_friend:
+	for auth in authors:	
+		for fid in user_friend:
+			if(str(auth.author) not in looked_up):
 				total = Friends.objects.raw("select count(*) from main_friends where ((f.username2 = '"+ str(fid.username1) +"' and '" + str(auth.author) + "' = f.username1) or (f.username1 = '"+ str(fid.username1) +"' and '"+ str(auth.author) +"' = f.username2)); ")	
 				totalf = Friends.objects.raw("select count(*) from main_friends where ((f.username2 = '"+ str(fid.username2) +"' and '" + str(auth.author) + "' = f.username1) or (f.username1 = '"+ str(fid.username2) +"' and '"+ str(auth.author) +"' = f.username2)); ")	
 				looked_up.append(str(auth.author))
@@ -115,9 +116,9 @@ def add_post(request):
 	if(request.method == 'POST'):
 		post2= request.POST.get("post", "")
 		flag = request.POST.get("privacy", "")
-		if(flag == 3):
-			#FASDF'SJDS'ADJF FIGURE IT OUT WHO USER IS
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
+		if(flag == "3"):
+			private_auth = request.POST.get("private_auth", "")
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth)
 		else:
 			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
 		post.save()
@@ -128,8 +129,9 @@ def addPostUserProfile(request):
 	if(request.method == 'POST'):
 		post2= request.POST.get("post", "")
 		flag = request.POST.get("privacy", "")
-		if(flag == 3):
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
+		if(flag == "3"):
+			private_auth = request.POST.get("private_auth", "")
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth)
 		else:
 			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
 		post.save()
