@@ -160,25 +160,27 @@ def save(request):
 		post= request.POST.get("ID", "")
 		post2= request.POST.get("post", "")
 		flag = request.POST.get("privacy", "")
+		date = datetime.now()
 		if(flag == "3"):
 			private_auth = request.POST.get("private_auth", "")
-			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth)
+			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth, date=date)
 			post.save()
 		else:
-			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag)
+			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag,date=date)
 			post.save()
 	return redirect(showposts)
 
 def add_post(request):
 	context = RequestContext(request)
+	date = datetime.now()
 	if(request.method == 'POST'):
 		post2= request.POST.get("post", "")
 		flag = request.POST.get("privacy", "")
 		if(flag == "3"):
 			private_auth = request.POST.get("private_auth", "")
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth)
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth,date=date)
 		else:
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag,date=date)
 		post.save()
 	return redirect(showposts)
 
