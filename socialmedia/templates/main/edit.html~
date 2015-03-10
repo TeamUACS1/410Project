@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 {% for posts in posts %}
-<form action="/socialmedia/edit/" method=post>{% csrf_token %}
+<form action="/socialmedia/save/" method=post>{% csrf_token %}
 	<input type="hidden" id="ID" name="ID" value={{posts.id}}>
 	<textarea class="text" id="post" name="post" placeholder={{posts.post}}></textarea></p><p>
 					<select name="privacy">
@@ -9,7 +9,7 @@
 						<option value=1>Private</option>
 						<option value=2>Friends</option>
 					</select>
-					<input type=submit class="btn addBtn" value="Add"></p>
+					<input type=submit class="btn addBtn" value="save"></p>
 </form>
 {%endfor%}
 {%endblock%}

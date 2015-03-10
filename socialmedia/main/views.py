@@ -141,16 +141,51 @@ def delete(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		post= request.POST.get("ID", "")
-		print post
 		post =Posts(id=post)
 		post.delete()
+	return redirect(showposts)
+
+
+def edit(request):
+	session=request.session['logged_in']
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		post= request.POST.get("ID", "")
+		posts =Posts.objects.filter(id=post)
+	return render_to_response('main/edit.html',{'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+
+def save(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		post= request.POST.get("ID", "")
+		post2= request.POST.get("post", "")
+		flag = request.POST.get("privacy", "")
+		if(flag == "3"):
+			private_auth = request.POST.get("private_auth", "")
+			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth)
+			post.save()
+		else:
+			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag)
+			post.save()
+	return redirect(showposts)
+
+def add_post(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		post2= request.POST.get("post", "")
+		flag = request.POST.get("privacy", "")
+		if(flag == "3"):
+			private_auth = request.POST.get("private_auth", "")
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth)
+		else:
+			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
+		post.save()
 	return redirect(showposts)
 
 def deletePostUserProfile(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		post= request.POST.get("deleteID", "")
-		print post
 		post =Posts(id=post)
 		post.delete()
 	return redirect(userProfile)
