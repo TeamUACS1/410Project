@@ -15,8 +15,8 @@ def index(request):
 	context =RequestContext(request)
 	request.session['logged_in']='f'
 	request.session['user']=''
-	session=request.session['logged_in']
-	return render_to_response('main/welcome.html',context_instance=RequestContext(request, {'sessions':session,}))
+	request.session['admin']='f'
+	return render_to_response('main/welcome.html',context)
 
 def showposts(request):
 	context =RequestContext(request)
