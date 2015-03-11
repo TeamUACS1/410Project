@@ -17,12 +17,12 @@
 		<form action="/socialmedia/profileSettings/" method=post>{% csrf_token%}
 		<dl>
 			<dt>Enter new Password:
-			<input type="checkbox" id = "passbutton" name = "newpass" value = "change password?">
-			<dd><input type=text id=passtextfield name=newpassword >
+			<input type="button" id = "passbutton" name = "newpass" value = "change password?">
+			<dd><input type=text id=passtextfield name=newpassword disabled >
 			<dt>Enter new Github Username:
 
-			<input type="checkbox" id = "gitbutton" name = "newpass" value = "change Github?">
-			<dd><input type=text id=gittextfield name=githubname>
+			<input type="button" id = "gitbutton" name = "newpass" value = "change Github?">
+			<dd><input type=text id=gittextfield name=githubname disabled>
 			<dd><input type=submit value="Save Changes">
 			<dt>Blank entries do not change values
 
@@ -30,17 +30,21 @@
 			<script>
 			var pass = document.getElementById("passtextfield");
 			var git = document.getElementById("gittextfield");
-			pass.style.display = "none";
-			git.style.display = "none";
+			
+			var passbutt = document.getElementById("passbutton");
+			var gitbutt = document.getElementById("gitbutton");
 
-			$("#passbutton").click(function(){
-				$("#passtextfield").show();
+			passbutt.addEventListener("click", function(){
+			pass.disabled = false;
+			passbutt.style.visibility = "hidden";
 			});
 
+			gitbutt.addEventListener("click", function(){
+			git.disabled = false;
 
-			$("#gitbutton").click(function(){
-				$("#gittextfield").show();
+			gitbutt.style.visibility = "hidden";
 			});
+
 			</script>
 		</dl>
 		</form>
