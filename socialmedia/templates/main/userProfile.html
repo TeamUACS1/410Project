@@ -30,27 +30,44 @@
 					<input type=submit class="btn addBtn" value="Add"></p>
 				</div>
 			</form>
-			{% for posts in posts %}
 			<div class="link">
-				<h4>{{ posts.post }}<form class="operation_from" action="/socialmedia/deletePostUserProfile/" method=post>{% csrf_token %}
-					<input type="hidden" id="deleteID" name="deleteID" value={{posts.id}}>
-
-
-					<input type="submit" value=Delete>
-					</form>
-				</h4>
+				<h3> My Posts</h3>
+				{% for posts in posts %}
+				<div class="link">
+					<h4>{{ posts.post }}<form class="operation_from" action="/socialmedia/deletePostUserProfile/" method=post>{% csrf_token %}
+						<input type="hidden" id="deleteID" name="deleteID" value={{posts.id}}>
+						<input type="submit" value=Delete>
+						</form>
+					</h4>
+				</div>
+				{% endfor %}
 			</div>
-			{% endfor %}
-			{% for friend in friends %}
 			<div class="link">
-				<h4>{{friend.username2}}
-					<form class="operation_form" action="/socialmedia/removeFriend/" method=post>{% csrf_token %}
-						<input type="hidden" id="IDS" name="IDS" value={{friend.id}}>
-						<input type="submit" value="Unfriend">
-					</form>
-				</h4>
+				<h3>My Friends</h3>
+				{% for friend in friends %}
+				<div class="link">
+					<h4>{{friend.username1}}
+						<form class="operation_form" action="/socialmedia/removeFriend/" method=post>{% csrf_token %}
+							<input type="hidden" id="IDS" name="IDS" value={{friend.id}}>
+							<input type="submit" value="Unfriend">
+						</form>
+					</h4>
+				</div>
+				{% endfor %}
 			</div>
-			{% endfor %}
+			<div class="link">
+				<h3>Friend Requests</h3>
+				{% for request in requests %}
+				<div class="link">
+					<h4>{{request.username1}}
+						<form class="operation_form" action="/socialmedia/respondToFriendRequest/" method=post>{% csrf_token %}
+							<input type="hidden" id="requestUser" name="requestUser" value={{request.id}}>
+							<input type="submit" value="Accept Request">
+						</form>
+					</h4>
+				</div>
+				{% endfor %}
+			</div>
 		</div>
 	</div>
 </div>
