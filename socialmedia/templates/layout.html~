@@ -12,7 +12,7 @@
     {% else %}
         <a class="log" href="logout"> Log out</a>
     {% endif %}
-	{% for admin in {% request.session.admin %} %}
+	{% for admin in request.session.admin %}
 		{% if admin = "T" %}
 		<p> hey admin! </p>
 		{%endif%}{%endfor%}
