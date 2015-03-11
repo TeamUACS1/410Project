@@ -7,11 +7,15 @@
     <div>
 	{% for session in sessions %}
     {% if session != "T" %}
-        <a class="log" href="main/login"> Login</a>
-        <a class="sign" href="main/signup"> Sign up</a>
+        <a class="log" href="login"> Login</a>
+        <a class="sign" href="signup"> Sign up</a>
     {% else %}
-        <a class="log" href="main/logout"> Log out</a>
+        <a class="log" href="logout"> Log out</a>
     {% endif %}
+	{% for admin in {% request.session.admin %} %}
+		{% if admin = "T" %}
+		<p> hey admin! </p>
+		{%endif%}{%endfor%}
     </div>
    {%endfor%}
     

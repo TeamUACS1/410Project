@@ -68,6 +68,7 @@ def seeAllFoFPosts(request):
 def login(request):
 	context =RequestContext(request)
 	session=request.session['logged_in']
+	admin=request.session['admin']="F"
 	error =None
 	if request.method=='POST':
 		users=Users.objects.filter(username=request.POST.get("username", ""))
@@ -83,6 +84,9 @@ def login(request):
 			request.session['logged_in']="T"
 			session=request.session['logged_in']
 			request.session['user']=request.POST.get("username", "")
+			if request.POST.get("username", "")== "admin":
+				request.session['admin']="T"
+				admin=request.session['admin']
 			return redirect(showposts)
 	return render_to_response('main/login.html',{'error': error}, context_instance=RequestContext(request, {'sessions':session,}))
 
