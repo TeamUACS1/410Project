@@ -5,13 +5,9 @@ urlpatterns = patterns('',
 url(r'^$', views.index, name='index'),
 url(r'^loggedin', views.showposts, name='showposts'),
 url(r'^add_post/$', views.add_post, name='add_post'),
-<<<<<<< HEAD
 url(r'^addPostUserProfile/$', views.addPostUserProfile, name='addPostUserProfile'),
 url(r'^deletePostUserProfile/$', views.deletePostUserProfile, name='deletePostUserProfile'),
 url(r'^seeAllPosts/$', views.seeAllPosts, name='seeAllPosts'),
-=======
-url(r'^seeAllPosts', views.seeAllPosts, name='seeAllPosts'),
->>>>>>> 82642e722f680f8a0614f5facf3c29433e829c5a
 url(r'^seefriendPosts/$', views.seeAllFriendPosts, name='seefriendPosts'),
 url(r'^friendOfFriend/$', views.seeAllFoFPosts, name='seeAllFoFPosts'),
 url(r'^signup', views.signup, name='signup'),
