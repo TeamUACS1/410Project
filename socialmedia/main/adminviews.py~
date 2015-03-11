@@ -33,7 +33,7 @@ def deleteauthor(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		author= request.POST.get("ID", "")
-		author =Users(id=post)
+		author =Users(id=author)
 		author.delete()
 	return redirect(manageAuthor)
 
@@ -41,22 +41,17 @@ def deleteauthor(request):
 def editauthor(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
-		post= request.POST.get("ID", "")
-		posts =Posts.objects.filter(id=post)
-	return render_to_response('main/edit.html',{'posts': posts}, context)
+		author= request.POST.get("ID", "")
+		author =Users.objects.filter(id=author)
+	return render_to_response('main/edit_authors.html',{'author': author}, context)
 
-def save(request):
+def saveauthor(request):
 	context = RequestContext(request)
-	if(request.method == 'POST'):
-		post= request.POST.get("ID", "")
-		post2= request.POST.get("post", "")
-		flag = request.POST.get("privacy", "")
-		date = datetime.now()
-		if(flag == "3"):
-			private_auth = request.POST.get("private_auth", "")
-			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth, date=date)
-			post.save()
-		else:
-			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag,date=date)
-			post.save()
+	context =RequestContext(request)
+	author= request.POST.get("ID", "")
+	authors = Users.objects.get(id=author)
+	password=request.POST.get("password", "")
+	encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
+	authors.password=encrypted_pass
+	authors.save()
 	return redirect(showposts)

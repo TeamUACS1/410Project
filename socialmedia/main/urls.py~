@@ -26,4 +26,6 @@ url(r'^myStream/$', views.myStream, name='myStream'),
 url(r'^approveAuthors/$', adminviews.approveAuthor, name='approveAuthor'),
 url(r'^manageAuthors/$', adminviews.manageAuthor, name='manageAuthor'),
 url(r'^approve/$', adminviews.approve, name='approve'),
+url(r'^deleteauthor/$', adminviews.deleteauthor, name='deleteauthor'),
+url(r'^editauthor/$', adminviews.editauthor, name='editauthor'),
 )
