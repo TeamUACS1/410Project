@@ -68,6 +68,15 @@
 				</div>
 				{% endfor %}
 			</div>
+			<div class="link">
+				<h3>Users You're Following</h3>
+				{% for follower in followers %}
+				<div class="link">
+					<h4>{{follower.username2}}				
+					</h4>
+				</div>
+				{% endfor %}
+			</div>
 		</div>
 	</div>
 </div>

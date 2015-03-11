@@ -237,7 +237,8 @@ def seeAllSearches(request):
 	searchResult = ""
 	if(request.method == 'POST'):
 		username2 = request.POST.get("searchUser", "")
-		searchResult = Users.objects.filter(username=username2)
+		#searchResult = Users.objects.filter(username=username2)
+		searchResult = Users.objects.raw("select u.id, u.username from main_users u, main_friends f where u.username='"+username2+"' and f.username2 = u.username and f.followFlag='0';")
 	return render_to_response('main/search.html', {'searchResults': searchResult}, context)	
 
 def userProfile(request):
