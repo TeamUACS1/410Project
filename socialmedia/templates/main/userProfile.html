@@ -46,7 +46,7 @@
 				<h3>My Friends</h3>
 				{% for friend in friends %}
 				<div class="link">
-					<h4>{{friend.username1}}
+					<h4>{{friend.username2}}
 						<form class="operation_form" action="/socialmedia/removeFriend/" method=post>{% csrf_token %}
 							<input type="hidden" id="IDS" name="IDS" value={{friend.id}}>
 							<input type="submit" value="Unfriend">
