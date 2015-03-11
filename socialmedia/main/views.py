@@ -39,8 +39,7 @@ def seeAllFriendPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
 	posts = Posts.objects.raw("select p.id from main_posts p, main_friends f where p.privateFlag = 2 and ((f.username2 = p.author and '" + user + "' = f.username1) or (f.username1 = p.author and '"+ user +"' = f.username2));")
-	session=request.session['logged_in']
-	return render_to_response('main/show_friend_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/show_friend_entries.html', {'posts': posts}, context)
 
 def seeAllFoFPosts(request):
 	context =RequestContext(request)
@@ -58,15 +57,11 @@ def seeAllFoFPosts(request):
 				totalf = Friends.objects.raw("select count(*) from main_friends where ((f.username2 = '"+ str(fid.username2) +"' and '" + str(auth.author) + "' = f.username1) or (f.username1 = '"+ str(fid.username2) +"' and '"+ str(auth.author) +"' = f.username2)); ")	
 				looked_up.append(str(auth.author))
 				if (total or totalf):
-					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"'")
-
-	session=request.session['logged_in']
-	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context_instance=RequestContext(request, {'sessions':session,}))
+					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"'")]
+	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
 def login(request):
 	context =RequestContext(request)
-	session=request.session['logged_in']
-	admin=request.session['admin']="F"
 	error =None
 	if request.method=='POST':
 		users=Users.objects.filter(username=request.POST.get("username", ""))
@@ -84,9 +79,8 @@ def login(request):
 			request.session['user']=request.POST.get("username", "")
 			if request.POST.get("username", "")== "admin":
 				request.session['admin']="T"
-				admin=request.session['admin']
 			return redirect(showposts)
-	return render_to_response('main/login.html',{'error': error}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/login.html',{'error': error}, context)
 
 def logout(request):
 	return redirect(index)
@@ -107,10 +101,9 @@ def signup(request):
 			user=Users(username=username,password=encrypted_pass)
 			user.save()
 			request.session['logged_in']="T"
-			session=request.session['logged_in']
 			request.session['user']=request.POST.get("username", "")
 			return redirect(showposts)
-	return render_to_response('main/signup.html',{'error': error}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/signup.html',{'error': error}, context)
 
 
 def add_post(request):
@@ -149,12 +142,11 @@ def delete(request):
 
 
 def edit(request):
-	session=request.session['logged_in']
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		post= request.POST.get("ID", "")
 		posts =Posts.objects.filter(id=post)
-	return render_to_response('main/edit.html',{'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/edit.html',{'posts': posts}, context)
 
 def save(request):
 	context = RequestContext(request)
@@ -213,16 +205,13 @@ def removeFriend(request):
 def seeAllSearches(request):
 	context =RequestContext(request)
 	searchResult = ""
-	session = ""
 	if(request.method == 'POST'):
 		username2 = request.POST.get("searchUser", "")
-		searchResult = Users.objects.filter(username=username2)
-		session=request.session['logged_in']
-	return render_to_response('main/search.html', {'searchResults': searchResult}, context_instance=RequestContext(request, {'sessions':session,}))	
+		searchResult = Users.objects.filter(username=username2)]
+	return render_to_response('main/search.html', {'searchResults': searchResult}, context)	
 
 def userProfile(request):
 	context = RequestContext(request)
-	session = request.session['logged_in']
 	user = request.session['user']
 	print user
 	friendList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag=1 and (username1='" + user +"' or username2= '"+ user +"')")
@@ -230,12 +219,11 @@ def userProfile(request):
 		if friend.username1 != user:
 			friend.username2 = friend.username1;
 			friend.username1 = user;
-	return render_to_response('main/userProfile.html', {'friends': friendList}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/userProfile.html', {'friends': friendList}, context)
 
 
 def profileSettings(request):
 	context =RequestContext(request)
-	session=request.session['logged_in']
 	error = None
 	
 	if request.method=='POST':
@@ -253,11 +241,10 @@ def profileSettings(request):
 			user.githubUsername = githubUser
 			user.save()
 	
-	return render_to_response('main/profileSettings.html', {'error':error}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/profileSettings.html', {'error':error}, context))
 
 def myStream(request):
 	context = RequestContext(request)
-	session = request.session['logged_in']
 	error = None
 	posts = Posts.objects.filter(privateFlag=0)
 	current_user=request.session['user']
@@ -265,7 +252,7 @@ def myStream(request):
 
 	posts = getGithubActivity(user)
 
-	return render_to_response('main/myStream.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/myStream.html', {'posts': posts}, context)
 
 
 def getGithubActivity(user):
