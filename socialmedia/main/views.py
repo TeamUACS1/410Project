@@ -21,8 +21,7 @@ def index(request):
 def showposts(request):
 	context =RequestContext(request)
 	posts = Posts.objects.filter(author=request.session['user'])
-	session=request.session['logged_in']
-	return render_to_response('main/show_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/show_entries.html', {'posts': posts}, context)
 
 def showpostsUserProfile(request):
 	context =RequestContext(request)
