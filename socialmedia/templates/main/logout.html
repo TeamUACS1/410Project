@@ -2,7 +2,7 @@
 {% block body %}
 <h2>Log Out</h2>
     <p>Thanks for visiting </p>
-    <form action="/socialmedia/main/logout/" method='post'>{% csrf_token %}
+    <form action="/socialmedia/logout" method='post'>{% csrf_token %}
     <dl>
         <dd><input type=submit value=Return to Welcome page>
     </dl>
