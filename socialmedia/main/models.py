@@ -14,7 +14,7 @@ class Users(models.Model):
 	username = models.CharField(max_length=256, null=False)
 	password = models.CharField(max_length=32)
 	githubUsername = models.CharField(max_length=256)
-	#image = models.ImageField(upload_to = 'images/profile_Img/')
+	approved_flag=models.IntegerField(max_length=256)
 
 class Friends(models.Model):
 	username1=models.CharField(max_length=256, null=False)

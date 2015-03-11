@@ -98,12 +98,12 @@ def signup(request):
 		else:
 			password =request.POST.get("password", "")
 			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
-			user=Users(username=username,password=encrypted_pass)
+			user=Users(username=username,password=encrypted_pass, approved_flag=0)
 			user.save()
 			request.session['logged_in']="T"
 			request.session['user']=request.POST.get("username", "")
-			return redirect(showposts)
-	return render_to_response('main/signup.html',{'error': error}, context)
+			return render_to_response('main/signed.html',{'error': error}, context)
+	return render_to_response('main/signedup.html',{'error': error}, context)
 
 
 def add_post(request):

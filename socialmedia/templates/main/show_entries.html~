@@ -31,8 +31,8 @@
 				<li><a href="/socialmedia/myStream">My Stream</a></li>
 				{% for admin in request.session.admin %}
 					{% if admin = "T" %}
-					<li><a href="/socialmedia/approveAuthors">Approve Authors</a></li>
-					<li><a href="/socialmedia/manageAuthors">Manage Authors</a></li>
+					<li><a href="/socialmedia/approveAuthors">My Stream</a></li>
+					<li><a href="/socialmedia/manageAuthors">My Stream</a></li>
 		{%endif%}{%endfor%}
 			</ul>
 		</div>
