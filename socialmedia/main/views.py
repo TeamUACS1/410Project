@@ -33,8 +33,7 @@ def seeAllPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
 	posts = Posts.objects.filter(Q(privateFlag=0) | Q(extra=user))
-	session=request.session['logged_in']
-	return render_to_response('main/show_all_entries.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
+	return render_to_response('main/show_all_entries.html', {'posts': posts}, context)
 
 def seeAllFriendPosts(request):
 	context =RequestContext(request)
