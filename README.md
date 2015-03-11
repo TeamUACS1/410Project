@@ -1,5 +1,7 @@
 # 410Project
-Group project for CMPUT 410
+Group project for CMPUT 410. Social Media is a social networking website that allows uses to make and share various posts with other users on the website.  
+  
+[Check out the project requirements here](https://github.com/abramhindle/CMPUT404-project-socialdistribution/blob/master/project.org)  
 
 Contributors / Licensing
 ========================
