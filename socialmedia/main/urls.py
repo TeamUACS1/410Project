@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from main import views
+from main import adminviews
 urlpatterns = patterns('',
 url(r'^$', views.index, name='index'),
 url(r'^loggedin', views.showposts, name='showposts'),
@@ -19,4 +20,7 @@ url(r'^userProfile', views.userProfile, name='userProfile'),
 url(r'^removeFriend/', views.removeFriend, name='removeFriend'),
 url(r'^profileSettings', views.profileSettings, name='profileSettings'),
 url(r'^myStream/$', views.myStream, name='myStream'),
+url(r'^approveAuthors/$', adminviews.approveAuthor, name='approveAuthor'),
+url(r'^manageAuthors/$', adminviews.manageAuthor, name='manageAuthor'),
+url(r'^approve/$', adminviews.approve, name='approve'),
 )

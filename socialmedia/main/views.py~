@@ -102,7 +102,7 @@ def signup(request):
 			user.save()
 			request.session['logged_in']="T"
 			request.session['user']=request.POST.get("username", "")
-			return render_to_response('main/signed.html',{'error': error}, context)
+			return render_to_response('main/signedup.html',{'error': error}, context)
 	return render_to_response('main/signup.html',{'error': error}, context)
 
 
