@@ -57,7 +57,7 @@ def seeAllFoFPosts(request):
 				totalf = Friends.objects.raw("select count(*) from main_friends where ((f.username2 = '"+ str(fid.username2) +"' and '" + str(auth.author) + "' = f.username1) or (f.username1 = '"+ str(fid.username2) +"' and '"+ str(auth.author) +"' = f.username2)); ")	
 				looked_up.append(str(auth.author))
 				if (total or totalf):
-					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"'")]
+					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"'")
 	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
 def login(request):
@@ -207,7 +207,7 @@ def seeAllSearches(request):
 	searchResult = ""
 	if(request.method == 'POST'):
 		username2 = request.POST.get("searchUser", "")
-		searchResult = Users.objects.filter(username=username2)]
+		searchResult = Users.objects.filter(username=username2)
 	return render_to_response('main/search.html', {'searchResults': searchResult}, context)	
 
 def userProfile(request):
@@ -241,7 +241,7 @@ def profileSettings(request):
 			user.githubUsername = githubUser
 			user.save()
 	
-	return render_to_response('main/profileSettings.html', {'error':error}, context))
+	return render_to_response('main/profileSettings.html', {'error':error}, context)
 
 def myStream(request):
 	context = RequestContext(request)
