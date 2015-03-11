@@ -26,13 +26,13 @@
 			{% for authors in authors %}
 			<div class="link">
 				<h4>{{ authors.username }}<h4><form class="operation_from" action="/socialmedia/deleteauthor/" method=post>{% csrf_token %}
-					<input type="hidden" id="ID" name="ID" value={{author.id}}>
+					<input type="hidden" id="ID" name="ID" value={{authors.id}}>
 
 
 					<input type="submit" value=Delete>
 					</form>
 					<form class="operation_from" action="/socialmedia/editauthor/" method=post>{% csrf_token %}
-					<input type="hidden" id="ID" name="ID" value={{author.id}}>
+					<input type="hidden" id="ID" name="ID" value={{authors.id}}>
 
 
 					<input type="submit" value=Edit>

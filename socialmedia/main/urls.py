@@ -28,4 +28,5 @@ url(r'^manageAuthors/$', adminviews.manageAuthor, name='manageAuthor'),
 url(r'^approve/$', adminviews.approve, name='approve'),
 url(r'^deleteauthor/$', adminviews.deleteauthor, name='deleteauthor'),
 url(r'^editauthor/$', adminviews.editauthor, name='editauthor'),
+url(r'^saveauthor/$', adminviews.saveauthor, name='saveauthor'),
 )

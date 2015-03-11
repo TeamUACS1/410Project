@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+{% for author in author %}
+<form action="/socialmedia/saveauthor/" method=post>{% csrf_token %}
+	<input type="hidden" id="ID" name="ID" value={{author.id}}>
+	<p> {{author.username}} <p>
+	<dd><input type=password name=password>			
+	<input type=submit class="btn addBtn" value="save"></p>
+</form>
+{%endfor%}
+{%endblock%}
