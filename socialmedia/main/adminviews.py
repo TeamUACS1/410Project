@@ -1,3 +1,4 @@
+#Contains all of the functions associated with the admin functionalities
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -11,11 +12,13 @@ from main.models import Posts
 from main.models import Users
 from main.models import Friends
 
+#shows the authors that have been approved by the admin. Displays them on a page accesible by the admin
 def approveAuthor(request):
 	context =RequestContext(request)
 	authors = Users.objects.filter(approved_flag=0)
 	return render_to_response('main/show_approval_list.html', {'authors': authors}, context)
 
+#allows the admin to approve a new user/author to the website after they sign up for an account
 def approve(request):
 	context =RequestContext(request)
 	author= request.POST.get("ID", "")
@@ -24,11 +27,13 @@ def approve(request):
 	authors.save()
 	return redirect(approveAuthor)
 
+#Allows the server admin to manage the authors on the website
 def manageAuthor(request):
 	context =RequestContext(request)
 	authors = Users.objects.filter()
 	return render_to_response('main/show_authors_list.html', {'authors': authors}, context)
 
+#Allows the server admin to delete authors from the website
 def deleteauthor(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -37,7 +42,7 @@ def deleteauthor(request):
 		author.delete()
 	return redirect(manageAuthor)
 
-
+#Allows the server admin to edit author information 
 def editauthor(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -45,6 +50,7 @@ def editauthor(request):
 		author =Users.objects.filter(id=author)
 	return render_to_response('main/edit_authors.html',{'author': author}, context)
 
+#Allows the server admin to save changes made to the author information
 def saveauthor(request):
 	context = RequestContext(request)
 	context =RequestContext(request)

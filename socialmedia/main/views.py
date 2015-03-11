@@ -1,3 +1,4 @@
+#main views file
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -11,6 +12,7 @@ from main.models import Posts
 from main.models import Users
 from main.models import Friends
 
+#This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
 	context =RequestContext(request)
 	request.session['logged_in']='f'
@@ -18,33 +20,41 @@ def index(request):
 	request.session['admin']='f'
 	return render_to_response('main/welcome.html',context)
 
+#Showposts shows all the posts created by the author. It is displayed in the 'My Posts' section
 def showposts(request):
 	context =RequestContext(request)
 	posts = Posts.objects.filter(author=request.session['user'])
 	return render_to_response('main/show_entries.html', {'posts': posts}, context)
 
-
+#seeAllPosts shows all the public posts/ posts that the user has the right to view on the website. 
+#Public posts have a flag of 0.
 def seeAllPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
 	posts = Posts.objects.filter(Q(privateFlag=0) | Q(extra=user))
 	return render_to_response('main/show_all_entries.html', {'posts': posts}, context)
 
+#This function gets all the user's friends' posts and displays them on the window
 def seeAllFriendPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
 	posts = Posts.objects.raw("select p.id from main_posts p, main_friends f where p.privateFlag = 2 and ((f.username2 = p.author and '" + user + "' = f.username1) or (f.username1 = p.author and '"+ user +"' = f.username2));")
 	return render_to_response('main/show_friend_entries.html', {'posts': posts}, context)
 
+#This function gets all the user's friends of friends' posts and displays them on the website
+#Multiple SQL queries are used to gather the correct posts
 def seeAllFoFPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
+	#grab ids and authors of posts that have a '4' friend of friend privacy flag
 	authors = Posts.objects.raw("select distinct p.id, p.author from main_posts p, main_friends f where p.privateFlag = 4;")
+	#grab all of people current user is friends with
 	user_friend = Friends.objects.raw("select id, username1, username2 from main_friends where username1 = '" + user + "' or username2 = '"+ user +"'; ")
 	total_posts = []
 	looked_up = []
 	looked_up.append(user)
 
+	#loop through the objects to see if the post authors and current user have mutual friends. If so, display post. 
 	for auth in authors:	
 		for fid in user_friend:
 			if(str(auth.author) not in looked_up):
@@ -55,6 +65,7 @@ def seeAllFoFPosts(request):
 					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"'")
 	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
+#Handles user login. Checks to see if login credentials are valid. Manages user and admin logins
 def login(request):
 	context =RequestContext(request)
 	error =None
@@ -77,9 +88,11 @@ def login(request):
 			return redirect(showposts)
 	return render_to_response('main/login.html',{'error': error}, context)
 
+#logs out a user
 def logout(request):
 	return redirect(index)
 
+#Allows a user to sign up. It only allows for unique usernames in the database by checking against the db
 def signup(request):
 	context =RequestContext(request)
 	session=request.session['logged_in']
@@ -99,8 +112,10 @@ def signup(request):
 			return render_to_response('main/signedup.html',{'error': error}, context)
 	return render_to_response('main/signup.html',{'error': error}, context)
 
-
-def add_post(request):
+#Collects the information from a post sent by a logged in user
+#If the flag is set to three you are sending a post to a specific user
+#Save the post in the database making sure that the specified user can see it
+"""def add_post(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		post2= request.POST.get("post", "")
@@ -111,9 +126,9 @@ def add_post(request):
 		else:
 			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
 		post.save()
-	return redirect(showposts)
+	return redirect(showposts)"""
 
-
+#Allows users to delete posts by passing the post's IDs and deleting it from the db
 def delete(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -122,7 +137,7 @@ def delete(request):
 		post.delete()
 	return redirect(showposts)
 
-
+#Allows users to edit a post and updating the existing post in the database
 def edit(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -130,6 +145,7 @@ def edit(request):
 		posts =Posts.objects.filter(id=post)
 	return render_to_response('main/edit.html',{'posts': posts}, context)
 
+#Is called after editing a posting and saving it
 def save(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -146,6 +162,9 @@ def save(request):
 			post.save()
 	return redirect(showposts)
 
+#Collects the information from a post sent by a logged in user
+#If the flag is set to three you are sending a post to a specific user
+#Save the post in the database making sure that the specified user can see it
 def add_post(request):
 	context = RequestContext(request)
 	date = datetime.now()
@@ -160,7 +179,8 @@ def add_post(request):
 		post.save()
 	return redirect(showposts)
 
-
+#Allows a user to add friends after finding another user to add.
+#When this is called the adder becomes the addee's follower 
 def addFriend(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -169,20 +189,18 @@ def addFriend(request):
 		post_friend.save()
 	return redirect(seeAllSearches)
 
-
+#Allows the user to search for other users using a specific username
 def seeAllSearches(request):
 	context =RequestContext(request)
 	user= request.session['user']
 	searchResult = ""
 	if(request.method == 'POST'):
 		username2 = request.POST.get("searchUser", "")
-		#searchResult = Users.objects.filter(username=username2)
-		#searchResult = Users.objects.raw("select u.id, u.username from main_users u, main_friends f where u.username='"+username2+" and ('"+username2+"' not in (select * from main_friends where (username1 = '"+user+"' and username2 = '"+username2+"') or (username1 = '"+username2+"' and username2 = '"+user+"') ))';")
 		searchResult = Users.objects.raw("select * from main_users where username='"+username2+"' and '"+username2+"' NOT IN (select username2 from main_friends where (username1 = '"+username2+"' and username2 = '"+user+"') or (username1 = '"+user+"' and username2 = '"+username2+"')) and '"+username2+"' NOT IN (select username1 from main_friends where (username1 = '"+username2+"' and username2 = '"+user+"') or (username1 = '"+user+"' and username2 = '"+username2+"'));")
-
 	return render_to_response('main/search.html', {'searchResults': searchResult}, context)	
 
-
+#This allows the user to change some of his profile settings and re encrypts the password if needed
+#Lets the users change some settings and save them back to the db
 def profileSettings(request):
 	context =RequestContext(request)
 	error = None
@@ -204,6 +222,7 @@ def profileSettings(request):
 	
 	return render_to_response('main/profileSettings.html', {'error':error}, context)
 
+#Display the current user's stream, posts and github activity
 def myStream(request):
 	context = RequestContext(request)
 	error = None
@@ -215,11 +234,11 @@ def myStream(request):
 
 	return render_to_response('main/myStream.html', {'posts': posts}, context)
 
-
+#Fetches the github activity using the github api
 def getGithubActivity(user):
 	posts = ""
 	if user.githubUsername:
-		#urlString = "http://api.github.com/users/" + user.githubUsername + "/events"
+		
 		activityList = []
 		try:
 			resp = urllib2.urlopen("https://api.github.com/users/"+user.githubUsername+"/events").read()
@@ -238,10 +257,10 @@ def getGithubActivity(user):
 					activityelem += " Pushed at repo: "
 					activityelem += element["repo"]["name"]
 					activityList.append(activityelem)	
-			#print(activityList)
+			
 			posts = activityList
 		except urllib2.URLError, e:
-			#TODO handle this better
+			
 			print("there was an error: %r" % e)
 
 	return posts
