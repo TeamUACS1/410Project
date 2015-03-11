@@ -27,7 +27,8 @@ def showpostsUserProfile(request):
 	context =RequestContext(request)
 	posts = Posts.objects.filter(author=request.session['user'])
 	session=request.session['logged_in']
-	return redirect(userProfile)
+	return posts
+	#return render_to_response('main/userProfile.html', {'posts': posts}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def seeAllPosts(request):
 	context =RequestContext(request)
@@ -120,6 +121,7 @@ def add_post(request):
 
 def addPostUserProfile(request):
 	context = RequestContext(request)
+	session=request.session['logged_in']
 	if(request.method == 'POST'):
 		post2= request.POST.get("post", "")
 		flag = request.POST.get("privacy", "")
@@ -130,6 +132,7 @@ def addPostUserProfile(request):
 			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
 		post.save()
 	return redirect(userProfile)
+	#return render_to_response('main/userProfile.html', context_instance=RequestContext(request, {'sessions':session,}))
 
 def delete(request):
 	context = RequestContext(request)
@@ -193,6 +196,15 @@ def addFriend(request):
 		post_friend.save()
 	return redirect(seeAllSearches)
 
+def respondToFriendRequest(request):
+	context = RequestContext(request)
+	if (request.method == 'POST'):
+		username2 = request.session['user']
+		friendshipId = request.POST.get("requestUser", "")
+		removeRequest = Friends.objects.filter(id = friendshipId).update(followflag=1)
+	return redirect(userProfile)
+
+
 def removeFriend(request):
 	context = RequestContext(request)
 	if (request.method == 'POST'):
@@ -200,6 +212,25 @@ def removeFriend(request):
 		friendInfo = Friends(id=friendId)
 		friendInfo.delete()
 	return redirect(userProfile)
+
+
+def showFriendRequests(request):
+	context = RequestContext(request)
+	session = request.session['logged_in']
+	user= request.session['user']
+	requestList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag='0' and username2='" + user +"';")
+	#return redirect()
+	return requestList
+	#return render_to_response('main/userProfile.html', {'requests': requestList}, context_instance=RequestContext(request, {'sessions':session,}))
+
+
+def showUsersFollowing(request):
+	context = RequestContext(request)
+	session = request.session['logged_in']
+	user= request.session['user']
+	followingList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag='0' and username1='" + user +"';")
+	return followingList
+	#return render_to_response('main/userProfile.html', {'followers': followingList}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def seeAllSearches(request):
 	context =RequestContext(request)
@@ -212,13 +243,17 @@ def seeAllSearches(request):
 def userProfile(request):
 	context = RequestContext(request)
 	user = request.session['user']
-	print user
+	
 	friendList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag=1 and (username1='" + user +"' or username2= '"+ user +"')")
 	for friend in friendList:
 		if friend.username1 != user:
 			friend.username2 = friend.username1;
 			friend.username1 = user;
-	return render_to_response('main/userProfile.html', {'friends': friendList}, context)
+	
+	followingList = showUsersFollowing(request) 
+	requestList = showFriendRequests(request)
+	posts = showpostsUserProfile(request)
+	return render_to_response('main/userProfile.html', {'friends': friendList, 'followers': followingList, 'requests': requestList, 'posts': posts}, context)
 
 
 def profileSettings(request):
