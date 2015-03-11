@@ -218,7 +218,7 @@ def showFriendRequests(request):
 	context = RequestContext(request)
 	session = request.session['logged_in']
 	user= request.session['user']
-	requestList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag='0' and username2='" + user +"';")
+	requestList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag=0 and username2='" + user +"';")
 	#return redirect()
 	return requestList
 	#return render_to_response('main/userProfile.html', {'requests': requestList}, context_instance=RequestContext(request, {'sessions':session,}))
@@ -228,18 +228,25 @@ def showUsersFollowing(request):
 	context = RequestContext(request)
 	session = request.session['logged_in']
 	user= request.session['user']
-	followingList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag='0' and username1='" + user +"';")
+	followingList = Friends.objects.raw("select id, username1, username2, followflag from main_friends where followflag=0 and username1='" + user +"';")
 	return followingList
 	#return render_to_response('main/userProfile.html', {'followers': followingList}, context_instance=RequestContext(request, {'sessions':session,}))
 
 def seeAllSearches(request):
 	context =RequestContext(request)
+	user= request.session['user']
 	searchResult = ""
 	if(request.method == 'POST'):
 		username2 = request.POST.get("searchUser", "")
 		#searchResult = Users.objects.filter(username=username2)
-		searchResult = Users.objects.raw("select u.id, u.username from main_users u, main_friends f where u.username='"+username2+"' and f.username2 = u.username and f.followFlag='0';")
+		#searchResult = Users.objects.raw("select u.id, u.username from main_users u, main_friends f where u.username='"+username2+" and ('"+username2+"' not in (select * from main_friends where (username1 = '"+user+"' and username2 = '"+username2+"') or (username1 = '"+username2+"' and username2 = '"+user+"') ))';")
+		searchResult = Users.objects.raw("select * from main_users where username='"+username2+"' and '"+username2+"' NOT IN (select username2 from main_friends where (username1 = '"+username2+"' and username2 = '"+user+"') or (username1 = '"+user+"' and username2 = '"+username2+"')) and '"+username2+"' NOT IN (select username1 from main_friends where (username1 = '"+username2+"' and username2 = '"+user+"') or (username1 = '"+user+"' and username2 = '"+username2+"'));")
+
 	return render_to_response('main/search.html', {'searchResults': searchResult}, context)	
+
+
+
+
 
 def userProfile(request):
 	context = RequestContext(request)
