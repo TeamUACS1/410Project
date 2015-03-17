@@ -9,8 +9,10 @@ import json
 from datetime import datetime
 import hashlib
 from main.models import Posts 
-from main.models import Users
+from main.models import Authors
 from main.models import Friends
+from main.models import Comments
+from main.models import Follows
 
 #Allows a user to post a post from the user profile page
 def addPostUserProfile(request):

@@ -25,7 +25,7 @@ CREATE TABLE main_authors (
 
 CREATE TABLE main_comments (
     id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-    author varchar(32) NOT NULL,
+    author main_authors,
     comments varchar(512),
     pubDate Date,
     guid varchar(32) UNIQUE
@@ -39,9 +39,9 @@ CREATE TABLE main_posts (
     description varchar(256),
     content_type varchar(256),
     content varchar(512),
-    author main_authors,
+    author REFERENCES main_authors(displayname),
     categories varchar(32),
-    comments main_comments,
+    comments REFERENCES main_comments(comments),
     pubDate Date,
     visibility varchar(16),
     guid varchar(32) UNIQUE
@@ -51,13 +51,15 @@ CREATE TABLE main_friends (
     id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
     authorguid1 varchar(32) NOT NULL,
     authorguid2 varchar(32) NOT NULL,
-    accepted varchar(8) NOT NULL
+    accepted varchar(8) NOT NULL, 
+    UNIQUE(authorguid1, authorguid2)
 );
 
    
 CREATE TABLE main_follows (
     id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
     authorguid1 varchar(32) NOT NULL,
-    authorguid2 varchar(32) NOT NULL
+    authorguid2 varchar(32) NOT NULL,
+    UNIQUE(authorguid1, authorguid2)
 );
 

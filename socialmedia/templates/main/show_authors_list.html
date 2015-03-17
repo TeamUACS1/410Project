@@ -25,7 +25,7 @@
 		<div id="content">
 			{% for authors in authors %}
 			<div class="link">
-				<h4>{{ authors.username }}<h4><form class="operation_from" action="/socialmedia/deleteauthor/" method=post>{% csrf_token %}
+				<h4>{{ authors.displayname }}<h4><form class="operation_from" action="/socialmedia/deleteauthor/" method=post>{% csrf_token %}
 					<input type="hidden" id="ID" name="ID" value={{authors.id}}>
 
 

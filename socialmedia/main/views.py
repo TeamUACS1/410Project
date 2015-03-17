@@ -6,11 +6,14 @@ from django.shortcuts import redirect
 from django.db.models import Q
 import urllib2
 import json
+import uuid
 from datetime import datetime
 import hashlib
 from main.models import Posts 
-from main.models import Users
+from main.models import Authors
+from main.models import Comments
 from main.models import Friends
+from main.models import Follows
 
 #This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
@@ -23,7 +26,8 @@ def index(request):
 #Showposts shows all the posts created by the author. It is displayed in the 'My Posts' section
 def showposts(request):
 	context =RequestContext(request)
-	posts = Posts.objects.filter(author=request.session['user'])
+	#author=Authors.objects.filter(displayname=request.session['user'])
+	posts = Posts.objects.filter()
 	return render_to_response('main/show_entries.html', {'posts': posts}, context)
 
 #seeAllPosts shows all the public posts/ posts that the user has the right to view on the website. 
@@ -31,7 +35,7 @@ def showposts(request):
 def seeAllPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
-	posts = Posts.objects.filter(Q(privateFlag=0) | Q(extra=user))
+	posts = Posts.objects.filter(Q(visibility='PUBLIC') | Q(author=user))
 	return render_to_response('main/show_all_entries.html', {'posts': posts}, context)
 
 #This function gets all the user's friends' posts and displays them on the window
@@ -70,12 +74,12 @@ def login(request):
 	context =RequestContext(request)
 	error =None
 	if request.method=='POST':
-		users=Users.objects.filter(username=request.POST.get("username", ""))
+		authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
 		password =request.POST.get("password", "")
 		encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
-		for user in users:
-			password=user.password
-		if not users:
+		for author in authors:
+			password=author.password
+		if not authors:
 			error='Not a used username'
 		elif encrypted_pass!=password:
 			error='Invalid Password'
@@ -97,17 +101,20 @@ def signup(request):
 	context =RequestContext(request)
 	session=request.session['logged_in']
 	error =None
+	host= "http://cs410.cs.ualberta.ca:41034"
 	if request.method=='POST':
-		username=username=request.POST.get("username", "")
+		displayname=request.POST.get("username", "")
 		password=request.POST.get("password", "")
-		users=Users.objects.filter(username=request.POST.get("username", ""))
-		if users:
+		authors=Authors.objects.filter(displayname=displayname)
+		if authors:
 			error='taken username'
 		else:
+			guid = uuid.uuid1()
+			url = host+"/"+displayname+"/"+str(guid)
 			password =request.POST.get("password", "")
 			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
-			user=Users(username=username,password=encrypted_pass, approved_flag=0)
-			user.save()
+			author=Authors(displayname=displayname,password=encrypted_pass, host=host, guid= guid, url=url, approved_flag=0)
+			author.save()
 			request.session['user']=request.POST.get("username", "")
 			return render_to_response('main/signedup.html',{'error': error}, context)
 	return render_to_response('main/signup.html',{'error': error}, context)
@@ -169,13 +176,22 @@ def add_post(request):
 	context = RequestContext(request)
 	date = datetime.now()
 	if(request.method == 'POST'):
-		post2= request.POST.get("post", "")
-		flag = request.POST.get("privacy", "")
-		if(flag == "3"):
+		content= request.POST.get("post", "")
+		visibility = request.POST.get("privacy", "")
+		author = Authors(displayname=request.session['user'])
+		author = author.displayname
+		guid = uuid.uuid1()
+		if(visibility == "3"):
 			private_auth = request.POST.get("private_auth", "")
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth,date=date)
-		else:
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag,date=date)
+			post = Posts(content=content,author=author,visibility="FOAF", pubDate=date, guid=guid)
+		elif(visibility == "0"):
+			post = Posts(content=content,author=author,visibility="PUBLIC", pubDate=date, guid=guid)
+		elif(visibility == "1"):
+			post = Posts(content=content,author=author,visibility="PRIVATE", pubDate=date, guid=guid)
+		elif(visibility == "2"):
+			post = Posts(content=content,author=author,visibility="FRIEND", pubDate=date, guid=guid)
+		elif(visibility == "4"):
+			post = Posts(content=content,author=author,visibility="SERVERONLY", pubDate=date, guid=guid)
 		post.save()
 	return redirect(showposts)
 
