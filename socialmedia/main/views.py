@@ -158,16 +158,13 @@ def save(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		post= request.POST.get("ID", "")
-		post2= request.POST.get("post", "")
+		title= request.POST.get("title", "")
+		description= request.POST.get("description", "")
+		cont= request.POST.get("post", "")
 		flag = request.POST.get("privacy", "")
 		date = datetime.now()
-		if(flag == "3"):
-			private_auth = request.POST.get("private_auth", "")
-			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth, date=date)
-			post.save()
-		else:
-			post=Posts(id=post,post=post2,author=request.session['user'],privateFlag=flag,date=date)
-			post.save()
+		post=Posts(id=post,title=title,description=description,content=cont,author=request.session['user'],privateFlag=flag,pubDate=date)
+		post.save()
 	return redirect(showposts)
 
 #Collects the information from a post sent by a logged in user
@@ -177,22 +174,24 @@ def add_post(request):
 	context = RequestContext(request)
 	date = datetime.now()
 	if(request.method == 'POST'):
-		content= request.POST.get("post", "")
+		title= request.POST.get("title", "")
+		description= request.POST.get("description", "")
+		cont= request.POST.get("post", "")
 		visibility = request.POST.get("privacy", "")
 		author = Authors(displayname=request.session['user'])
 		author = author.displayname
 		guid = uuid.uuid1()
 		if(visibility == "3"):
 			private_auth = request.POST.get("private_auth", "")
-			post = Posts(content=content,author=author,visibility="FOAF", pubDate=date, guid=guid)
+			post = Posts(title=title,description=description,content=cont,author=author,visibility="FOAF", pubDate=date, guid=guid)
 		elif(visibility == "0"):
-			post = Posts(content=content,author=author,visibility="PUBLIC", pubDate=date, guid=guid)
+			post = Posts(title=title,description=description,content=cont,author=author,visibility="PUBLIC", pubDate=date, guid=guid)
 		elif(visibility == "1"):
-			post = Posts(content=content,author=author,visibility="PRIVATE", pubDate=date, guid=guid)
+			post = Posts(title=title,description=description,content=cont,author=author,visibility="PRIVATE", pubDate=date, guid=guid)
 		elif(visibility == "2"):
-			post = Posts(content=content,author=author,visibility="FRIEND", pubDate=date, guid=guid)
+			post = Posts(title=title,description=description,content=cont,author=author,visibility="FRIEND", pubDate=date, guid=guid)
 		elif(visibility == "4"):
-			post = Posts(content=content,author=author,visibility="SERVERONLY", pubDate=date, guid=guid)
+			post = Posts(title=title,description=description,content=cont,author=author,visibility="SERVERONLY", pubDate=date, guid=guid)
 		post.save()
 	return redirect(showposts)
 
