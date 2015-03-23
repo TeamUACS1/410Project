@@ -141,6 +141,7 @@ def delete(request):
 	if(request.method == 'POST'):
 		post= request.POST.get("ID", "")
 		post =Posts(id=post)
+		print (post)
 		post.delete()
 	return redirect(showposts)
 
