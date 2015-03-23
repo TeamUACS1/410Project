@@ -18,7 +18,7 @@
 						<option value=4>Server Only</option>
 					</select>
 					<input type=hidden class="text" id="private_auth" name="private_auth" placeholder="Type another username"></p>
-					<textarea style="display:none;" class="text" id="guid" name="guid">{{posts.guid}}</textarea></p>
+					<textarea type=hidden class="text" id="guid" name="guid">{{posts.guid}}</textarea></p>
 		
 					<input type=submit class="btn addBtn" value="save"></p>
 </form>

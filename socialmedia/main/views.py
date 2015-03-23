@@ -141,7 +141,6 @@ def delete(request):
 	if(request.method == 'POST'):
 		post= request.POST.get("ID", "")
 		post =Posts(id=post)
-		print (post)
 		post.delete()
 	return redirect(showposts)
 
@@ -161,9 +160,23 @@ def save(request):
 		title= request.POST.get("title", "")
 		description= request.POST.get("description", "")
 		cont= request.POST.get("post", "")
-		flag = request.POST.get("privacy", "")
+		visibility = request.POST.get("privacy", "")
+		guid = request.POST.get("guid", "")
+		print (guid)
 		date = datetime.now()
-		post=Posts(id=post,title=title,description=description,content=cont,author=request.session['user'],privateFlag=flag,pubDate=date)
+		author = Authors(displayname=request.session['user'])
+		author = author.displayname
+		if(visibility == "3"):
+			private_auth = request.POST.get("private_auth", "")
+			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="FOAF", pubDate=date, guid=guid)
+		elif(visibility == "0"):
+			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="PUBLIC", pubDate=date, guid=guid)
+		elif(visibility == "1"):
+			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="PRIVATE", pubDate=date, guid=guid)
+		elif(visibility == "2"):
+			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="FRIEND", pubDate=date, guid=guid)
+		elif(visibility == "4"):
+			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="SERVERONLY", pubDate=date, guid=guid)
 		post.save()
 	return redirect(showposts)
 
