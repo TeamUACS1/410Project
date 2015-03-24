@@ -67,7 +67,7 @@ def seeAllFriendPosts(request):
 		string=str(string).split("},")[0]
 		string=string + "}}]"
 		newpost=Posts.objects.filter(Q(author=string) &Q(visibility="FRIENDS"))
-		posts=chain(posts,newpost)
+	
 		#posts.chain(posts, newpost)
 		posts = posts | newpost
 
@@ -77,11 +77,11 @@ def seeAllFriendPosts(request):
 #Multiple SQL queries are used to gather the correct posts
 def seeAllFoFPosts(request):
 	context =RequestContext(request)
-	user = request.session['user']
+	user = request.session['user_guid']
 	#grab ids and authors of posts that have a '4' friend of friend privacy flag
-	authors = Posts.objects.raw("select distinct p.id, p.author from main_posts p, main_friends f where p.privateFlag = 4;")
+	authors = Posts.objects.raw("select distinct p.id, p.author from main_posts p, main_friends f where p.visibility ='FOAF';")
 	#grab all of people current user is friends with
-	user_friend = Friends.objects.raw("select id, username1, username2 from main_friends where username1 = '" + user + "' or username2 = '"+ user +"'; ")
+	user_friend = Friends.objects.raw("select id, authorguid1, authorguid2 from main_friends where authorguid1 = '" + user + "' or authorguid2 = '"+ user +"'; ")
 	total_posts = []
 	looked_up = []
 	looked_up.append(user)
@@ -90,11 +90,11 @@ def seeAllFoFPosts(request):
 	for auth in authors:	
 		for fid in user_friend:
 			if(str(auth.author) not in looked_up):
-				total = Friends.objects.raw("select count(*) from main_friends where ((f.username2 = '"+ str(fid.username1) +"' and '" + str(auth.author) + "' = f.username1) or (f.username1 = '"+ str(fid.username1) +"' and '"+ str(auth.author) +"' = f.username2)); ")	
-				totalf = Friends.objects.raw("select count(*) from main_friends where ((f.username2 = '"+ str(fid.username2) +"' and '" + str(auth.author) + "' = f.username1) or (f.username1 = '"+ str(fid.username2) +"' and '"+ str(auth.author) +"' = f.username2)); ")	
+				total = Friends.objects.raw("select count(*) from main_friends where ((f.authorguid2 = '"+ str(fid.authorguid1) +"' and '" + str(auth.author) + "' = f.authorguid1) or (f.authorguid1 = '"+ str(fid.authorguid1) +"' and '"+ str(auth.author) +"' = f.authorguid2)); ")	
+				totalf = Friends.objects.raw("select count(*) from main_friends where ((f.authorguid2 = '"+ str(fid.authorguid2) +"' and '" + str(auth.author) + "' = f.authorguid1) or (f.authorguid1 = '"+ str(fid.authorguid2) +"' and '"+ str(auth.author) +"' = f.authorguid2)); ")	
 				looked_up.append(str(auth.author))
 				if (total or totalf):
-					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"'")
+					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"' and p.visibility ='FOAF';")
 	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
 #Handles user login. Checks to see if login credentials are valid. Manages user and admin logins

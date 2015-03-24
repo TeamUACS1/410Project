@@ -29,7 +29,7 @@
 				<h4>{{ posts.title }}</h4>
 				<h4>{{ posts.description }}</h4>
 				<h4>{{ posts.content }}</h4>
-				<h4>{{ posts.visibility }}</h4>
+				<h4>{{ posts.pubDate }}</h4>
 			</div>
 			{% endfor %}
 		</div>
