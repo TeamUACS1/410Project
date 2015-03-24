@@ -11,14 +11,14 @@
 </textarea></p>
 					
 					<select name="privacy" id = "privacy" onchange = "addname(this)">
-  						<option value=0 selected="selected">Public</option>
-						<option value=1>Private</option>
-						<option value=2>Friends</option>
-						<option value=3>Friend of Friend</option>
-						<option value=4>Server Only</option>
+  						<option value="PUBLIC" selected="selected">Public</option>
+						<option value="PRIVATE">Private</option>
+						<option value="FRIENDS">Friends</option>
+						<option value="FOAF">Friend of Friend</option>
+						<option value="SERVERONLY">Server Only</option>
 					</select>
 					<input type=hidden class="text" id="private_auth" name="private_auth" placeholder="Type another username"></p>
-					<textarea type=hidden class="text" id="guid" name="guid">{{posts.guid}}</textarea></p>
+					<textarea style="display:none;" class="text" id="guid" name="guid">{{posts.guid}}</textarea></p>
 		
 					<input type=submit class="btn addBtn" value="save"></p>
 </form>

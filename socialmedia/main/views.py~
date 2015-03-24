@@ -127,18 +127,7 @@ def signup(request):
 #Collects the information from a post sent by a logged in user
 #If the flag is set to three you are sending a post to a specific user
 #Save the post in the database making sure that the specified user can see it
-"""def add_post(request):
-	context = RequestContext(request)
-	if(request.method == 'POST'):
-		post2= request.POST.get("post", "")
-		flag = request.POST.get("privacy", "")
-		if(flag == "3"):
-			private_auth = request.POST.get("private_auth", "")
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth)
-		else:
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
-		post.save()
-	return redirect(showposts)"""
+
 
 #Allows users to delete posts by passing the post's IDs and deleting it from the db
 def delete(request):
