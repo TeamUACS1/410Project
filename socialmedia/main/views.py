@@ -46,8 +46,27 @@ def seeAllPosts(request):
 #This function gets all the user's friends' posts and displays them on the window
 def seeAllFriendPosts(request):
 	context =RequestContext(request)
-	user = request.session['user']
-	posts = Posts.objects.raw("select p.id from main_posts p, main_friends f where p.privateFlag = 2 and ((f.username2 = p.author and '" + user + "' = f.username1) or (f.username1 = p.author and '"+ user +"' = f.username2));")
+	user = request.session['user_guid']
+	f=Friends.objects.filter((Q(authorguid1=user)&Q(accepted=str(1)))).authorguid2
+	#posts
+	for friends in f:
+		
+		string=serializers.serialize("json",friends,fields=('guid','host','displayname','url'))
+		string=str(string).replace("fields","author")
+		string=str(string).split("},")[0]
+		string=string + "}}]"
+		newpost=Posts.objects.filter(Q(author=string) &Q(visibility="FRIENDS"))
+		posts=chain(posts,newpost)
+	f=Friends.objects.filter((Q(authorguid2=user)&Q(accepted=str(1)))).authorguid1
+	#posts
+	for friends in f:
+		
+		string=serializers.serialize("json",friends,fields=('guid','host','displayname','url'))
+		string=str(string).replace("fields","author")
+		string=str(string).split("},")[0]
+		string=string + "}}]"
+		newpost=Posts.objects.filter(Q(author=string) &Q(visibility="FRIENDS"))
+		posts=chain(posts,newpost)
 	return render_to_response('main/show_friend_entries.html', {'posts': posts}, context)
 
 #This function gets all the user's friends of friends' posts and displays them on the website
