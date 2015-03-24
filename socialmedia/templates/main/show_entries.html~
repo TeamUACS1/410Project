@@ -26,7 +26,7 @@
 				<li><a href="/socialmedia/seefriendPosts" id="seefriendPosts">Friend's Posts</a></li>
 				<li><a href="/socialmedia/friendOfFriend" id="friendOfFriend">Friends of friends</a></li>
 				<li><a href="/socialmedia/search" id="search">Search</a></li>
-				<li><a href="/socialmedia/author/{{request.session.user_guid}}/posts">User Profile</a></li>
+				<li><a href="<a href=/socialmedia/author/{{request.session.user_guid}}/posts">User Profile</a></li>
 				<li><a href="/socialmedia/profileSettings">Profile Settings</a></li>
 				<li><a href="/socialmedia/myStream">My Stream</a></li>
 				{% for admin in request.session.admin %}
