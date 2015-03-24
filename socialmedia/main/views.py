@@ -166,8 +166,8 @@ def save(request):
 			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="PUBLIC", pubDate=date, guid=guid)
 		elif(visibility == "PRIVATE"):
 			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="PRIVATE", pubDate=date, guid=guid)
-		elif(visibility == "FRIEND"):
-			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="FRIEND", pubDate=date, guid=guid)
+		elif(visibility == "FRIENDS"):
+			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="FRIENDS", pubDate=date, guid=guid)
 		elif(visibility == "SERVERONLY"):
 			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="SERVERONLY", pubDate=date, guid=guid)
 		post.save()
@@ -194,8 +194,8 @@ def add_post(request):
 			post = Posts(title=title,description=description,content=cont,author=author,visibility="PUBLIC", pubDate=date, guid=guid)
 		elif(visibility == "PRIVATE"):
 			post = Posts(title=title,description=description,content=cont,author=author,visibility="PRIVATE", pubDate=date, guid=guid)
-		elif(visibility == "FRIEND"):
-			post = Posts(title=title,description=description,content=cont,author=author,visibility="FRIEND", pubDate=date, guid=guid)
+		elif(visibility == "FRIENDS"):
+			post = Posts(title=title,description=description,content=cont,author=author,visibility="FRIENDS", pubDate=date, guid=guid)
 		elif(visibility == "SERVERONLY"):
 			post = Posts(title=title,description=description,content=cont,author=author,visibility="SERVERONLY", pubDate=date, guid=guid)
 		post.save()
