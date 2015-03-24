@@ -15,7 +15,7 @@ from main.models import Comments
 from main.models import Friends
 from main.models import Follows
 from django.core import serializers
-
+from itertools import chain
 #This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
 	context =RequestContext(request)
@@ -46,8 +46,33 @@ def seeAllPosts(request):
 #This function gets all the user's friends' posts and displays them on the window
 def seeAllFriendPosts(request):
 	context =RequestContext(request)
-	user = request.session['user']
-	posts = Posts.objects.raw("select p.id from main_posts p, main_friends f where p.privateFlag = 2 and ((f.username2 = p.author and '" + user + "' = f.username1) or (f.username1 = p.author and '"+ user +"' = f.username2));")
+	user = request.session['user_guid']
+	friends = Friends.objects.raw("select * from main_friends where ((authorguid1 = '"+ user +"') or (authorguid2 = '"+ user +"') and accepted = 1)")	
+	friend_list = []
+	for friend in friends:
+		if ((friend.authorguid1 != request.session['user_guid']) and (friend.authorguid2 == request.session['user_guid'])):
+			friend_list.append(friend.authorguid1)
+			
+		if ((friend.authorguid2 != request.session['user_guid']) and (friend.authorguid1 == request.session['user_guid'])):
+			friend_list.append(friend.authorguid2)
+
+	
+	posts = Posts.objects.filter(guid='0')
+
+	for friend in friend_list:
+
+		author = Authors.objects.filter(guid=friend)
+
+		string=serializers.serialize("json",author,fields=('guid','host','displayname','url'))
+		string=str(string).replace("fields","author")
+		string=str(string).split("},")[0]
+		string=string + "}}]"
+		newpost=Posts.objects.filter(Q(author=string) &Q(visibility="FRIENDS"))
+		#posts.chain(posts, newpost)
+		posts = posts | newpost
+
+
+	print posts
 	return render_to_response('main/show_friend_entries.html', {'posts': posts}, context)
 
 #This function gets all the user's friends of friends' posts and displays them on the website
