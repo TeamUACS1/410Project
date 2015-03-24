@@ -21,7 +21,10 @@ def index(request):
 	context =RequestContext(request)
 	request.session['logged_in']='f'
 	request.session['user']=''
+	request.session['user_guid']=''
 	request.session['admin']='f'
+	request.session['friend']=''
+	request.session['follow']=''
 	return render_to_response('main/welcome.html',context)
 
 #Showposts shows all the posts created by the author. It is displayed in the 'My Posts' section
@@ -92,8 +95,11 @@ def login(request):
 			string=str(string).split("},")[0]
 			string=string + "}}]"
 			request.session['user']=string
-			if request.POST.get("username", "")== "admin":
-				request.session['admin']="T"
+			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
+			for author in authors:
+				request.session['user']=author.guid
+				if request.POST.get("username", "")== "admin":
+					request.session['admin']="T"
 			return redirect(showposts)
 	return render_to_response('main/login.html',{'error': error}, context)
 
@@ -156,20 +162,10 @@ def save(request):
 		cont= request.POST.get("post", "")
 		visibility = request.POST.get("privacy", "")
 		guid = request.POST.get("guid", "")
-		print (guid)
+
 		date = datetime.now()
 		author = request.session['user']
-		if(visibility == "3"):
-			private_auth = request.POST.get("private_auth", "")
-			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="FOAF", pubDate=date, guid=guid)
-		elif(visibility == "0"):
-			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="PUBLIC", pubDate=date, guid=guid)
-		elif(visibility == "1"):
-			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="PRIVATE", pubDate=date, guid=guid)
-		elif(visibility == "2"):
-			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="FRIEND", pubDate=date, guid=guid)
-		elif(visibility == "4"):
-			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="SERVERONLY", pubDate=date, guid=guid)
+		post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility=visibility, pubDate=date, guid=guid)
 		post.save()
 	return redirect(showposts)
 
@@ -187,17 +183,7 @@ def add_post(request):
 		author = request.session['user']
 
 		guid = str(uuid.uuid1()).replace("-", "")
-		if(visibility == "3"):
-			private_auth = request.POST.get("private_auth", "")
-			post = Posts(title=title,description=description,content=cont,author=author,visibility="FOAF", pubDate=date, guid=guid)
-		elif(visibility == "0"):
-			post = Posts(title=title,description=description,content=cont,author=author,visibility="PUBLIC", pubDate=date, guid=guid)
-		elif(visibility == "1"):
-			post = Posts(title=title,description=description,content=cont,author=author,visibility="PRIVATE", pubDate=date, guid=guid)
-		elif(visibility == "2"):
-			post = Posts(title=title,description=description,content=cont,author=author,visibility="FRIEND", pubDate=date, guid=guid)
-		elif(visibility == "4"):
-			post = Posts(title=title,description=description,content=cont,author=author,visibility="SERVERONLY", pubDate=date, guid=guid)
+		post = Posts(title=title,description=description,content=cont,author=author,visibility=visibility, pubDate=date, guid=guid)
 		post.save()
 	return redirect(showposts)
 
@@ -217,9 +203,43 @@ def seeAllSearches(request):
 	user= request.session['user']
 	searchResult = ""
 	if(request.method == 'POST'):
-		username2 = request.POST.get("searchUser", "")
-		searchResult = Users.objects.raw("select * from main_users where username='"+username2+"' and '"+username2+"' NOT IN (select username2 from main_friends where (username1 = '"+username2+"' and username2 = '"+user+"') or (username1 = '"+user+"' and username2 = '"+username2+"')) and '"+username2+"' NOT IN (select username1 from main_friends where (username1 = '"+username2+"' and username2 = '"+user+"') or (username1 = '"+user+"' and username2 = '"+username2+"'));")
+		username = request.POST.get("searchUser", "")
+		searchResult = Authors.objects.raw("select * from main_authors where displayname='"+username+"';")
 	return render_to_response('main/search.html', {'searchResults': searchResult}, context)	
+
+
+
+def viewfriend(request, author_guid):
+	context = RequestContext(request)
+	friends = Authors.objects.filter(guid=author_guid)
+	string=serializers.serialize("json",friends,fields=('guid','host','displayname','url'))
+	string=str(string).replace("fields","author")
+	string=str(string).split("},")[0]
+	string=string + "}}]"
+	user= request.session['user_guid']
+	users= request.session['user']
+	for friend in friends:
+		fr=Friends.objects.raw("select * from main_friends where ((authorguid1 = '"+ str(user) +"' and '" + str(friend.guid) + "' = authorguid2) or (authorguid2 = '"+ str(user) +"' and '"+ str(friend.guid) +"' = authorguid1)); ")
+		fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)
+	
+	if string==users:
+		post=Posts.objects.filter(author=string)
+		request.session['friend']='t'
+		request.session['follow']='t'
+	elif fr:
+		post=Posts.objects.filter(author=string)
+		request.session['friend']='t'
+		request.session['follow']='t'
+	elif fo:
+		post=Posts.objects.filter(author=string)
+		request.session['friend']='f'
+		request.session['follow']='t'
+	else:
+		post=Posts.objects.filter(author=string,visibility="PUBLIC")
+		request.session['friend']='f'
+		request.session['follow']='f'
+ 
+	return render_to_response('main/friend.html', {'friends': friends,"posts":post}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db

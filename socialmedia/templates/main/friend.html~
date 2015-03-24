@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+<div id="wrapper">
+	<header>
+		<h1>Welcome</h1>
+
+	</header>	
+{% for friends in friends %}
+	<div id="main">
+		<div id="sidebar">
+			<ul>
+  				<li id="home"><a href="/socialmedia/loggedin">My Posts</a></li>
+				<li class="active" ><a href="/socialmedia/userProfile" id="userProfile">User Profile</a></li>
+			</ul>
+		</div>
+		<div id="content">
+		<p>{{friends.displayname}}</p>
+			{% for posts in posts %}
+			<div style="background-color:moccasin; border:5px;")
+		<p>{{posts.title}}</p
+<p>{{posts.description}}</p>
+<p>{{posts.content}}</p>
+<p>{{posts.pubDate}}</p>
+</div>
+{%endfor%}
+	</div>
+	{%endfor%}
+</div>
+{%endblock%}

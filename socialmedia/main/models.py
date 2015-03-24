@@ -11,7 +11,7 @@ class Authors(models.Model):
 	guid = models.CharField(max_length=32)
 
 	def __unicode__(self):
-		return "\"author\":{\"id\": \"" + str(self.guid)+ "\",\"host\": \"" + str(self.host) + "\",\"displayname\": \"" + str(self.displayname) + "\",\"url\": \"" + str(self.url)+"\"}"  
+		return self.guid 
 
 
 class Comments(models.Model):
@@ -42,13 +42,13 @@ class Posts(models.Model):
 	
 
 class Friends(models.Model):
-	authorguid1=models.CharField(max_length=32, null=False)
-	authorguid2=models.CharField(max_length=32, null=False)
+	authorguid1=models.CharField(max_length=32, null=False)#adder
+	authorguid2=models.CharField(max_length=32, null=False)#addee
 	accepted = models.CharField(max_length=8, null=False)
 	
 class Follows(models.Model):
-	authorguid1=models.CharField(max_length=32, null=False)
-	authorguid2=models.CharField(max_length=32, null=False)
+	authorguid1=models.CharField(max_length=32, null=False)#adder
+	authorguid2=models.CharField(max_length=32, null=False)#addee
 
 
 
