@@ -1,4 +1,5 @@
 from django.db import models
+from django.core import serializers
 
 class Authors(models.Model):
 	host = models.CharField(max_length=32, null=False)
@@ -10,7 +11,8 @@ class Authors(models.Model):
 	guid = models.CharField(max_length=32)
 
 	def __unicode__(self):
-		return self.guid
+		return "\"author\":{\"id\": \"" + str(self.guid)+ "\",\"host\": \"" + str(self.host) + "\",\"displayname\": \"" + str(self.displayname) + "\",\"url\": \"" + str(self.url)+"\"}"  
+
 
 class Comments(models.Model):
 	author = models.ManyToManyField(Authors)
@@ -28,7 +30,7 @@ class Posts(models.Model):
 	description = models.CharField(max_length=256)
 	content_type = models.CharField(max_length=256)
 	content = models.CharField(max_length=512)
-	author = models.CharField(max_length=32)
+	author = models.CharField(max_length=512)
 	categories = models.CharField(max_length=32)
 	comments = models.ManyToManyField(Comments)
 	pubDate = models.DateField(max_length=32)

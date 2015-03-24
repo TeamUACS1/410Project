@@ -1,4 +1,27 @@
 from django.db import models
+from django.core import serializers
+
+class Authors(models.Model):
+	host = models.CharField(max_length=32, null=False)
+	displayname = models.CharField(max_length=32, null=False)
+	password = models.CharField(max_length=32, null=False)
+	github = models.CharField(max_length=40)
+	approved_flag=models.IntegerField(max_length=8)
+	url = models.CharField(max_length=257)
+	guid = models.CharField(max_length=32)
+
+	def __unicode__(self):
+		return "\"author\":{\"id\": \"" + str(self.guid)+ "\",\"host\": \"" + str(self.host) + "\",\"displayname\": \"" + str(self.displayname) + "\",\"url\": \"" + str(self.url)+"\"}"  
+
+
+class Comments(models.Model):
+	author = models.ManyToManyField(Authors)
+	comments = models.CharField(max_length=512)
+	pubDate = models.DateField(max_length=32)
+	guid = models.CharField(max_length=32)
+
+	def __unicode__(self):
+		return self.guid
 
 class Posts(models.Model):
 	title = models.CharField(max_length=100)
@@ -15,25 +38,8 @@ class Posts(models.Model):
 	guid = models.CharField(max_length=32)
 
 	def __unicode__(self):
-		return self.author
+		return self.guid
 	
-
-class Authors(models.Model):
-	host = models.CharField(max_length=32, null=False)
-	displayname = models.CharField(max_length=32, null=False)
-	password = models.CharField(max_length=32, null=False)
-	github = models.CharField(max_length=40)
-	approved_flag=models.IntegerField(max_length=8)
-	url = models.CharField(max_length=257)
-	guid = models.CharField(max_length=32)
-
-
-class Comments(models.Model):
-	author = models.CharField(max_length=32, null=False)
-	comments = models.CharField(max_length=512)
-	pubDate = models.DateField(max_length=32)
-	guid = models.CharField(max_length=32)
-
 
 class Friends(models.Model):
 	authorguid1=models.CharField(max_length=32, null=False)

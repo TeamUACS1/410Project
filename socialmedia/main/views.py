@@ -14,6 +14,7 @@ from main.models import Authors
 from main.models import Comments
 from main.models import Friends
 from main.models import Follows
+from django.core import serializers
 
 #This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
@@ -86,7 +87,11 @@ def login(request):
 		else:
 			request.session['logged_in']="T"
 			session=request.session['logged_in']
-			request.session['user']=request.POST.get("username", "")
+			string=serializers.serialize("json",Authors.objects.filter(displayname=request.POST.get("username", "")),fields=('guid','host','displayname','url'))
+			string=str(string).replace("fields","author")
+			string=str(string).split("},")[0]
+			string=string + "}}]"
+			request.session['user']=string
 			if request.POST.get("username", "")== "admin":
 				request.session['admin']="T"
 			return redirect(showposts)
@@ -109,7 +114,7 @@ def signup(request):
 		if authors:
 			error='taken username'
 		else:
-			guid = uuid.uuid1()
+			guid = str(uuid.uuid1()).replace("-", "")
 			url = host+"/"+displayname+"/"+str(guid)
 			password =request.POST.get("password", "")
 			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
@@ -122,18 +127,7 @@ def signup(request):
 #Collects the information from a post sent by a logged in user
 #If the flag is set to three you are sending a post to a specific user
 #Save the post in the database making sure that the specified user can see it
-"""def add_post(request):
-	context = RequestContext(request)
-	if(request.method == 'POST'):
-		post2= request.POST.get("post", "")
-		flag = request.POST.get("privacy", "")
-		if(flag == "3"):
-			private_auth = request.POST.get("private_auth", "")
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag, extra=private_auth)
-		else:
-			post =Posts(post=post2,author=request.session['user'],privateFlag=flag)
-		post.save()
-	return redirect(showposts)"""
+
 
 #Allows users to delete posts by passing the post's IDs and deleting it from the db
 def delete(request):
@@ -164,8 +158,7 @@ def save(request):
 		guid = request.POST.get("guid", "")
 		print (guid)
 		date = datetime.now()
-		author = Authors(displayname=request.session['user'])
-		author = author.displayname
+		author = request.session['user']
 		if(visibility == "3"):
 			private_auth = request.POST.get("private_auth", "")
 			post = Posts(id=post,title=title,description=description,content=cont,author=author,visibility="FOAF", pubDate=date, guid=guid)
@@ -191,9 +184,9 @@ def add_post(request):
 		description= request.POST.get("description", "")
 		cont= request.POST.get("post", "")
 		visibility = request.POST.get("privacy", "")
-		author = Authors(displayname=request.session['user'])
-		author = author.displayname
-		guid = uuid.uuid1()
+		author = request.session['user']
+
+		guid = str(uuid.uuid1()).replace("-", "")
 		if(visibility == "3"):
 			private_auth = request.POST.get("private_auth", "")
 			post = Posts(title=title,description=description,content=cont,author=author,visibility="FOAF", pubDate=date, guid=guid)
