@@ -31,8 +31,8 @@ def index(request):
 #Showposts shows all the posts created by the author. It is displayed in the 'My Posts' section
 def showposts(request):
 	context =RequestContext(request)
-	#author=Authors.objects.filter(displayname=request.session['user'])
-	posts = Posts.objects.filter()
+	user = request.session['user']
+	posts = Posts.objects.filter(author=user)
 	return render_to_response('main/show_entries.html', {'posts': posts}, context)
 
 #seeAllPosts shows all the public posts/ posts that the user has the right to view on the website. 
