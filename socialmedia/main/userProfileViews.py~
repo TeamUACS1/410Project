@@ -55,7 +55,7 @@ def respondToFriendRequest(request):
 		friendshipId = request.POST.get("requestUser", "")
 		guid = request.POST.get("ID", "")
 		removeRequest = Friends.objects.filter(id = friendshipId).update(accepted=1)
-	return render_to_response('main/search.html', context)	
+	return render_to_response('/socialmedia/author/'+guid+'/posts',context)
 
 #Shows the list of every user following the currently logged in user
 #These users can be accepted as friends

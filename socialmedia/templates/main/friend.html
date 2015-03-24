@@ -14,7 +14,35 @@
 			</ul>
 		</div>
 		<div id="content">
-		<p>{{friends.displayname}}</p>
+		<h2>{{friends.displayname}}</h2>
+			{% for session in request.session.friend %}
+    			{% if session != "t" %} <form class="operation_from" action="/socialmedia/addfriend/" method=post>{% csrf_token %}
+					<input type="hidden" id="ID" name="ID" value={{friends.guid}}>
+					<input type="submit" value="Send friend request">
+					</form>
+			{% else%} <p> You are friends!! </p>
+			{%endif%}{%endfor%}
+			{% for session in request.session.friend_request %}
+			{% for fr in fr %}
+    			{% if session != "f" %} <form class="operation_from" action="/socialmedia/respondToFriendRequest/" method=post>{% csrf_token %}
+					<input type="hidden" id="requestUser" name="requestUser" value={{fr.id}}>
+					<input type="hidden" id="ID" name="ID" value={{friends.guid}}>
+					
+					<input type="submit" value="Accept friend request">
+					</form>
+			{%endif%}{%endfor%}{%endfor%}
+			{% for session in request.session.follow %}
+    			{% if session != "t" %} <form class="operation_from" action="/socialmedia/followFriend/" method=post>{% csrf_token %}
+					<input type="hidden" id="ID" name="ID" value={{friends.guid}}>
+					<input type="submit" value="Follow the author">
+					</form>
+			{% else%} <p> You are following!! </p>
+
+	
+			
+
+				{%endif%}{%endfor%}
+
 			{% for posts in posts %}
 			<div style="background-color:moccasin; border: 5px solid red;")
 		<p>{{posts.title}}</p

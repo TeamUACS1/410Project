@@ -21,6 +21,7 @@ def index(request):
 	context =RequestContext(request)
 	request.session['logged_in']='f'
 	request.session['user']=''
+	request.session['friend_request']=''
 	request.session['user_guid']=''
 	request.session['admin']='f'
 	request.session['friend']=''
@@ -97,7 +98,7 @@ def login(request):
 			request.session['user']=string
 			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
 			for author in authors:
-				request.session['user']=author.guid
+				request.session['user_guid']=author.guid
 				if request.POST.get("username", "")== "admin":
 					request.session['admin']="T"
 			return redirect(showposts)
@@ -192,9 +193,11 @@ def add_post(request):
 def addFriend(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
-		username2= request.POST.get("adduser", "")
-		post_friend = Friends(username1=request.session['user'],username2=username2, followflag=0)
+		username2= request.POST.get("ID", "")
+		post_friend = Friends(authorguid1=request.session['user_guid'],authorguid2=username2, accepted=0)
+		post_follow = Follows(authorguid1=request.session['user_guid'],authorguid2=username2)
 		post_friend.save()
+		post_follow.save()
 	return redirect(seeAllSearches)
 
 #Allows the user to search for other users using a specific username
@@ -216,30 +219,33 @@ def viewfriend(request, author_guid):
 	string=str(string).replace("fields","author")
 	string=str(string).split("},")[0]
 	string=string + "}}]"
+	friend = Authors.objects.get(guid=author_guid)
 	user= request.session['user_guid']
 	users= request.session['user']
-	for friend in friends:
-		fr=Friends.objects.raw("select * from main_friends where ((authorguid1 = '"+ str(user) +"' and '" + str(friend.guid) + "' = authorguid2) or (authorguid2 = '"+ str(user) +"' and '"+ str(friend.guid) +"' = authorguid1)); ")
-		fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)
+	f=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(1)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(1))))
+	fr=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(0)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(0))))
+	fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)
 	
-		if string==users:
-			post=Posts.objects.filter(author=string)
-			request.session['friend']='t'
-			request.session['follow']='t'
-		elif fr:
-			post=Posts.objects.filter(author=string)
-			request.session['friend']='t'
-			request.session['follow']='t'
-		elif fo:
-			post=Posts.objects.filter(author=string)
-			request.session['friend']='f'
-			request.session['follow']='t'
-		else:
-			post=Posts.objects.filter(author=string,visibility="PUBLIC")
-			request.session['friend']='f'
-			request.session['follow']='f'
+	if string==users:
+		post=Posts.objects.filter(author=string)
+
+	elif f:
+		post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
+		request.session['friend']='t'
+	elif fr:
+		post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
+		request.session['friend_request']='t'
+		request.session['follow']='t'
+	elif fo:
+		post=Posts.objects.filter(author=string,visibility="PUBLIC")
+		request.session['friend']='f'
+		request.session['follow']='t'
+	else:
+		post=Posts.objects.filter(author=string,visibility="PUBLIC")
+		request.session['friend']='f'
+		request.session['follow']='f'
  	
-	return render_to_response('main/friend.html', {'friends': friends,"posts":post}, context)
+	return render_to_response('main/friend.html', {'friends': friends,"posts":post,"fr":fr}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db
