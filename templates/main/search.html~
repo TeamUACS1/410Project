@@ -27,7 +27,7 @@
 
 
 				<h4>
-				<a href="/main/author/{{result.guid}}/feed">{{result.displayname}}
+				<a href="/main/author/{{result.guid}}/posts">{{result.displayname}}
 				</h4>
 
 			</div>
