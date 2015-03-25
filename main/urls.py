@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from main import views
 from main import adminviews
+from main import apiviews
 from main import userProfileViews
 urlpatterns = patterns('',
 url(r'^$', views.index, name='index'),
@@ -31,4 +32,10 @@ url(r'^approve/$', adminviews.approve, name='approve'),
 url(r'^deleteauthor/$', adminviews.deleteauthor, name='deleteauthor'),
 url(r'^editauthor/$', adminviews.editauthor, name='editauthor'),
 url(r'^saveauthor/$', adminviews.saveauthor, name='saveauthor'),
+url(r'^getposts', apiviews.getposts, name='getposts'),
+url(r'^author/posts', apiviews.authorposts, name='authorposts'),
+url(r'^author/(?P<author_guid>\w+)/posts', apiviews.authorsposts, name='vauthorsposts'),
+url(r'^posts/(?P<post_guid>\w+)', apiviews.getpost, name='getpost'),
+url(r'^friends/(?P<authorguid1>\w+)/(?P<authorguid2>\w+)', apiviews.arefriends, name='arefriends'),
+url(r'^friends/(?P<authorguid1>\w+)', apiviews.friends, name='friends'),
 )

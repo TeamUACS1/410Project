@@ -1,0 +1,36 @@
+from django.shortcuts import render
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.shortcuts import redirect
+from django.db.models import Q
+from django.core import serializers
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+import urllib2
+import json
+from datetime import datetime
+import hashlib
+from main.models import Posts 
+from main.models import Authors
+from main.models import Comments
+from main.models import Friends
+from main.models import Follows
+def getposts(request):
+	lists=[]
+	context =RequestContext(request)
+	user = request.session['user']
+	posts = Posts.objects.filter(Q(visibility='PUBLIC'))
+	for post in posts:
+		post2 = {}
+		post2['title'] = post.title
+		post2['source'] = post.source
+		post2['origin']= post.origin
+		post2['description'] = post.description
+		post2['content-type'] = post.content_type
+		post2['content'] = post.content
+		post2['pubdate'] = str(post.pubDate)
+		post2['guid'] = str(post.guid)
+		post2['visability'] = post.visibility
+		post2['author'] = post.author
+		post2['comments'] = []
+		lists.append(post2)
+	return HttpResponse(json.dumps({"posts" : lists}))
