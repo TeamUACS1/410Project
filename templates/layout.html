@@ -1,0 +1,21 @@
+<!doctype html>
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}" media="all" />
+<script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+<div class="page">
+    <div>
+	{% for session in request.session.logged_in %}
+    {% if session != "T" %}
+        <a class="log" href="/main/login"> Login</a>
+        <a class="sign" href="/main/signup"> Sign up</a>
+    {% else %}
+        <a class="log" href="/main/logout"> Log out</a>
+    {% endif %}
+	{{request.session.user}}
+
+    </div>
+   {%endfor%}
+    
+    {% block body%} {%endblock%}
+    </div>

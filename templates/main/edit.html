@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body %}
+{% for posts in posts %}
+<form action="/main/save/" method=post>{% csrf_token %}
+
+	<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+										<textarea class="text" id="title" name="title">{{posts.title}}</textarea></p><p>
+					<textarea class="text" id="description" name="description">{{posts.description}}</textarea></p><p>
+					<textarea class="text" id="post" name="post">
+{{posts.content}}
+</textarea></p>
+					
+					<select name="privacy" id = "privacy" onchange = "addname(this)">
+  					<option value="PUBLIC" selected="selected">Public</option>
+						<option value="PRIVATE">Private</option>
+						<option value="FRIENDS">Friends</option>
+						<option value="FOAF">Friend of Friend</option>
+						<option value="SERVERONLY">Server Only</option>
+					</select>
+					<input type=hidden class="text" id="private_auth" name="private_auth" placeholder="Type another username"></p>
+					<textarea style="display:none;" class="text" id="guid" name="guid">{{posts.guid}}</textarea></p>
+		
+					<input type=submit class="btn addBtn" value="save"></p>
+</form>
+{%endfor%}
+{%endblock%}

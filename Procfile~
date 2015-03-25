@@ -1,0 +1,1 @@
+web: gunicorn my410project.wsgi --log-file -
