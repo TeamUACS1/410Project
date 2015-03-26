@@ -21,7 +21,7 @@
 	<div id="main">
 		<div id="sidebar">
 			<ul>
-  				<li class="active" id="home"><a href="#">My Posts</a></li>
+  				<li  id="home"><a href="#">My Posts</a></li>
 				<li><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
 				<li><a href="/main/seefriendPosts" id="seefriendPosts">Friend's Posts</a></li>
 				<li><a href="/main/friendOfFriend" id="friendOfFriend">Friends of friends</a></li>
@@ -30,6 +30,7 @@
 				<li><a href="/main/profileSettings">Profile Settings</a></li>
 				<li><a href="/main/myStream">My Stream</a></li>
 				<li><a href="/main/otherServerPost">Other Server Posts</a></li>
+				<li><a href="/main/otherIfFriend">Check if two people from another node are friends</a></li>
 				{% for admin in request.session.admin %}
 					{% if admin = "T" %}
 					<li><a href="/main/approveAuthors">Approve Authors</a></li>

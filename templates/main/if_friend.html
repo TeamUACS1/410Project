@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block body %}
+<div id="wrapper">
+	<header>
+		<h1>Welcome</h1>
+			<script>
+			function changefields(o) {
+				var info = document.getElementById("options");
+				var select = info.options[info.selectedIndex].value;
+				if (select== "1"){
+					doc = document.getElementById("authorguid2");
+					doc.setAttribute("type", "text");
+				}
+				else {
+					doc = document.getElementById("authorguid2");
+					doc.setAttribute("type", "hidden");
+				}
+			}
+		</script>
+	</header>	
+	<div id="main">
+		<div id="sidebar">
+			<ul>
+  				<li id="home"><a href="/main/loggedin">My Posts</a></li>
+				<li><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
+				<li><a href="/main/seefriendPosts" id="seefriendPosts">Friend's Posts</a></li>
+				<li><a href="/main/friendOfFriend" id="friendOfFriend">Friends of friends</a></li>
+				<li><a href="/main/search" id="search">Search</a></li>
+				<li><a href="/main/userProfile" id="userProfile">User Profile</a></li>
+				<li><a href="/main/profileSettings">Profile Settings</a></li>
+				<li><a href="/main/myStream">My Stream</a></li>
+				<li><a href="/main/otherServerPost">Other Server Posts</a></li>
+				<li class="active"><a href="/main/otherIfFriend">Check if two people from another node are friends</a></li>
+				{% for admin in request.session.admin %}
+					{% if admin = "T" %}
+					<li><a href="/main/approveAuthors">Approve Authors</a></li>
+					<li><a href="/main/manageAuthors">Manage Authors</a></li>
+		{%endif%}{%endfor%}
+			</ul>
+		</div>
+
+		<div id="content">
+			
+			<form id="checkForm" method="POST" action="/main/otherIfFriend/">{% csrf_token %}
+				<div class="winHead">
+					<h2>Check if two author's from another node are friends</h2>
+				</div>
+				<div class="winBody">
+					<p>
+					<textarea class="text" id="authorguid1" name="authorguid1" placeholder="Author's guid"></textarea></p><p>
+					<textarea class="text" id="authorguid2" name="authorguid2" placeholder="Author's guid"></textarea></p>
+					<select name="options" id = "options" onchange = "changefields(this)">
+  						<option value="1" selected="selected">Check if friends</option>
+						<option value="2">Friendlist</option>
+					</select>
+					
+
+
+					<input type=submit class="btn addBtn" value="Check"></p>
+				</div>
+			</form>
+
+			
+			<div class="link">
+				<h4>{{ posts}}</h4>				
+			</div>
+			
+		</div>
+	</div>
+</div>
+{%endblock%}

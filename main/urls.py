@@ -3,7 +3,7 @@ from main import views
 from main import adminviews
 from main import apiviews
 from main import userProfileViews
-from main import serverPostsViews
+from main import serverViews
 urlpatterns = patterns('',
 url(r'^$', views.index, name='index'),
 url(r'^loggedin', views.showposts, name='showposts'),
@@ -27,7 +27,8 @@ url(r'^removeFriend/', userProfileViews.removeFriend, name='removeFriend'),
 url(r'^respondToFriendRequest/', userProfileViews.respondToFriendRequest, name='respondToFriendRequest'),
 url(r'^profileSettings', views.profileSettings, name='profileSettings'),
 url(r'^myStream/$', views.myStream, name='myStream'),
-url(r'^otherServerPost/$', serverPostsViews.getPostsFromServers, name='getPostsFromServers'),
+url(r'^otherServerPost/$', serverViews.getPostsFromServers, name='getPostsFromServers'),
+url(r'^otherIfFriend/$', serverViews.ifFriends, name='ifFriends'),
 url(r'^approveAuthors/$', adminviews.approveAuthor, name='approveAuthor'),
 url(r'^manageAuthors/$', adminviews.manageAuthor, name='manageAuthor'),
 url(r'^approve/$', adminviews.approve, name='approve'),
