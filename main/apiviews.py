@@ -196,7 +196,11 @@ def authorsposts(request,author_guid):
 
 def getpost(request):
 	return
-def arefriends(request):
-	return
+def arefriends(request,authorguid1,authorguid2):
+	f=Friends.objects.filter((Q(authorguid1=authorguid1)&Q(authorguid2=authorguid2)&Q(accepted=str(1)))|(Q(authorguid2=authorguid1)&Q(authorguid1=authorguid2)&Q(accepted=str(1))))
+	if f:
+		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid1+"\"], \"friends\": \"YES\" }:")
+	else:
+		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid1+"\"], \"friends\": \"NO\" }:")
 def friends(request):
 	return
