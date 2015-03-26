@@ -229,11 +229,40 @@ def getpost(request,post_guid):
 		return HttpResponse(json.dumps({"posts" : lists}))
 
 	elif request.method == 'POST':
-
-
-
-
+		lists =[]
+		context = RequestContext(request)
+		author = request.post.get("author")
+		posts = Post.objects.filter(Q(guid=post_guid, author = author))
 		
+		print "Posts:"
+		print posts
+		print "Author:"
+		print author
+		for post in posts:
+			post2 = {}
+			post2['title'] = post.title
+			post2['source'] = post.source
+			post2['origin']= post.origin
+			post2['description'] = post.description
+			post2['content-type'] = post.content_type
+			post2['content'] = post.content
+			post2['pubdate'] = str(post.pubDate)
+			post2['guid'] = str(post.guid)
+			post2['visability'] = post.visibility
+			string = str(post.author).split("guid\":")[1]
+			string=string.split(",")[0]
+			string=string.split("\"")[1]
+			author=Authors.objects.filter(guid=str(string))
+			for author in author:
+				author2={}
+				author2['id'] = str(author.guid)
+				author2['host'] = "cmput410project15.herokuapp.com"
+				author2['displayname'] = author.displayname
+				author2['url'] = "cmput410project15.herokuapp.com/main/author/" + str(author.guid)
+				post2['author'] = author2
+				post2['comments'] = []
+				lists.append(post2)
+
 		return
 
 #
