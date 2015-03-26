@@ -14,6 +14,7 @@ from main.models import Authors
 from main.models import Comments
 from main.models import Friends
 from main.models import Follows
+
 def getposts(request):
 	lists=[]
 	context =RequestContext(request)
@@ -121,8 +122,8 @@ def authorsposts(request,author_guid):
 	string=str(string).split("},")[0]
 	string=string + "}}]"
 	friend = Authors.objects.get(guid=author_guid)
-	user= request.session['user_guid']
-	users= request.session['user']
+	user = request.session['user_guid']
+	users = request.session['user']
 	f=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(1)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(1))))
 	fr=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(0)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(0))))
 	fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)
@@ -168,9 +169,49 @@ def authorsposts(request,author_guid):
 
 
 
+#send specific ID
+def getpost(request,post_guid):
 
-def getpost(request):
-	return
+	if request.method == 'GET':
+		lists=[]
+		context =RequestContext(request)
+		#user = request.session['user']
+		posts = Posts.objects.filter(Q(guid=post_guid))
+		for post in posts:
+			post2 = {}
+			post2['title'] = post.title
+			post2['source'] = post.source
+			post2['origin']= post.origin
+			post2['description'] = post.description
+			post2['content-type'] = post.content_type
+			post2['content'] = post.content
+			post2['pubdate'] = str(post.pubDate)
+			post2['guid'] = str(post.guid)
+			post2['visability'] = post.visibility
+			string = str(post.author).split("guid\":")[1]
+			string=string.split(",")[0]
+			string=string.split("\"")[1]
+			author=Authors.objects.filter(guid=str(string))
+			for author in author:
+				author2={}
+				author2['id'] = str(author.guid)
+				author2['host'] = "cmput410project15.herokuapp.com"
+				author2['displayname'] = author.displayname
+				author2['url'] = "cmput410project15.herokuapp.com/main/author/" + str(author.guid)
+				post2['author'] = author2
+				post2['comments'] = []
+				lists.append(post2)
+		return HttpResponse(json.dumps({"posts" : lists}))
+
+	elif request.method == 'POST':
+
+
+
+
+		
+		return
+
+#
 def arefriends(request):
 	return
 def friends(request):
