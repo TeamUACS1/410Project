@@ -45,6 +45,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'main',
 )
+BASICAUTH_USERNAME = 'user'
+BASICAUTH_PASSWORD = 'pass'
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

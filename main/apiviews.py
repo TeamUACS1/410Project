@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 import urllib2
+import base64
 import json
 from datetime import datetime
 import hashlib
@@ -14,8 +15,31 @@ from main.models import Authors
 from main.models import Comments
 from main.models import Friends
 from main.models import Follows
+from functools import wraps
+from django.conf import settings
 
+#based on tutorial from http://learningdjango.blogspot.ca/2012/04/basic-http-authentication-in-django.html
+def basic_http_auth(f):
+    def wrap(request, *args, **kwargs):
+        if request.META.get('HTTP_AUTHORIZATION', False):
+            authtype, auth = request.META['HTTP_AUTHORIZATION'].split(' ')
+            auth = base64.b64decode(auth)
+            username, password = auth.split(':')
+            if username == settings.BASICAUTH_USERNAME and password == settings.BASICAUTH_PASSWORD:
+                return f(request, *args, **kwargs)
+            else:
+                r = HttpResponse("Auth Required", status = 401)
+                r['WWW-Authenticate'] = 'Basic realm="hi"'
+                return r
+        r = HttpResponse("Auth Required", status = 401)
+        r['WWW-Authenticate'] = 'Basic realm="hi"'
+        return r
+        
+    return wrap
+
+@basic_http_auth
 def getposts(request):
+
 	lists=[]
 	context =RequestContext(request)
 	#user = request.session['user']
@@ -46,6 +70,7 @@ def getposts(request):
 			lists.append(post2)
 	return HttpResponse(json.dumps({"posts" : lists}))
 
+@basic_http_auth
 def authorposts(request):
 	context =RequestContext(request)
 	user = request.session['user']
@@ -113,7 +138,7 @@ def authorposts(request):
 			lists.append(post2)
 	return HttpResponse(json.dumps({"posts" : lists}))
 
-
+@basic_http_auth
 def authorsposts(request,author_guid):
 	context = RequestContext(request)
 	friends = Authors.objects.filter(guid=author_guid)
