@@ -29,19 +29,30 @@
 			<div class="link">
 				<h4>{ <br> "posts": [ </h4>		
 				<div>	
-					<h4>{{ posts.author }}</h4>
-				</div>
-				<h4>{{ posts.comments }}</h4>
-				<h4>{{ posts.content }}</h4>
-				<h4>{{ posts.content-type}}</h4>
-				<h4>{{ posts.description}}</h4>
-				<h4>{{ posts.guid}}</h4>
-				<h4>{{ posts.origin}}</h4>
-				<h4>{{ posts.pubDate }}</h4>
-				<h4>{{ posts.source}}</h4>
-				<h4>{{ posts.title}}</h4>
-				<h4>{{ posts.visibility}}</h4>
-				<p class="tags"> </p>
+					<h4>{</h4>
+					<h4>"author": {</h4>
+					<h4>"displayname": {{ posts.author.displayname }}</h4>
+					<h4>"host": {{posts.author.host}}</h4>
+					<h4>"id": {{posts.author.id}}</h4>
+					<h4>"url": {{posts.author.url}}</h4>
+					<h4>}</h4>
+ 				</div>
+				<h4>"comments": {{ posts.comments }},</h4>
+				<h4>"content":  {{ posts.content }},</h4>
+				<h4>"description": {{ posts.description}},</h4>
+				<h4>"guid": {{ posts.guid}},</h4>
+				<h4>"origin": {{ posts.origin}},</h4>
+				<h4>"pubDate": {{ posts.pubDate }},</h4>
+				<h4>"source": {{ posts.source}},</h4>
+				<h4>"title": {{ posts.title}},</h4>
+				<h4>"visibility": {{ posts.visibility}},</h4>
+				<h4>},</h4>
+				<div>
+					<h4>{</h4>
+					<h4>"author": {</h4>
+					<h4>"displayname": {{posts.comments}},</h4>		
+				</div>		
+
 			</div>
 			{% endfor %}
 		</div>
