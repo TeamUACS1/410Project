@@ -241,5 +241,8 @@ def arefriends(request,authorguid1,authorguid2):
 		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid1+"\"], \"friends\": \"YES\" }:")
 	else:
 		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid1+"\"], \"friends\": \"NO\" }:")
-def friends(request):
-	return
+def friends(request,authorguid1):
+	hi=request.POST.get("query", "")
+	author=hi[author]
+	print hi
+	return HttpResponse("<p>hi</p>")
