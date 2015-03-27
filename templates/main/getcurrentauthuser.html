@@ -3,12 +3,13 @@
 <div id="wrapper">
 	<header>
 		<h1>Welcome</h1>
+			
 	</header>	
 	<div id="main">
 		<div id="sidebar">
 			<ul>
   				<li id="home"><a href="/main/loggedin">My Posts</a></li>
-				<li class="active"><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
+				<li><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
 				<li><a href="/main/seefriendPosts" id="seefriendPosts">Friend's Posts</a></li>
 				<li><a href="/main/friendOfFriend" id="friendOfFriend">Friends of friends</a></li>
 				<li><a href="/main/search" id="search">Search</a></li>
@@ -17,6 +18,8 @@
 				<li><a href="/main/myStream">My Stream</a></li>
 				<li><a href="/main/otherServerPost">Other Server Posts</a></li>
 				<li><a href="/main/othernodePostId">Search a post Id on other host</a></li>
+				<li><a href="/main/specificauthorposts">Get specific user posts</a></li>
+				<li  class="active"><a href="/main/currentlyauthuser">Get currently auth'ed user posts</a></li>
 				{% for admin in request.session.admin %}
 					{% if admin = "T" %}
 					<li><a href="/main/approveAuthors">Approve Authors</a></li>
@@ -24,17 +27,20 @@
 		{%endif%}{%endfor%}
 			</ul>
 		</div>
+
 		<div id="content">
 			
+
 			{% for posts in posts %}
 			<div class="link">
-				<h4>{{ posts.title }}</h4>
-				<h4>{{ posts.description }}</h4>
-				<h4>{{ posts.content }}</h4>
-				<h4>{{ posts.pubDate }}</h4>
-				<h4>{{ posts.author}}</h4>
-				
-				
+				<h4>Content: {{ posts.content }}</h4>
+				<h4>Description: {{ posts.description}}</h4>
+				<h4>Guid: {{ posts.guid}}</h4>
+				<h4>Origin:{{ posts.origin}}</h4>
+				<h4>Date: {{ posts.pubdate }}</h4>
+				<h4>Source: {{ posts.source}}</h4>
+				<h4>Title: {{ posts.title}}</h4>
+				<h4>Visibility: {{ posts.visibility}}</h4>			
 			</div>
 			{% endfor %}
 		</div>

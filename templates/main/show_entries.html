@@ -29,8 +29,12 @@
 				<li><a href="/main/author/{{request.session.user_guid}}/posts">User Profile</a></li>
 				<li><a href="/main/profileSettings">Profile Settings</a></li>
 				<li><a href="/main/myStream">My Stream</a></li>
-				<li><a href="/main/otherServerPost">Other Server Posts</a></li>
-				<li><a href="/main/otherIfFriend">Check if two people from another node are friends</a></li>
+				<li><a href="/main/otherServerPost">Other Server Public Posts</a></li>
+				<li><a href="/main/othernodePostId">Search a post Id on other host</a></li>
+				<li><a href="/main/specificauthorposts">Get specific user posts</a></li>
+				<li><a href="/main/currentlyauthuser">Get currently auth'ed user posts</a></li>
+				<li><a href="/main/friendcheck">Check friend status between Authors</a></li>
+				<li><a href="/main/friendreq">Make a friend request to another node</a></li>
 				{% for admin in request.session.admin %}
 					{% if admin = "T" %}
 					<li><a href="/main/approveAuthors">Approve Authors</a></li>

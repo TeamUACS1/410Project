@@ -3,12 +3,13 @@
 <div id="wrapper">
 	<header>
 		<h1>Welcome</h1>
+			
 	</header>	
 	<div id="main">
 		<div id="sidebar">
 			<ul>
   				<li id="home"><a href="/main/loggedin">My Posts</a></li>
-				<li class="active"><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
+				<li><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
 				<li><a href="/main/seefriendPosts" id="seefriendPosts">Friend's Posts</a></li>
 				<li><a href="/main/friendOfFriend" id="friendOfFriend">Friends of friends</a></li>
 				<li><a href="/main/search" id="search">Search</a></li>
@@ -17,6 +18,7 @@
 				<li><a href="/main/myStream">My Stream</a></li>
 				<li><a href="/main/otherServerPost">Other Server Posts</a></li>
 				<li><a href="/main/othernodePostId">Search a post Id on other host</a></li>
+				<li  class="active"><a href="/main/friendcheck">Check friend status between Authors</a></li>
 				{% for admin in request.session.admin %}
 					{% if admin = "T" %}
 					<li><a href="/main/approveAuthors">Approve Authors</a></li>
@@ -24,18 +26,29 @@
 		{%endif%}{%endfor%}
 			</ul>
 		</div>
+
 		<div id="content">
 			
-			{% for posts in posts %}
-			<div class="link">
-				<h4>{{ posts.title }}</h4>
-				<h4>{{ posts.description }}</h4>
-				<h4>{{ posts.content }}</h4>
-				<h4>{{ posts.pubDate }}</h4>
-				<h4>{{ posts.author}}</h4>
-				
-				
-			</div>
+			<form id="checkForm" method="POST" action="/main/friendcheck/">{% csrf_token %}
+				<div class="winHead">
+					<h2>Check friend status between Authors </h2>
+				</div>
+				<div class="winBody">
+					<p>
+					<textarea class="text" id="authorguid1" name="authorguid1" placeholder="Author's guid"></textarea></p><p>
+					<textarea class="text" id="authorguid2" name="authorguid2" placeholder="Author's guid separated with a space"></textarea></p><p>
+
+					
+
+
+					<input type=submit class="btn addBtn" value="Check"></p>
+				</div>
+			</form>
+			<h4>{{friendee}}</h4>
+			{% for names in posts %}
+				{% for ids in names %}
+					<h4>{{ ids }}</h4>						
+				{% endfor %}
 			{% endfor %}
 		</div>
 	</div>

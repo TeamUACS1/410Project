@@ -3,20 +3,7 @@
 <div id="wrapper">
 	<header>
 		<h1>Welcome</h1>
-			<script>
-			function changefields(o) {
-				var info = document.getElementById("options");
-				var select = info.options[info.selectedIndex].value;
-				if (select== "1"){
-					doc = document.getElementById("authorguid2");
-					doc.setAttribute("type", "text");
-				}
-				else {
-					doc = document.getElementById("authorguid2");
-					doc.setAttribute("type", "hidden");
-				}
-			}
-		</script>
+			
 	</header>	
 	<div id="main">
 		<div id="sidebar">
@@ -30,7 +17,8 @@
 				<li><a href="/main/profileSettings">Profile Settings</a></li>
 				<li><a href="/main/myStream">My Stream</a></li>
 				<li><a href="/main/otherServerPost">Other Server Posts</a></li>
-				<li class="active"><a href="/main/otherIfFriend">Check if two people from another node are friends</a></li>
+				<li><a href="/main/othernodePostId">Search a post Id on other host</a></li>
+				<li class="active"><a href="/main/specificauthorposts">Get specific user posts</a></li>
 				{% for admin in request.session.admin %}
 					{% if admin = "T" %}
 					<li><a href="/main/approveAuthors">Approve Authors</a></li>
@@ -41,18 +29,14 @@
 
 		<div id="content">
 			
-			<form id="checkForm" method="POST" action="/main/otherIfFriend/">{% csrf_token %}
+			<form id="checkForm" method="POST" action="/main/specificauthorposts/">{% csrf_token %}
 				<div class="winHead">
-					<h2>Check if two author's from another node are friends</h2>
+					<h2>Get specific user posts</h2>
 				</div>
 				<div class="winBody">
 					<p>
 					<textarea class="text" id="authorguid1" name="authorguid1" placeholder="Author's guid"></textarea></p><p>
-					<textarea class="text" id="authorguid2" name="authorguid2" placeholder="Author's guid"></textarea></p>
-					<select name="options" id = "options" onchange = "changefields(this)">
-  						<option value="1" selected="selected">Check if friends</option>
-						<option value="2">Friendlist</option>
-					</select>
+
 					
 
 
@@ -60,11 +44,18 @@
 				</div>
 			</form>
 
-			
+			{% for posts in posts %}
 			<div class="link">
-				<h4>{{ posts}}</h4>				
+				<h4>Content: {{ posts.content }}</h4>
+				<h4>Description: {{ posts.description}}</h4>
+				<h4>Guid: {{ posts.guid}}</h4>
+				<h4>Origin:{{ posts.origin}}</h4>
+				<h4>Date: {{ posts.pubdate }}</h4>
+				<h4>Source: {{ posts.source}}</h4>
+				<h4>Title: {{ posts.title}}</h4>
+				<h4>Visibility: {{ posts.visibility}}</h4>			
 			</div>
-			
+			{% endfor %}
 		</div>
 	</div>
 </div>

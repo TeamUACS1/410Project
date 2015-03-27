@@ -28,7 +28,11 @@ url(r'^respondToFriendRequest/', userProfileViews.respondToFriendRequest, name='
 url(r'^profileSettings', views.profileSettings, name='profileSettings'),
 url(r'^myStream/$', views.myStream, name='myStream'),
 url(r'^otherServerPost/$', serverViews.getPostsFromServers, name='getPostsFromServers'),
-url(r'^otherIfFriend/$', serverViews.ifFriends, name='ifFriends'),
+url(r'^othernodePostId/$', serverViews.searchPostId, name='othernodePostId'),
+url(r'^specificauthorposts/$', serverViews.specificauthorposts, name='specificauthorposts'),
+url(r'^currentlyauthuser/$', serverViews.currentlyauthuser, name='currentlyauthuser'),
+url(r'^friendcheck/$', serverViews.iffriend, name='iffriend'),
+url(r'^friendreq/$', serverViews.friendreq, name='friendreq'),
 url(r'^approveAuthors/$', adminviews.approveAuthor, name='approveAuthor'),
 url(r'^manageAuthors/$', adminviews.manageAuthor, name='manageAuthor'),
 url(r'^approve/$', adminviews.approve, name='approve'),
@@ -41,6 +45,5 @@ url(r'^author/(?P<author_guid>\w+)/posts', apiviews.authorsposts, name='vauthors
 url(r'^posts/(?P<post_guid>\w+)', apiviews.getpost, name='getpost'),
 url(r'^friends/(?P<authorguid1>\w+)/(?P<authorguid2>\w+)', apiviews.arefriends, name='arefriends'),
 url(r'^friends/(?P<authorguid1>\w+)', apiviews.friends, name='friends'),
-)
 url(r'^friendrequest', apiviews.friendrequest, name='friendrequest'),
 )

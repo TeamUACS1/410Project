@@ -227,7 +227,7 @@ def getpost(request,post_guid):
 				lists.append(post2)
 		return HttpResponse(json.dumps({"posts" : lists}))
 
-	elif request.method == 'POST':
+	elif request.method == 'POST' or 'PUT':
 		lists =[]
 		context = RequestContext(request)
 		
@@ -259,7 +259,7 @@ def getpost(request,post_guid):
 				lists.append(post2)
 			"""
 
-		existingpost = Post.objects.filter(guid=post_guid)
+		existingpost = Posts.objects.filter(Q(guid=post_guid))
 		if(existingpost):
 
 			date = datetime.now()
@@ -283,8 +283,6 @@ def getpost(request,post_guid):
 
 		return HttpResponse(json.dumps({"posts" : title}))
 
-	elif request.method == 'PUT':
-		return
 
 def arefriends(request,authorguid1,authorguid2):
 	f=Friends.objects.filter((Q(authorguid1=authorguid1)&Q(authorguid2=authorguid2)&Q(accepted=str(1)))|(Q(authorguid2=authorguid1)&Q(authorguid1=authorguid2)&Q(accepted=str(1))))
