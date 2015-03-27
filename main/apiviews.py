@@ -230,14 +230,7 @@ def getpost(request,post_guid):
 	elif request.method == 'POST':
 		lists =[]
 		context = RequestContext(request)
-		date = datetime.now()
-		info = json.loads(request.body)
-		title = info["title"]
-		description = info["description"]
-		content = info["content"]
-		visibility = info["visibility"]
-		author = info["author"]
-		#posts = Post.objects.filter(Q(guid=post_guid))
+		
 		"""
 		for post in posts:
 			
@@ -266,8 +259,26 @@ def getpost(request,post_guid):
 				lists.append(post2)
 			"""
 
-			guid = str(uuid.uuid1()).replace("-", "")
-			post = Posts(title=title,description=description,content=cont,author=author,visibility=visibility, pubDate=date, guid=guid)
+			existingpost = Post.objects.filter(guid=post_guid)
+			if(existingpost):
+
+				date = datetime.now()
+				info = json.loads(request.body)
+				title = info["title"]
+				description = info["description"]
+				content = info["content"]
+				visibility = info["visibility"]
+				author = info["author"]["displayname"]
+
+				string=serializers.serialize("json",Authors.objects.filter(displayname=author),fields=('guid','host','displayname','url'))
+				string=str(string).replace("fields","author")
+				string=str(string).split("},")[0]
+				string=string + "}}]"
+
+				guid = str(uuid.uuid1()).replace("-", "")
+				post = Post.objects.filter(guid=post_guid).update(title=title, description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
+			else:
+				post = Posts(title=title,description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
 			post.save()
 
 		return #HttpResponse(json.dumps({"posts" : lists}))
