@@ -54,7 +54,7 @@ def getposts(request):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visability'] = post.visibility
+		post2['visibility'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -122,7 +122,7 @@ def authorposts(request):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visability'] = post.visibility
+		post2['visibility'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -176,7 +176,7 @@ def authorsposts(request,author_guid):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visability'] = post.visibility
+		post2['visibility'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -211,7 +211,7 @@ def getpost(request,post_guid):
 			post2['content'] = post.content
 			post2['pubdate'] = str(post.pubDate)
 			post2['guid'] = str(post.guid)
-			post2['visability'] = post.visibility
+			post2['visibility'] = post.visibility
 			string = str(post.author).split("guid\":")[1]
 			string=string.split(",")[0]
 			string=string.split("\"")[1]
@@ -230,12 +230,17 @@ def getpost(request,post_guid):
 	elif request.method == 'POST':
 		lists =[]
 		context = RequestContext(request)
+		date = datetime.now()
 		info = json.loads(request.body)
-		author=info["author"]
-		authors=info["authors"]
-		posts = Post.objects.filter(Q(guid=post_guid))
-		
+		title = info["title"]
+		description = info["description"]
+		content = info["content"]
+		visibility = info["visibility"]
+		author = info["author"]
+		#posts = Post.objects.filter(Q(guid=post_guid))
+		"""
 		for post in posts:
+			
 			post2 = {}
 			post2['title'] = post.title
 			post2['source'] = post.source
@@ -259,8 +264,13 @@ def getpost(request,post_guid):
 				post2['author'] = author2
 				post2['comments'] = []
 				lists.append(post2)
+			"""
 
-		return HttpResponse(json.dumps({"posts" : lists}))
+			guid = str(uuid.uuid1()).replace("-", "")
+			post = Posts(title=title,description=description,content=cont,author=author,visibility=visibility, pubDate=date, guid=guid)
+			post.save()
+
+		return #HttpResponse(json.dumps({"posts" : lists}))
 
 	elif request.method == 'PUT':
 		return
