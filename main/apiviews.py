@@ -230,14 +230,11 @@ def getpost(request,post_guid):
 	elif request.method == 'POST':
 		lists =[]
 		context = RequestContext(request)
-		author = request.body("author")
-		posts = Post.objects.filter(Q(guid=post_guid, author = author))
+		info = json.loads(request.body)
+		author=info["author"]
+		authors=info["authors"]
+		posts = Post.objects.filter(Q(guid=post_guid))
 		
-		print "Posts:"
-		print posts
-		print "Author:"
-		print author
-
 		for post in posts:
 			post2 = {}
 			post2['title'] = post.title
@@ -263,7 +260,7 @@ def getpost(request,post_guid):
 				post2['comments'] = []
 				lists.append(post2)
 
-		return
+		return HttpResponse(json.dumps({"posts" : lists}))
 
 	elif request.method == 'PUT':
 		return
