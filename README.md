@@ -41,3 +41,7 @@ You can replace ``helloworld`` with your desired project name.
 - [WhiteNoise](https://warehouse.python.org/project/whitenoise/)
 - [django-postgrespool](https://warehouse.python.org/project/django-postgrespool/)
 - [dj-database-url](https://warehouse.python.org/project/dj-database-url/)
+
+## Link to Materials for Project part 2:
+
+- [Material](https://github.com/TeamUACS1/410Project/wiki/Part-2-Submission)
