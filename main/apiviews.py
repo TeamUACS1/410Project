@@ -54,7 +54,7 @@ def getposts(request):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visibility'] = post.visibility
+		post2['visability'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -122,7 +122,7 @@ def authorposts(request):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visibility'] = post.visibility
+		post2['visability'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -176,7 +176,7 @@ def authorsposts(request,author_guid):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visibility'] = post.visibility
+		post2['visability'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -289,9 +289,9 @@ def getpost(request,post_guid):
 def arefriends(request,authorguid1,authorguid2):
 	f=Friends.objects.filter((Q(authorguid1=authorguid1)&Q(authorguid2=authorguid2)&Q(accepted=str(1)))|(Q(authorguid2=authorguid1)&Q(authorguid1=authorguid2)&Q(accepted=str(1))))
 	if f:
-		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid1+"\"], \"friends\": \"YES\" }:")
+		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid2+"\"], \"friends\": \"YES\" }:")
 	else:
-		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid1+"\"], \"friends\": \"NO\" }:")
+		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid2+"\"], \"friends\": \"NO\" }:")
 def friends(request,authorguid1):
 	lists=[]
 	hi=json.loads(request.body)
@@ -301,3 +301,13 @@ def friends(request,authorguid1):
 		if Friends.objects.filter((Q(authorguid1=author)&Q(authorguid2=author1)&Q(accepted=str(1)))|(Q(authorguid2=author1)&Q(authorguid1=author)&Q(accepted=str(1)))):
 			lists.append(author1)
 	return HttpResponse(json.dumps({"friends":lists,"author":author,"query":"friends"}))
+def friendrequest(request):
+	hi=json.loads(request.body)
+	author=hi["author"]["id"]
+	authors=hi["friend"]["id"]
+	if not Friends.objects.filter((Q(authorguid1=author)&Q(authorguid2=authors))|(Q(authorguid1=authors)&Q(authorguid2=author))):
+		post_friend = Friends(authorguid1=author,authorguid2=authors, accepted=0)
+		post_follow = Follows(authorguid1=author,authorguid2=authors)
+		post_friend.save()
+		post_follow.save()		
+	return

@@ -42,3 +42,5 @@ url(r'^posts/(?P<post_guid>\w+)', apiviews.getpost, name='getpost'),
 url(r'^friends/(?P<authorguid1>\w+)/(?P<authorguid2>\w+)', apiviews.arefriends, name='arefriends'),
 url(r'^friends/(?P<authorguid1>\w+)', apiviews.friends, name='friends'),
 )
+url(r'^friendrequest', apiviews.friendrequest, name='friendrequest'),
+)
