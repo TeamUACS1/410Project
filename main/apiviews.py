@@ -281,7 +281,7 @@ def getpost(request,post_guid):
 			post = Posts(title=title,description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
 		post.save()
 
-		return #HttpResponse(json.dumps({"posts" : lists}))
+		return HttpResponse(json.dumps({"posts" : title}))
 
 	elif request.method == 'PUT':
 		return
