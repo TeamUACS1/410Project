@@ -73,43 +73,47 @@ def getposts(request):
 @basic_http_auth
 def authorposts(request):
 	context =RequestContext(request)
-	user = request.session['user']
-	posts1 = Posts.objects.filter(Q(visibility='PRIVATE') | Q(author=user))
-	posts2 = Posts.objects.filter(Q(visibility='PUBLIC'))
-	posts3 = Posts.objects.filter(guid='0')
-	friends = Friends.objects.raw("select * from main_friends where ((authorguid1 = '"+ user +"') or (authorguid2 = '"+ user +"') and accepted = 1)")	
-	friend_list = []
-	for friend in friends:
-		if ((friend.authorguid1 != request.session['user_guid']) and (friend.authorguid2 == request.session['user_guid'])):
-			friend_list.append(friend.authorguid1)
-		if ((friend.authorguid2 != request.session['user_guid']) and (friend.authorguid1 == request.session['user_guid'])):
-			friend_list.append(friend.authorguid2)
-	posts = Posts.objects.filter(guid='0')
-	for friend in friend_list:
+	if 'user_guid' in request.session:
+		user = request.session['user_guid']	
+		posts1 = Posts.objects.filter(Q(visibility='PRIVATE') | Q(author=user))
+		posts2 = Posts.objects.filter(Q(visibility='PUBLIC'))
+		posts3 = Posts.objects.filter(guid='0')
+		friends = Friends.objects.raw("select * from main_friends where ((authorguid1 = '"+ user +"') or (authorguid2 = '"+ user +"') and accepted = 1)")	
+		friend_list = []
+		for friend in friends:
+			if ((friend.authorguid1 != request.session['user_guid']) and (friend.authorguid2 == request.session['user_guid'])):
+				friend_list.append(friend.authorguid1)
+			if ((friend.authorguid2 != request.session['user_guid']) and (friend.authorguid1 == request.session['user_guid'])):
+				friend_list.append(friend.authorguid2)
+		posts = Posts.objects.filter(guid='0')
+		for friend in friend_list:
+			author = Authors.objects.filter(guid=friend)
+			string=serializers.serialize("json",author,fields=('guid','host','displayname','url'))
+			string=str(string).replace("fields","author")
+			string=str(string).split("},")[0]
+			string=string + "}}]"
+			newpost=Posts.objects.filter(Q(author=string) &Q(visibility="FRIENDS"))
+			posts3 = posts | newpost
+		authors = Posts.objects.raw("select distinct p.id, p.author from main_posts p, main_friends f where p.visibility ='FOAF';")
+		user_friend = Friends.objects.raw("select id, authorguid1, authorguid2 from main_friends where authorguid1 = '" + user + "' or authorguid2 = '"+ user +"'; ")
+		total_posts =Posts.objects.filter(guid='0')
+		looked_up = []
+		looked_up.append(user)
 
-		author = Authors.objects.filter(guid=friend)
-		string=serializers.serialize("json",author,fields=('guid','host','displayname','url'))
-		string=str(string).replace("fields","author")
-		string=str(string).split("},")[0]
-		string=string + "}}]"
-		newpost=Posts.objects.filter(Q(author=string) &Q(visibility="FRIENDS"))
-		posts3 = posts | newpost
-	authors = Posts.objects.raw("select distinct p.id, p.author from main_posts p, main_friends f where p.visibility ='FOAF';")
-	user_friend = Friends.objects.raw("select id, authorguid1, authorguid2 from main_friends where authorguid1 = '" + user + "' or authorguid2 = '"+ user +"'; ")
-	total_posts = Posts.objects.filter(guid='0')
-	looked_up = []
-	looked_up.append(user)
-
-	for auth in authors:	
-		for fid in user_friend:
-			if(str(auth.author) not in looked_up):
-				total = Friends.objects.raw("select count(*) from main_friends where ((f.authorguid2 = '"+ str(fid.authorguid1) +"' and '" + str(auth.author) + "' = f.authorguid1) or (f.authorguid1 = '"+ str(fid.authorguid1) +"' and '"+ str(auth.author) +"' = f.authorguid2)); ")	
-				totalf = Friends.objects.raw("select count(*) from main_friends where ((f.authorguid2 = '"+ str(fid.authorguid2) +"' and '" + str(auth.author) + "' = f.authorguid1) or (f.authorguid1 = '"+ str(fid.authorguid2) +"' and '"+ str(auth.author) +"' = f.authorguid2)); ")	
-				looked_up.append(str(auth.author))
-				if (total or totalf):
-					posts5=Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"' and p.visibility ='FOAF';")
-					total_posts = posts5|total_posts
-	posts= posts1|posts2|posts3|total_posts
+		for auth in authors:	
+			for fid in user_friend:
+				if(str(auth.author) not in looked_up):
+					#total=Friends.objects.filter( (Q(authorguid2=str(fid.authorguid1))&Q(authorguid1=str(auth.author)))|(Q(authorguid1=str(fid.authorguid1))&Q(authorguid2=str(auth.author)))
+					total = Friends.objects.raw("select count(*) from main_friends where ((f.authorguid2 = '"+ str(fid.authorguid1) +"' and '" + str(auth.author) + "' = f.authorguid1) or (f.authorguid1 = '"+ str(fid.authorguid1) +"' and '"+ str(auth.author) +"' = f.authorguid2)); ")	
+					totalf = Friends.objects.raw("select count(*) from main_friends where ((f.authorguid2 = '"+ str(fid.authorguid2) +"' and '" + str(auth.author) + "' = f.authorguid1) or (f.authorguid1 = '"+ str(fid.authorguid2) +"' and '"+ str(auth.author) +"' = f.authorguid2)); ")	
+					looked_up.append(str(auth.author))
+					if (total or totalf):
+						posts5=Posts.objects.filter(Q(author =str(auth.author))& Q(visibility ='FOAF'))
+						total_posts = posts5|total_posts
+		posts= posts1|posts2|posts3|total_posts
+	
+	else:
+		posts = Posts.objects.filter(Q(visibility='PUBLIC'))
 	lists=[]
 	for post in posts:
 		print post
@@ -136,6 +140,7 @@ def authorposts(request):
 			post2['author'] = author2
 			post2['comments'] = []
 			lists.append(post2)
+	
 	return HttpResponse(json.dumps({"posts" : lists}))
 
 @basic_http_auth

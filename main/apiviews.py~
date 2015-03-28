@@ -54,7 +54,7 @@ def getposts(request):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visibility'] = post.visibility
+		post2['visability'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -122,7 +122,7 @@ def authorposts(request):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visibility'] = post.visibility
+		post2['visability'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -176,7 +176,7 @@ def authorsposts(request,author_guid):
 		post2['content'] = post.content
 		post2['pubdate'] = str(post.pubDate)
 		post2['guid'] = str(post.guid)
-		post2['visibility'] = post.visibility
+		post2['visability'] = post.visibility
 		string = str(post.author).split("guid\":")[1]
 		string=string.split(",")[0]
 		string=string.split("\"")[1]
@@ -227,17 +227,10 @@ def getpost(request,post_guid):
 				lists.append(post2)
 		return HttpResponse(json.dumps({"posts" : lists}))
 
-	elif request.method == 'POST':
+	elif request.method == 'POST' or 'PUT':
 		lists =[]
 		context = RequestContext(request)
-		date = datetime.now()
-		info = json.loads(request.body)
-		title = info["title"]
-		description = info["description"]
-		content = info["content"]
-		visibility = info["visibility"]
-		author = info["author"]
-		#posts = Post.objects.filter(Q(guid=post_guid))
+		
 		"""
 		for post in posts:
 			
@@ -266,14 +259,30 @@ def getpost(request,post_guid):
 				lists.append(post2)
 			"""
 
-			guid = str(uuid.uuid1()).replace("-", "")
-			post = Posts(title=title,description=description,content=cont,author=author,visibility=visibility, pubDate=date, guid=guid)
-			post.save()
+		existingpost = Posts.objects.filter(Q(guid=post_guid))
 
-		return #HttpResponse(json.dumps({"posts" : lists}))
+		date = datetime.now()
+		info = json.loads(request.body)
+		title = info["title"]
+		description = info["description"]
+		content = info["content"]
+		visibility = info["visibility"]
+		author = info["author"]["displayname"]
 
-	elif request.method == 'PUT':
-		return
+		string=serializers.serialize("json",Authors.objects.filter(displayname=author),fields=('guid','host','displayname','url'))
+		string=str(string).replace("fields","author")
+		string=str(string).split("},")[0]
+		string=string + "}}]"
+
+		guid = post_guid
+		if(existingpost):
+			post = Post.objects.filter(guid=post_guid).update(title=title, description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
+		else:
+			post = Posts(title=title,description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
+		post.save()
+
+		return HttpResponse(json.dumps({"posts" : title}))
+
 
 def arefriends(request,authorguid1,authorguid2):
 	f=Friends.objects.filter((Q(authorguid1=authorguid1)&Q(authorguid2=authorguid2)&Q(accepted=str(1)))|(Q(authorguid2=authorguid1)&Q(authorguid1=authorguid2)&Q(accepted=str(1))))
@@ -290,3 +299,13 @@ def friends(request,authorguid1):
 		if Friends.objects.filter((Q(authorguid1=author)&Q(authorguid2=author1)&Q(accepted=str(1)))|(Q(authorguid2=author1)&Q(authorguid1=author)&Q(accepted=str(1)))):
 			lists.append(author1)
 	return HttpResponse(json.dumps({"friends":lists,"author":author,"query":"friends"}))
+def friendrequest(request):
+	hi=json.loads(request.body)
+	author=hi["author"]["id"]
+	authors=hi["friend"]["id"]
+	if not Friends.objects.filter((Q(authorguid1=author)&Q(authorguid2=authors))|(Q(authorguid1=authors)&Q(authorguid2=author))):
+		post_friend = Friends(authorguid1=author,authorguid2=authors, accepted=0)
+		post_follow = Follows(authorguid1=author,authorguid2=authors)
+		post_friend.save()
+		post_follow.save()		
+	return
