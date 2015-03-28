@@ -152,26 +152,26 @@ def authorsposts(request,author_guid):
 	string=str(string).split("},")[0]
 	string=string + "}}]"
 	friend = Authors.objects.get(guid=author_guid)
-	user = request.session['user_guid']
-	users = request.session['user']
-	f=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(1)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(1))))
-	fr=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(0)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(0))))
-	fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)
-	
-	if string==users:
-		post=Posts.objects.filter(author=string)
-
-	elif f:
-		post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
-	elif fr:
-		post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
-	elif fo:
-		post=Posts.objects.filter(author=string,visibility="PUBLIC")
+	if 'user_guid' in request.session:
+		user = request.session['user_guid']
+		users = request.session['user']
+		f=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(1)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(1))))
+		fr=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(0)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(0))))
+		fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)	
+		if string==users:
+			post=Posts.objects.filter(author=string)	
+		elif f:
+			post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
+		elif fr:
+			post=Posts.objects.filter(Q(author=string) & Q(visibility="PUBLIC"))
+		elif fo:
+			post=Posts.objects.filter(author=string,visibility="PUBLIC")
+		else:
+			post=Posts.objects.filter(author=string,visibility="PUBLIC")
 	else:
-		post=Posts.objects.filter(author=string,visibility="PUBLIC")
+		post=Posts.objects.filter(Q(author=string) & Q(visibility="PUBLIC"))
 	lists=[]
 	for post in post:
-		print post
 		post2 = {}
 		post2['title'] = post.title
 		post2['source'] = post.source
