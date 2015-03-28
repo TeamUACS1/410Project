@@ -210,6 +210,6 @@ def getpostifFOAF(request):
 		contents = urllib2.urlopen(request).read()
 
 		data = json.loads(contents)
-		print data
+		
 		return render_to_response('main/foafothernode.html', {'posts': data} ,context)
 	return render_to_response('main/foafothernode.html' ,context)
