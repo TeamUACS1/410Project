@@ -33,6 +33,7 @@ url(r'^specificauthorposts/$', serverViews.specificauthorposts, name='specificau
 url(r'^currentlyauthuser/$', serverViews.currentlyauthuser, name='currentlyauthuser'),
 url(r'^friendcheck/$', serverViews.iffriend, name='iffriend'),
 url(r'^friendreq/$', serverViews.friendreq, name='friendreq'),
+url(r'^foaf/$', serverViews.getpostifFOAF, name='getpostifFOAF'),
 url(r'^approveAuthors/$', adminviews.approveAuthor, name='approveAuthor'),
 url(r'^manageAuthors/$', adminviews.manageAuthor, name='manageAuthor'),
 url(r'^approve/$', adminviews.approve, name='approve'),

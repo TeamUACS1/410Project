@@ -177,3 +177,39 @@ def friendreq(request):
 
 		return render_to_response('main/othernodefriendreq.html', {'posts': contents} ,context)
 	return render_to_response('main/othernodefriendreq.html' ,context)
+
+def getpostifFOAF(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		postid = request.POST.get("postid", "")
+		authorid = request.POST.get("authorid", "")
+		host = "http://thought-bubble.herokuapp.com/"
+		authorids = request.POST.get("authorids", "")
+
+		author_list = authorids.split(" ")
+		author_string = []
+		for authors in author_list:
+			author_string.append(str(authors))
+
+		jsonreq = {}
+		jsonreq["id"] = postid
+		jsonreq["author"] = {}
+		jsonreq["author"]["id"] = authorid
+		jsonreq["author"]["host"] = host
+		jsonreq["author"]["displayname"] = "random"
+
+		jsonreq["friends"] = author_string
+
+		jsonreq["query"] = "getpost"
+
+		url = 'http://thought-bubble.herokuapp.com/main/Foafvis/'
+		
+		data = json.dumps(jsonreq)
+		
+		request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*"})
+		contents = urllib2.urlopen(request).read()
+
+		data = json.loads(contents)
+		print data
+		return render_to_response('main/foafothernode.html', {'posts': data} ,context)
+	return render_to_response('main/foafothernode.html' ,context)
