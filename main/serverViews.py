@@ -15,9 +15,12 @@ from main.models import Authors
 from main.models import Comments
 from main.models import Friends
 from main.models import Follows
-
 import base64
 
+
+#Create a get for the public posts hosted on group4's database
+#Requires Auth hence the headers
+#Then returns the posts to the show_other_server_posts.html page so the posts are displayed
 def getPostsFromServers(request):
 	context = RequestContext(request)
 	url = 'http://thought-bubble.herokuapp.com/main/getposts/'
@@ -27,7 +30,6 @@ def getPostsFromServers(request):
 	contents = urllib2.urlopen(request).read()
 
 	data = json.loads(contents)
-
 	posts = []
 	for key in data["posts"]:
 		posts.append(key)
@@ -35,7 +37,10 @@ def getPostsFromServers(request):
 		
 	return render_to_response('main/show_other_server_posts.html', {'posts': posts}, context)
 
-
+#Create a get for a specific post ID hosted on group4's database
+#Requires Auth hence the headers
+#Then returns the post to the searchpostid.html page so the post is displayed
+#Only do so if the form on the page is posted so you can retrieve variables
 def searchPostId(request):
 	context = RequestContext(request)
 	posts = []
@@ -49,7 +54,6 @@ def searchPostId(request):
 		contents = urllib2.urlopen(request).read()
 
 		data = json.loads(contents)
-		
 		posts = []
 		for key in data["posts"]:
 			
@@ -59,6 +63,11 @@ def searchPostId(request):
 		return render_to_response('main/searchpostid.html', {'posts': posts}, context)
 	return render_to_response('main/searchpostid.html', context)
 
+
+#Create a get for a specific author ID hosted on group4's database to fetch all the author's posts
+#Requires Auth hence the headers
+#Then returns the posts to the searchauthorpost.html page so the posts are displayed
+#Only do so if the form on the page is posted so you can retrieve variables
 def specificauthorposts(request):
 	context = RequestContext(request)
 	
@@ -71,9 +80,6 @@ def specificauthorposts(request):
 		contents = urllib2.urlopen(request).read()
 
 		data = json.loads(contents)
-		
-	
-
 		posts = []
 		for key in data["posts"]:
 			posts.append(key)
@@ -82,7 +88,10 @@ def specificauthorposts(request):
 		return render_to_response('main/searchauthorpost.html', {'posts': posts}, context)
 	return render_to_response('main/searchauthorpost.html', context)
 
-
+#Create a get for the currently auth'ed user, hosted on group4's database, to fetch all the author's posts
+#Requires Auth hence the headers
+#Then returns the posts to the getcurrentauthuser.html page so the posts are displayed
+#Only do so if the form on the page is posted so you can retrieve variables
 def currentlyauthuser(request):
 	context = RequestContext(request)
 
@@ -94,9 +103,6 @@ def currentlyauthuser(request):
 	contents = urllib2.urlopen(request).read()
 
 	data = json.loads(contents)
-	
-
-
 	posts = []
 	for key in data["posts"]:
 		posts.append(key)
@@ -104,6 +110,11 @@ def currentlyauthuser(request):
 	
 	return render_to_response('main/getcurrentauthuser.html', {'posts': posts}, context)
 
+
+#Create a post with an author's id and a list of other author ids and filters for the original author's friends from the list
+#This is a POST hence the headers
+#Then returns the friend's ids to the if_friends.html page so the ids are displayed
+#Only do so if the form on the page is posted so you can retrieve variables
 def iffriend(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -132,7 +143,7 @@ def iffriend(request):
 		for key,value in data.iteritems():
 			names.append(value)
 		
-		print names
+		
 		names.pop(0)
 		friendee = names[1] + " is friends with:"
 		names.pop(1)
@@ -140,6 +151,10 @@ def iffriend(request):
 
 	return render_to_response('main/if_friends.html', context)
 
+#Create a post with two author id and the adder's displayname to create a friend request
+#This is a POST hence the headers
+#Then returns the status message to the othernodefriendreq.html page so it can be displayed
+#Only do so if the form on the page is posted so you can retrieve variables
 def friendreq(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
@@ -171,13 +186,14 @@ def friendreq(request):
 		request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*"})
 		contents = urllib2.urlopen(request).read()
 
-		#data = json.loads(contents)
-
-		print contents
 
 		return render_to_response('main/othernodefriendreq.html', {'posts': contents} ,context)
 	return render_to_response('main/othernodefriendreq.html' ,context)
 
+#Create a post with a postid, an author id and a list or author ids to check for FOAF 
+#This is a POST hence the headers
+#Then returns the post to the foafothernode.html page so it can be displayed
+#Only do so if the form on the page is posted so you can retrieve variables
 def getpostifFOAF(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
