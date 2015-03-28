@@ -37,6 +37,7 @@ def basic_http_auth(f):
         
     return wrap
 
+#Get all public posts
 @basic_http_auth
 def getposts(request):
 
@@ -70,6 +71,7 @@ def getposts(request):
 			lists.append(post2)
 	return HttpResponse(json.dumps({"posts" : lists}))
 
+#get all post visible to authenticated user. If no user returns public posts
 @basic_http_auth
 def authorposts(request):
 	context =RequestContext(request)
@@ -143,6 +145,7 @@ def authorposts(request):
 	
 	return HttpResponse(json.dumps({"posts" : lists}))
 
+#returns all posts by author visible to authenticated user. Returns public if no user
 @basic_http_auth
 def authorsposts(request,author_guid):
 	context = RequestContext(request)
@@ -199,7 +202,7 @@ def authorsposts(request,author_guid):
 
 
 
-#send specific ID
+#Gets post with specific ID
 def getpost(request,post_guid):
 	if request.method == 'GET':
 		lists=[]
@@ -288,13 +291,14 @@ def getpost(request,post_guid):
 
 		return HttpResponse(json.dumps({"posts" : title}))
 
-
+#Check if users are friends
 def arefriends(request,authorguid1,authorguid2):
 	f=Friends.objects.filter((Q(authorguid1=authorguid1)&Q(authorguid2=authorguid2)&Q(accepted=str(1)))|(Q(authorguid2=authorguid1)&Q(authorguid1=authorguid2)&Q(accepted=str(1))))
 	if f:
 		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid2+"\"], \"friends\": \"YES\" }:")
 	else:
 		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid2+"\"], \"friends\": \"NO\" }:")
+#return ids in the list that are friends
 def friends(request,authorguid1):
 	lists=[]
 	hi=json.loads(request.body)
@@ -304,6 +308,7 @@ def friends(request,authorguid1):
 		if Friends.objects.filter((Q(authorguid1=author)&Q(authorguid2=author1)&Q(accepted=str(1)))|(Q(authorguid2=author1)&Q(authorguid1=author)&Q(accepted=str(1)))):
 			lists.append(author1)
 	return HttpResponse(json.dumps({"friends":lists,"author":author,"query":"friends"}))
+#send friend request
 def friendrequest(request):
 	hi=json.loads(request.body)
 	author=hi["author"]["id"]
@@ -313,4 +318,6 @@ def friendrequest(request):
 		post_follow = Follows(authorguid1=author,authorguid2=authors)
 		post_friend.save()
 		post_follow.save()		
-	return
+		return HttpResponse("Added\n")
+	else:
+		return HttpResponse("Already friends\n")
