@@ -313,4 +313,6 @@ def friendrequest(request):
 		post_follow = Follows(authorguid1=author,authorguid2=authors)
 		post_friend.save()
 		post_follow.save()		
-	return
+		return HttpResponse("Added\n")
+	else:
+		return HttpResponse("Already friends\n")

@@ -172,7 +172,6 @@ def authorsposts(request,author_guid):
 		post=Posts.objects.filter(Q(author=string) & Q(visibility="PUBLIC"))
 	lists=[]
 	for post in post:
-		print post
 		post2 = {}
 		post2['title'] = post.title
 		post2['source'] = post.source
