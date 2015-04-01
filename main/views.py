@@ -288,7 +288,7 @@ def profileSettings(request):
 			user.save()
 		
 		if githubUser:
-			user.githubUsername = githubUser
+			user.github = githubUser
 			user.save()
 	
 	return render_to_response('main/profileSettings.html', {'error':error}, context)
@@ -297,10 +297,10 @@ def profileSettings(request):
 def myStream(request):
 	context = RequestContext(request)
 	error = None
-	posts = Posts.objects.filter(privateFlag=0)
-	current_user=request.session['user']
-	user = Users.objects.get(username=current_user)
+	current_user=request.session['user_guid']
+	user = Authors.objects.get(guid=current_user)
 
+	#posts = Posts.objects.filter(Q(visibility='PUBLIC')| Q(author=user))
 	posts = getGithubActivity(user)
 
 	return render_to_response('main/myStream.html', {'posts': posts}, context)
@@ -308,11 +308,11 @@ def myStream(request):
 #Fetches the github activity using the github api
 def getGithubActivity(user):
 	posts = ""
-	if user.githubUsername:
+	if user.github:
 		
 		activityList = []
 		try:
-			resp = urllib2.urlopen("https://api.github.com/users/"+user.githubUsername+"/events").read()
+			resp = urllib2.urlopen("https://api.github.com/users/"+user.github+"/events").read()
 			jsonresp = json.loads(resp)
 			#good tool for looking at the raw JSON: jsonformatter.curiousconcept.com
 			for element in jsonresp:
@@ -322,8 +322,8 @@ def getGithubActivity(user):
 					#date = ""
 					date = element["created_at"]
 					#TODO this is not working as intended
-					date = date.replace('Z', '')
-					date = date.replace('T', '')
+					date = date.replace('Z', ' ')
+					date = date.replace('T', ' ')
 					activityelem += date
 					activityelem += " Pushed at repo: "
 					activityelem += element["repo"]["name"]
