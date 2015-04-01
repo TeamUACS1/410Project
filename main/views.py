@@ -278,10 +278,10 @@ def profileSettings(request):
 	
 	if request.method=='POST':
 
-		current_user=request.session['user']
+		current_user=request.session['user_guid']
 		password = request.POST.get("newpassword","")
 		githubUser = request.POST.get("githubname","")
-		user = Users.objects.get(username=current_user)
+		user = Authors.objects.get(guid=current_user)
 		if password:
 			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
 			user.password = encrypted_pass
