@@ -22,7 +22,7 @@ class ProjectTestCase(TestCase):
 	self.friends1 = Friends(authorguid1 = self.guid1,authorguid2 = self.guid2)
 
     def test_the_tests(self):
-        """simply a test to make sure the tests are functional"""
+        """Simply a test to make sure the tests are functional"""
         self.assertEqual(True,True)
 
     def test_user_creation(self):
