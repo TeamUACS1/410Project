@@ -3,7 +3,6 @@
 {% block css %}
   <!-- Bootstrap core CSS -->
   <link type="text/css" href="{%static 'css/bootstrap.min.css' %}" rel="stylesheet" media="all">
-  <link type="text/css" href="{%static 'css/boostrap-theme.css' %}" rel="stylesheet" media="all">
 {% endblock %}
 <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
@@ -25,19 +24,7 @@
               <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
             </li>
             <li style="padding-right:1.2em; padding-top:1.2em;">
-            <!--
-              <script>
-                var jsonObj = request.session.user;
-                var jsonList1 = jsonObj[0].split(",");
-                var jsonList2 = jsonList1[3].split(":");
-                var jsonList3 = jsonList2[1]
-                
-                var finalstr= '<a href ="/main/loggedin" style="font-size:1.4em;">'+ jsonList3 + '</a>';
-                //for (i=0; i<jsonObj.lenth; i++){
-                  
-                //}
-              </script>-->
-                <a href="/main/loggedin" style="font-size:1.4em;">USERNAME</a>
+		<a href="/main/author/{{author.guid}}/feed" style="font-size:1.4em;">{{author.displayname}}</a>
             </li>
             <li style="padding-right:1.2em;">
               <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>

@@ -1,21 +1,42 @@
 <!doctype html>
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}" media="all" />
+{% block css %}
+  <!-- Bootstrap core CSS -->
+  <link type="text/css" href="{%static 'css/bootstrap.min.css' %}" rel="stylesheet" media="all">
+{% endblock %}
 <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
 <div class="page">
-    <div>
-	{% for session in request.session.logged_in %}
-    {% if session != "T" %}
-        <a class="log" href="/main/login"> Login</a>
-        <a class="sign" href="/main/signup"> Sign up</a>
-    {% else %}
-        <a class="log" href="/main/logout"> Log out</a>
-    {% endif %}
-	{{request.session.user}}
-
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="font-size:1.8em;" href="/main/loggedin">Social Hub</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="navbar navbar-nav navbar-right" style="list-style: none;">
+            <li style="padding-right:1.2em;">
+              <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
+            </li>
+            <li style="padding-right:1.2em; padding-top:1.2em;">
+		<a href="/main/author/{{author.guid}}/feed" style="font-size:1.4em;">{{author.displayname}}</a>
+            </li>
+            <li style="padding-right:1.2em;">
+              <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>
+            </li>
+            <li>
+              <a href="/main/logout" class="glyphicon glyphicon-log-out" style="font-size:1.4em;"></a>
+            </li>
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
     </div>
-   {%endfor%}
-    
+    <br>
+    <br>
     {% block body%} {%endblock%}
     </div>
