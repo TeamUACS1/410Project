@@ -28,6 +28,7 @@ url(r'^respondToFriendRequest/', userProfileViews.respondToFriendRequest, name='
 url(r'^profileSettings', views.profileSettings, name='profileSettings'),
 url(r'^myStream/$', views.myStream, name='myStream'),
 url(r'^otherServerPost/$', serverViews.getPostsFromServers, name='getPostsFromServers'),
+url(r'^otherServerAuthors', serverViews.getallauthors, name='getallauthors'),
 url(r'^othernodePostId/$', serverViews.searchPostId, name='othernodePostId'),
 url(r'^specificauthorposts/$', serverViews.specificauthorposts, name='specificauthorposts'),
 url(r'^currentlyauthuser/$', serverViews.currentlyauthuser, name='currentlyauthuser'),

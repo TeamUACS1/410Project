@@ -18,23 +18,34 @@ from main.models import Follows
 import base64
 
 
+
 #Create a get for the public posts hosted on group4's database
 #Requires Auth hence the headers
 #Then returns the posts to the show_other_server_posts.html page so the posts are displayed
 def getPostsFromServers(request):
 	context = RequestContext(request)
-	url = 'http://thought-bubble.herokuapp.com/main/getposts/'
+	url = 'http://thought-bubble.herokuapp.com/main/api/getposts/'
 	
-	string = "Basic "+ base64.b64encode("btrinh:127.0.0.1:a")
+	string = "Basic "+ base64.b64encode("dan:cmput410project15.herokuapp.com:dan")
 	request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
 	contents = urllib2.urlopen(request).read()
 
 	data = json.loads(contents)
 	posts = []
+
+
 	for key in data["posts"]:
 		posts.append(key)
 	
-		
+	url = 'http://cs410.cs.ualberta.ca:41074/service/posts/'
+	string = "Basic "+ base64.b64encode("admin:admin")
+	request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
+	contents = urllib2.urlopen(request).read()
+
+	data = json.loads(contents)
+	for key in data["posts"]:
+		posts.append(key)
+
 	return render_to_response('main/show_other_server_posts.html', {'posts': posts}, context)
 
 #Create a get for a specific post ID hosted on group4's database
@@ -46,21 +57,38 @@ def searchPostId(request):
 	posts = []
 	if(request.method == 'POST'):
 		postguid1 = request.POST.get("postguid1", "")
+		hostchoice = request.POST.get("hostchoice", "")
+		if(hostchoice == "1"):
+			url = 'http://thought-bubble.herokuapp.com/main/api/getapost/?postid='+ postguid1
+			string = "Basic "+ base64.b64encode("dan:cmput410project15.herokuapp.com:dan")
+			request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
+			contents = urllib2.urlopen(request).read()
+		else:
+			url = "http://cs410.cs.ualberta.ca:41074/service/posts/"+ postguid1 + "/"			
+			string = "Basic "+ base64.b64encode("admin:admin")
+			contents = request.get(url, headers={"Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
 		
-		url = 'http://thought-bubble.herokuapp.com/main/getapost/?postid='+ postguid1
-		
-		string = "Basic "+ base64.b64encode("admin:host:admin")
-		request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
-		contents = urllib2.urlopen(request).read()
-
-		data = json.loads(contents)
-		posts = []
-		for key in data["posts"]:
+		try:
 			
-			posts.append(key)
-	
+			data = json.loads(contents)
+			try:
+				for key in data["posts"]:
+					error = ""
+					posts.append(key)
+			except:
+				posts = []
+				error = data['message']
+		except urllib2.HTTPError, e:
+			print e.code
+			print e.msg
+			error = "No such post."
+
 		
-		return render_to_response('main/searchpostid.html', {'posts': posts}, context)
+		
+		
+		
+		
+		return render_to_response('main/searchpostid.html', {'posts': posts, 'error': error, 'postguid':postguid1}, context)
 	return render_to_response('main/searchpostid.html', context)
 
 
@@ -73,19 +101,35 @@ def specificauthorposts(request):
 	
 	if(request.method == 'POST'):
 		authorguid1 = request.POST.get("authorguid1", "")
-		url = 'http://thought-bubble.herokuapp.com/main/getauthorposts/?authorid='+ authorguid1 
-		
-		string = "Basic "+ base64.b64encode("admin:host:admin")
-		request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
-		contents = urllib2.urlopen(request).read()
-
-		data = json.loads(contents)
+		hostchoice = request.POST.get("hostchoice", "")
+		if(hostchoice == "1"):
+			url = 'http://thought-bubble.herokuapp.com/main/api/getpostsbyauthor/?authorid='+ authorguid1 
+			
+			string = "Basic "+ base64.b64encode("dan:cmput410project15.herokuapp.com:dan")
+			request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
+		else:
+			url = "http://cs410.cs.ualberta.ca:41074/service/author/"+authorguid1+"/posts/" 
+			
+			string = "Basic "+ base64.b64encode("admin:admin")
+			request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
 		posts = []
-		for key in data["posts"]:
-			posts.append(key)
+		error = ""
+		try:
+			contents = urllib2.urlopen(request).read()
+			data = json.loads(contents)
+			for key in data["posts"]:
+				posts.append(key)
+		except urllib2.HTTPError, e:
+			print e.code
+			print e.msg
+			error = "User doesn't exist"
+
+		
+		
+		
 	
 		
-		return render_to_response('main/searchauthorpost.html', {'posts': posts}, context)
+		return render_to_response('main/searchauthorpost.html', {'posts': posts, 'error': error}, context)
 	return render_to_response('main/searchauthorpost.html', context)
 
 #Create a get for the currently auth'ed user, hosted on group4's database, to fetch all the author's posts
@@ -96,9 +140,9 @@ def currentlyauthuser(request):
 	context = RequestContext(request)
 
 
-	url = 'http://thought-bubble.herokuapp.com/main/author/posts2/'
+	url = 'http://thought-bubble.herokuapp.com/main/api/author/posts2/'
 	
-	string = "Basic "+ base64.b64encode("admin:host:admin")
+	string = "Basic "+ base64.b64encode("dan:cmput410project15.herokuapp.com:dan")
 	request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
 	contents = urllib2.urlopen(request).read()
 
@@ -120,6 +164,7 @@ def iffriend(request):
 	if(request.method == 'POST'):
 		authorguid1 = request.POST.get("authorguid1", "")
 		authorguid2 = request.POST.get("authorguid2", "")
+		hostchoice = request.POST.get("hostchoice", "")
 		author_list = authorguid2.split(" ")
 		author_string = []
 		for authors in author_list:
@@ -128,25 +173,43 @@ def iffriend(request):
 
 		post_req = {}
 		post_req["query"] = "friends"
-		post_req["user"] = authorguid1
 		post_req["authors"] = author_string
 
-		data = json.dumps(post_req)
-		url = 'http://thought-bubble.herokuapp.com/main/checkfriends/?user=' + authorguid1
-	
+		if(hostchoice == "1"):
+			post_req["user"] = authorguid1
+			data = json.dumps(post_req)
+			url = 'http://thought-bubble.herokuapp.com/main/api/checkfriends/?user=' + authorguid1
+		
 
-		request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*"})
-		contents = urllib2.urlopen(request).read()
+			request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*"})
+			contents = urllib2.urlopen(request).read()
 
-		data = json.loads(contents)
+			data = json.loads(contents)
+
+		else:
+			post_req["author"] = authorguid1
+			data = json.dumps(post_req)
+			
+			
+			url = "http://cs410.cs.ualberta.ca:41074/service/friends/"+authorguid1+"/"
+			string = "Basic "+ base64.b64encode("admin:admin")
+			request = urllib2.Request(url=url, data=data, headers={"Authorization" : string, 'Host': "cs410.cs.ualberta.ca:41074","Content-Type" : "application/json", "Accept": "*/*"})
+			contents = urllib2.urlopen(request).read()
+
+			data = json.loads(contents)
+
 		names = []
+		friendee = ""
 		for key,value in data.iteritems():
 			names.append(value)
 		
-		
-		names.pop(0)
-		friendee = names[1] + " is friends with:"
-		names.pop(1)
+		if(len(names) != 1):
+			names.pop(0)
+			friendee = names[1] + " is friends with:"
+			names.pop(1)
+		else:
+			friendee = names[0]
+			del names[:]
 		return render_to_response('main/if_friends.html', {'posts': names, 'friendee': friendee}, context)
 
 	return render_to_response('main/if_friends.html', context)
@@ -162,6 +225,7 @@ def friendreq(request):
 		displayname = request.POST.get("displayname", "")
 		hosts = "http://thought-bubble.herokuapp.com/"
 		authorguid2 = request.POST.get("authorguid2", "")
+		hostchoice = request.POST.get("hostchoice", "")
 		friend_display = "random"
 		friend_url = "random"
 
@@ -180,12 +244,19 @@ def friendreq(request):
 		jsonreq["query"] = "friendrequest"
 
 		data = json.dumps(jsonreq)
-		url = 'http://thought-bubble.herokuapp.com/main/newfriendrequest/'
-	
 
-		request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*"})
+		if(hostchoice == "1"):
+			url = 'http://thought-bubble.herokuapp.com/main/api/newfriendrequest/'
+			request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*"})
+			
+
+		else:
+			url = "http://cs410.cs.ualberta.ca:41074/service/friendrequest/"
+			string = "Basic "+ base64.b64encode("admin:admin")			
+			request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*","Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
 		contents = urllib2.urlopen(request).read()
-
+		if (contents == "200 OK" or "{}"):
+			contents = "Friend request sent!"
 
 		return render_to_response('main/othernodefriendreq.html', {'posts': contents} ,context)
 	return render_to_response('main/othernodefriendreq.html' ,context)
@@ -199,8 +270,9 @@ def getpostifFOAF(request):
 	if(request.method == 'POST'):
 		postid = request.POST.get("postid", "")
 		authorid = request.POST.get("authorid", "")
-		host = "http://thought-bubble.herokuapp.com/"
+		
 		authorids = request.POST.get("authorids", "")
+		hostchoice = request.POST.get("hostchoice", "")
 
 		author_list = authorids.split(" ")
 		author_string = []
@@ -211,21 +283,66 @@ def getpostifFOAF(request):
 		jsonreq["id"] = postid
 		jsonreq["author"] = {}
 		jsonreq["author"]["id"] = authorid
-		jsonreq["author"]["host"] = host
 		jsonreq["author"]["displayname"] = "random"
-
 		jsonreq["friends"] = author_string
-
 		jsonreq["query"] = "getpost"
 
-		url = 'http://thought-bubble.herokuapp.com/main/Foafvis/'
-		
-		data = json.dumps(jsonreq)
-		
-		request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*"})
-		contents = urllib2.urlopen(request).read()
+		if(hostchoice == "1"):
+			host = "http://thought-bubble.herokuapp.com/"
+			jsonreq["author"]["host"] = host
 
-		data = json.loads(contents)
+			url = 'http://thought-bubble.herokuapp.com/main/api/Foafvis/'
+			
+			data = json.dumps(jsonreq)
+			
+			string = "Basic "+ base64.b64encode("dan:cmput410project15.herokuapp.com:dan")
+			request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*","Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
+			
+		else:
+			host = "http://cs410.cs.ualberta.ca"
+			jsonreq["author"]["host"] = host
+
+			url = 'http://cs410.cs.ualberta.ca:41074/service/foaf/getposts/'
+			
+			data = json.dumps(jsonreq)
+			
+			string = "Basic "+ base64.b64encode("admin:admin")
+			
+			request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*","Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
 		
-		return render_to_response('main/foafothernode.html', {'posts': data} ,context)
+
+		contents = urllib2.urlopen(request).read()
+		error = ""
+		try:
+			data = json.loads(contents)
+		except:
+			data = []
+			error = contents
+		
+		return render_to_response('main/foafothernode.html', {'posts': data, 'error': error} ,context)
 	return render_to_response('main/foafothernode.html' ,context)
+
+def getallauthors(request):
+	context = RequestContext(request)
+	url = 'http://thought-bubble.herokuapp.com/main/api/getallauthors/'
+	
+	string = "Basic "+ base64.b64encode("dan:cmput410project15.herokuapp.com:dan")
+	request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
+	contents = urllib2.urlopen(request).read()
+
+	data = json.loads(contents)
+	posts = []
+	for key in data["authors"]:
+		posts.append(key)
+	
+	url = "http://cs410.cs.ualberta.ca:41074/service/author/"
+	request = urllib2.Request(url)
+	contents = urllib2.urlopen(request).read()
+
+	data = json.loads(contents)
+	
+	for key in data:
+		
+		posts.append(key)
+
+	return render_to_response('main/show_other_server_authors.html', {'posts': posts}, context)
