@@ -35,26 +35,30 @@
 				<div class="winBody">
 					<p>
 					<textarea class="text" id="postguid1" name="postguid1" placeholder="Posts's guid"></textarea></p><p>
-
+					<select name="hostchoice" id = "hostchoice">
+  					<option value="1" selected="selected">Thought Bubble</option>
+						<option value="2">Group 7</option>
+						
+					</select>
 					
-
-
-					<input type=submit class="btn addBtn" value="Check"></p>
+					<input type=submit class="btn addBtn" value="Find"></p>
 				</div>
 			</form>
-
-			{% for posts in posts %}
-			<div class="link">
-				<h4>{{ posts.content }}</h4>
-				<h4>Description: {{ posts.description}}</h4>
-				<h4>Guid: {{ posts.guid}}</h4>
-				<h4>Origin:{{ posts.origin}}</h4>
-				<h4>Date: {{ posts.pubdate }}</h4>
-				<h4>Source: {{ posts.source}}</h4>
-				<h4>Title: {{ posts.title}}</h4>
-				<h4>Visibility: {{ posts.visibility}}</h4>			
-			</div>
-			{% endfor %}
+			{{error}}
+			{% if posts %}
+				{% for posts in posts %}
+				<div class="link">
+					<h4>{{ posts.content }}</h4>
+					<h4>Description: {{ posts.description}}</h4>
+					<h4>Guid: {{ postguid}}</h4>
+					<h4>Origin:{{ posts.origin}}</h4>
+					<h4>Date: {{ posts.pubdate }}</h4>
+					<h4>Source: {{ posts.source}}</h4>
+					<h4>Title: {{ posts.title}}</h4>
+					
+				</div>
+				{% endfor %}
+			{%endif%}
 		</div>
 	</div>
 </div>
