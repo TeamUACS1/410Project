@@ -17,7 +17,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/main/loggedin">Social Hub</a>
+          <a class="navbar-brand" style="font-size:1.8em;" href="/main/loggedin">Social Hub</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="navbar navbar-nav navbar-right" style="list-style: none;">
@@ -25,7 +25,19 @@
               <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
             </li>
             <li style="padding-right:1.2em; padding-top:1.2em;">
-              <a href="/main/loggedin" style="font-size:1.4em;">Username</a>
+            <!--
+              <script>
+                var jsonObj = request.session.user;
+                var jsonList1 = jsonObj[0].split(",");
+                var jsonList2 = jsonList1[3].split(":");
+                var jsonList3 = jsonList2[1]
+                
+                var finalstr= '<a href ="/main/loggedin" style="font-size:1.4em;">'+ jsonList3 + '</a>';
+                //for (i=0; i<jsonObj.lenth; i++){
+                  
+                //}
+              </script>-->
+                <a href="/main/loggedin" style="font-size:1.4em;">USERNAME</a>
             </li>
             <li style="padding-right:1.2em;">
               <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>

@@ -16,6 +16,16 @@ from main.models import Friends
 from main.models import Follows
 from django.core import serializers
 from itertools import chain
+
+#This function parses the displayname from the users json object
+def getDisplayname(request):
+	context = RequestContext(request)
+	user = request.sesion['user']
+	userSplit1 = user[0].split(",")
+	userSplit2 = userSplit1[3].split(":")
+	userSplit3 = userSplit2[1] 
+	return render_to_response('layout.html', {'displayname': userSplit3}, context)
+
 #This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
 	context =RequestContext(request)
