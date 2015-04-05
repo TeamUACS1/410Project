@@ -13,6 +13,8 @@ class APITestCases(TestCase):
         self.postID = "03d3fa38d1bb11e4b41d4ceb427382e1"
         #account ID for user "ashley"
 	self.authorID = "e76a5a0ed1ba11e4b1774ceb427382e1"
+        #account ID for user "boo"
+        self.friendID = "9ef25d96d26711e48f434ceb427382e1"
 
     def test_the_tests(self):
         """Simply a test to make sure the tests are functional"""
@@ -36,7 +38,7 @@ class APITestCases(TestCase):
     def test_getPostByID(self):
         """
         Tests to see if you can get a post by its ID.
-        Will fail if the id we use in this test is no longer
+        Will fail if the ID's we use in this test is no longer
         in the database.
         """            
         request = urllib2.Request(self.url+"posts/" + self.postID) 
@@ -54,8 +56,8 @@ class APITestCases(TestCase):
 
     def test_getPostByAuthorID(self):
         """
-        Tests to see if you can get a post by its ID.
-        Will fail if the id we use in this test is no longer
+        Tests to see if you can get a post by Author's ID.
+        Will fail if the ID's we use in this test is no longer
         in the database.
         """            
         request = urllib2.Request(self.url+"author/" + self.authorID + "/posts/") 
@@ -70,3 +72,65 @@ class APITestCases(TestCase):
                         self.assertTrue(True)
                         return
         self.assertTrue(False, "could not find any posts from this author ID. ")
+
+    def test_getAuthorPosts(self):
+        """
+        Tests to see if you can gets posts that the current
+        author can see.
+        (I actually wonder how this works without logging in 
+        as an author haha)
+        Will fail if the current author cannot see any posts.
+        """            
+        request = urllib2.Request(self.url+"author/posts/") 
+        base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
+        request.add_header("Authorization", "Basic %s" % base64string)
+        resultUrl = urllib2.urlopen(request)
+        result = resultUrl.read()
+	data = json.loads(result)
+	for key,value in data.items():
+            if key == "posts":
+                    if value:
+                        self.assertTrue(True)
+                        return
+        self.assertTrue(False, "could not find posts with the current user")
+
+    """ commenting out test until changes are pushed to website
+    def test_getFriend(self):
+        
+        #Tests to see if you can check friendship between authors.
+        #Will fail if the given id's are not friends :(.
+                    
+        request = urllib2.Request(self.url+"friends/" + self.authorID + "/"+ self.friendID) 
+        base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
+        request.add_header("Authorization", "Basic %s" % base64string)
+        resultUrl = urllib2.urlopen(request)
+        result = resultUrl.read()
+	data = json.loads(result)
+	for key,value in data.items():
+            if key == "friends":
+                    if value == "YES":
+                        self.assertTrue(True)
+                        return
+        self.assertTrue(False, "the two friends are not really friends :(")
+    """
+
+    def test_getAuthorFriends(self):
+        """
+        Will test to see if we can get friends of an author
+        Will fail if the current author has no friends.
+        """            
+        request = urllib2.Request(self.url+"friends/"+self.authorID) 
+        base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
+        request.add_header("Authorization", "Basic %s" % base64string)
+        resultUrl = urllib2.urlopen(request)
+        result = resultUrl.read()
+	data = json.loads(result)
+        print(result)
+        """
+	for key,value in data.items():
+            if key == "posts":
+                    if value:
+                        self.assertTrue(True)
+                        return
+        """
+        self.assertTrue(False, "could not get friends of author ID")
