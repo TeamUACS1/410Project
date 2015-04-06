@@ -1,66 +1,134 @@
-{% extends "layout.html" %}
-{% block body %}
-<div id="wrapper">
-	<header>
-		<h1>Welcome</h1>
-			
-	</header>	
-	<div id="main">
-		<div id="sidebar">
-			<ul>
-  				<li id="home"><a href="/main/loggedin">My Posts</a></li>
-				<li><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
-				<li><a href="/main/seefriendPosts" id="seefriendPosts">Friend's Posts</a></li>
-				<li><a href="/main/friendOfFriend" id="friendOfFriend">Friends of friends</a></li>
-				<li><a href="/main/search" id="search">Search</a></li>
-				<li><a href="/main/userProfile" id="userProfile">User Profile</a></li>
-				<li><a href="/main/profileSettings">Profile Settings</a></li>
-				<li><a href="/main/myStream">My Stream</a></li>
-				<li><a href="/main/otherServerPost">Other Server Posts</a></li>
-				<li><a href="/main/othernodePostId">Search a post Id on other host</a></li>
-				<li class="active"><a href="/main/specificauthorposts">Get specific user posts</a></li>
-				{% for admin in request.session.admin %}
-					{% if admin = "T" %}
-					<li><a href="/main/approveAuthors">Approve Authors</a></li>
-					<li><a href="/main/manageAuthors">Manage Authors</a></li>
-		{%endif%}{%endfor%}
-			</ul>
-		</div>
+<!DOCTYPE html>
+{% load static %}
 
-		<div id="content">
-			
-			<form id="checkForm" method="POST" action="/main/specificauthorposts/">{% csrf_token %}
-				<div class="winHead">
-					<h2>Get specific user posts</h2>
-				</div>
-				<div class="winBody">
-					<p>
-					<textarea class="text" id="authorguid1" name="authorguid1" placeholder="Author's id"></textarea></p><p>
-					<select name="hostchoice" id = "hostchoice">
-  					<option value="1" selected="selected">Thought Bubble</option>
-						<option value="2">Group 7</option>
-						
-					</select>
-					
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
 
+    <title>connect+ Search Author Post</title>
 
-					<input type=submit class="btn addBtn" value="Check"></p>
-				</div>
-			</form>
-			{{error}}
-			{% for posts in posts %}
-			<div class="link">
-				<h4>Content: {{ posts.content }}</h4>
-				<h4>Description: {{ posts.description}}</h4>
-				<h4>Guid: {{ posts.guid}}</h4>
-				<h4>Origin:{{ posts.origin}}</h4>
-				<h4>Date: {{ posts.pubdate }}</h4>
-				<h4>Source: {{ posts.source}}</h4>
-				<h4>Title: {{ posts.title}}</h4>
-				<h4>Visibility: {{ posts.visibility}}</h4>			
-			</div>
-			{% endfor %}
-		</div>
-	</div>
-</div>
-{%endblock%}
+    <!-- Bootstrap core CSS -->
+    {% block css %}
+    <link type="text/css" href="{%static 'css/bootstrap.css' %}" rel="stylesheet" media="all">
+    <!--<link type="text/css" href="{%static 'css/dashboard.css' %}" rel="stylesheet">-->
+    {% endblock %}
+
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="font-size:1.8em;" href="/main/loggedin">Social Hub</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="navbar navbar-nav navbar-right" style="list-style: none;">
+            <li style="padding-right:4em; padding-top:1.2em;">
+    <a href="/main/otherServerPost" style="font-size:1.4em;">connect+</a>
+            </li> 
+            <li style="padding-right:1.2em;">
+              <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
+            </li>
+            <li style="padding-right:1.2em; padding-top:1.2em;">
+    <a href="/main/author/{{request.session.user_json.guid}}/feed" style="font-size:1.4em;">{{request.session.user_json.displayname}}</a>
+            </li>         
+            <li style="padding-right:1.2em;">
+              <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>
+            </li>
+            
+            <li>
+              <a href="/main/logout" class="glyphicon glyphicon-log-out" style="font-size:1.4em;"></a>
+            </li>
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  
+  {% block body %}
+  <body>
+    <div class="container-fluid">
+      <!-- BEGIN SIDEBAR CODE -->
+      <div class="row">
+        <div class="col-sm-3 col-md-2">
+          <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
+            <li class="active"></li>
+            <li><a href="/main/otherServerPost" id="seeOtherServerPosts">Other SocialMedia Posts</a></li>
+            <li><a href="/main/otherServerAuthors" id="otherServerAuthors">Other SocialMedia Authors</a></li>
+            <li><a href="/main/othernodePostId" id="othernodePostId">Search Other SocialMedia PostId</a></li>
+            <li><a href="/main/specificauthorposts" id="specificauthorposts">Get Specific Author Post</a></li>
+            <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
+            <li><a href="/main/friendcheck" id="friendcheck">Check Authors' Friend Status</a></li>
+            <li><a href="/main/friendreq" id="friendreq">Send Friend Request to Other SocialMedia</a></li>
+            <li><a href="/main/foaf" id="foaf">Get Other SocialMedia FOAF Posts</a></li>
+          </ul>
+          <ul class="col-sm-3 col-md-2 sidebar">
+          {% for admin in request.session.admin %}
+          	{% if admin = "T" %}
+      			<li><a href="/main/approveAuthors">Approve Authors</a></li>
+      			<li><a href="/main/manageAuthors">Manage Authors</a></li>
+      		{%endif%}{%endfor%}
+          </ul>
+        </div>
+        <!-- END SIDEBAR CODE -->
+        
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+          <h1 class="page-header">Search specific Author's Post on other SocialMedia</h1>
+    			<form id="checkForm" method="POST" action="/main/specificauthorposts/">{% csrf_token %}
+    				<div class="winBody">
+    					<p>
+    					<textarea class="text" id="authorguid1" name="authorguid1" placeholder="Author's id"></textarea></p><p>
+    					<select name="hostchoice" id = "hostchoice">
+      					<option value="1" selected="selected">Thought Bubble</option>
+    						<option value="2">Group 7</option>
+    						
+    					</select>
+    					
+    					<input type=submit class="btn addBtn" value="Check"></p>
+    				</div>
+    			</form>
+    			{{error}}
+    			{% for posts in posts %}
+    			<div class="link">
+    				<h4>Content: {{ posts.content }}</h4>
+    				<h4>Description: {{ posts.description}}</h4>
+    				<h4>Guid: {{ posts.guid}}</h4>
+    				<h4>Origin:{{ posts.origin}}</h4>
+    				<h4>Date: {{ posts.pubdate }}</h4>
+    				<h4>Source: {{ posts.source}}</h4>
+    				<h4>Title: {{ posts.title}}</h4>
+    				<h4>Visibility: {{ posts.visibility}}</h4>			
+    			</div>
+    			{% endfor %}
+    		</div>
+    	</div>
+    </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=""{% static 'js/bootstrap.min.js' %}""></script>
+  </body>
+  {%endblock%}
+</html>
