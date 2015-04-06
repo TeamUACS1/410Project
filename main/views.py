@@ -47,6 +47,11 @@ def seeAllPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
 	posts = Posts.objects.filter(Q(visibility='PUBLIC') | Q(author=user))
+	for post in posts:
+		tempAuthor = json.loads(post.author)
+		author = tempAuthor[0]['author']
+		setattr(post, 'authorName', author['displayname'])
+		setattr(post, 'authorGuid', author['guid'])
 	return render_to_response('main/show_all_entries.html', {'posts': posts}, context)
 
 #This function gets all the user's friends' posts and displays them on the window
@@ -76,7 +81,12 @@ def seeAllFriendPosts(request):
 	
 		#posts.chain(posts, newpost)
 		posts = posts | newpost
-
+	
+	for post in posts:
+		tempAuthor = json.loads(post.author)
+		author = tempAuthor[0]['author']
+		setattr(post, 'authorName', author['displayname'])
+		setattr(post, 'authorGuid', author['guid'])
 	return render_to_response('main/show_friend_entries.html', {'posts': posts}, context)
 
 #This function gets all the user's friends of friends' posts and displays them on the website
@@ -101,6 +111,11 @@ def seeAllFoFPosts(request):
 				looked_up.append(str(auth.author))
 				if (total or totalf):
 					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"' and p.visibility ='FOAF';")
+	for post in total_posts:
+		tempAuthor = json.loads(post.author)
+		author = tempAuthor[0]['author']
+		setattr(post, 'authorName', author['displayname'])
+		setattr(post, 'authorGuid', author['guid'])
 	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
 #Handles user login. Checks to see if login credentials are valid. Manages user and admin logins
