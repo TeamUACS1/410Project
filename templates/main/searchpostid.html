@@ -76,9 +76,9 @@
             <li class="active"></li>
             <li><a href="/main/otherServerPost" id="seeOtherServerPosts">Other SocialMedia Posts</a></li>
             <li><a href="/main/otherServerAuthors" id="otherServerAuthors">Other SocialMedia Authors</a></li>
+            <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
             <li><a href="/main/othernodePostId" id="othernodePostId">Search Other SocialMedia PostId</a></li>
             <li><a href="/main/specificauthorposts" id="specificauthorposts">Get Specific Author Post</a></li>
-            <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
             <li><a href="/main/friendcheck" id="friendcheck">Check Authors' Friend Status</a></li>
             <li><a href="/main/friendreq" id="friendreq">Send Friend Request to Other SocialMedia</a></li>
             <li><a href="/main/foaf" id="foaf">Get Other SocialMedia FOAF Posts</a></li>
@@ -108,16 +108,20 @@
     			{{error}}
     			{% if posts %}
     				{% for posts in posts %}
-    				<div class="link" style="width:85%;">
-    					<h4>{{ posts.content }}</h4>
-    					<h4>Description: {{ posts.description}}</h4>
-    					<h4>Guid: {{ postguid}}</h4>
-    					<h4>Origin:{{ posts.origin}}</h4>
-    					<h4>Date: {{ posts.pubdate }}</h4>
-    					<h4>Source: {{ posts.source}}</h4>
-    					<h4>Title: {{ posts.title}}</h4>
-    				</div>
-    				{% endfor %}
+    				<div class="panel panel-default" style="width:85%;">
+              <div class="panel-heading">
+        			  <h4><span style="font-weight:bold;">{{posts.title}}:</span>{{posts.description}}<span class="span6 pull-right"><a href="http://{{posts.author.url}}">{{posts.author.displayname}} : {{posts.author.host}}</a></span></h4>	
+              </div>
+              <div class="panel-body">
+                <h5>{{posts.content}}</h5>
+              </div>
+              <div class="panel-footer">
+                <h5>{{posts.pubdate}}
+                <a href="/main/otherServerPost" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comments"><span class="badge">4</span></a>
+                </h5>
+              </div> 
+          </div>
+    			{% endfor %}
     			{%endif%}
     		</div>
     	</div>

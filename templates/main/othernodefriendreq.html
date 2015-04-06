@@ -76,9 +76,9 @@
             <li class="active"></li>
             <li><a href="/main/otherServerPost" id="seeOtherServerPosts">Other SocialMedia Posts</a></li>
             <li><a href="/main/otherServerAuthors" id="otherServerAuthors">Other SocialMedia Authors</a></li>
+            <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
             <li><a href="/main/othernodePostId" id="othernodePostId">Search Other SocialMedia PostId</a></li>
             <li><a href="/main/specificauthorposts" id="specificauthorposts">Get Specific Author Post</a></li>
-            <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
             <li><a href="/main/friendcheck" id="friendcheck">Check Authors' Friend Status</a></li>
             <li><a href="/main/friendreq" id="friendreq">Send Friend Request to Other SocialMedia</a></li>
             <li><a href="/main/foaf" id="foaf">Get Other SocialMedia FOAF Posts</a></li>
@@ -95,23 +95,18 @@
         
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
           <h1 class="page-header">Send Friend Request to Other SocialMedia</h1>	
-    			<form id="checkForm" method="POST" action="/main/friendreq/">{% csrf_token %}
-    				<div class="winBody">
-    					<p>
-    					<textarea class="text" id="authorguid1" name="authorguid1" placeholder="Author's guid"></textarea></p><p>
-    					<textarea class="text" id="displayname" name="displayname" placeholder="Author's displayname"></textarea></p><p>
-    					<textarea class="text" id="authorguid2" name="authorguid2" placeholder="Second Author's guid"></textarea></p><p>
+          <form id="checkForm" method="POST" action="/main/friendreq/">{% csrf_token %}
+            <div class="well well-sm" style="width:85%;">
+              <input type="text" name="authorguid1" id="authorguid1" class="form-control" placeholder="Author's guid"> <br>
+              <input type="text" name="displayname" id="displayname" class="form-control" placeholder="Author's displayname"><br>
+              <input type="text" name="authorguid2" id="authorguid2" class="form-control" placeholder="Second Author's guid"> <br>
     					<select name="hostchoice" id = "hostchoice">
       					<option value="1" selected="selected">Thought Bubble</option>
     						<option value="2">Group 7</option>
-    						
     					</select>
-    					
-    
-    
-    					<input type=submit class="btn addBtn" value="Check"></p>
+    					<button type="submit" value="Check">Send</button>
     				</div>
-    			</form>
+			    </form>
     			<h4>{{posts}}</h4>
 
 		    </div>
