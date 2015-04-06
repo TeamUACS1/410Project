@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block body %}
+<div id="wrapper">
+	<header>
+		<h1>Users</h1>
+	</header>	
+	<div id="main">
+		<div id="sidebar">
+			<ul>
+  				<li class="active" id="home"><a href="#">My Posts</a></li>
+				<li><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
+				<li><a href="/main/seefriendPosts" id="seefriendPosts">Friend's Posts</a></li>
+				<li><a href="/main/friendOfFriend" id="friendOfFriend">Friends of friends</a></li>
+				<li><a href="/main/search" id="search">Search</a></li>
+				<li><a href="/main/userProfile" id="userProfile">User Profile</a></li>
+				<li><a href="/main/profileSettings">Profile Settings</a></li>
+				<li><a href="/main/myStream">My Stream</a></li>
+				{% for admin in request.session.admin %}
+					{% if admin = "T" %}
+					<li><a href="/main/approveAuthors">Approve Authors</a></li>
+					<li><a href="/main/manageAuthors">Manage Authors</a></li>
+		{%endif%}{%endfor%}
+			</ul>
+		</div>
+		<div id="content">
+			{% for nodes in nodes %}
+			<div class="link">
+				<h4>{{ nodes.host }}<h4><form class="operation_from" action="/main/deletenode/" method=post>{% csrf_token %}
+					<input type="hidden" id="ID" name="ID" value={{nodes.id}}>
+
+
+					<input type="submit" value=Delete>
+					</form>
+					<form class="operation_from" action="/main/editnode/" method=post>{% csrf_token %}
+					<input type="hidden" id="ID" name="ID" value={{node.id}}>
+
+
+					<input type="submit" value=Edit>
+					</form>
+				</h4>
+				</h4>
+				<p class="tags"> </p>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{%endblock%}

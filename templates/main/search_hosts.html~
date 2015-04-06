@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block body %}
+<div id="wrapper">
+	<header>
+		<h1>Search</h1>
+	</header>	
+	<div id="main">
+		<div id="sidebar">
+			<ul>
+  				<li id="home"><a href="/main/loggedin">My Posts</a></li>
+				<li class="active" ><a href="/main/search" id="search">Search</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<form id="addForm" method="POST" action="/main/addHosts/">{% csrf_token %}
+				<div class="winHead">
+					<h2>Search for a Host</h2>
+				</div>
+				<div class="winBody">
+					<p>
+					<textarea class="text" id="searchUser" name="searchUser" placeholder="Enter Host name"></textarea></p><p>
+					<input type=submit class="btn addBtn" value="Add"></p>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{%endblock%}

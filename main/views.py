@@ -16,6 +16,37 @@ from main.models import Friends
 from main.models import Follows
 from django.core import serializers
 from itertools import chain
+#Handles user login. Checks to see if login credentials are valid. Manages user and admin logins
+def login(request):
+	context =RequestContext(request)
+	error =None
+	if request.method=='POST':
+		authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
+		password =request.POST.get("password", "")
+		encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
+		for author in authors:
+			password=author.password
+		if not authors:
+			error='Not a used username'
+		elif encrypted_pass!=password:
+			error='Invalid Password'
+		else:
+			request.session['logged_in']="T"
+			session=request.session['logged_in']
+			string=serializers.serialize("json",Authors.objects.filter(displayname=request.POST.get("username", "")),fields=('guid','host','displayname','url'))
+			string=str(string).replace("fields","author")
+			string=str(string).split("},")[0]
+			string=string + "}}]"
+			request.session['user']=string
+			author=json.loads(string)
+			request.session['user_json']=author[0]['author']
+			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
+			for author in authors:
+				request.session['user_guid']=author.guid
+				if request.POST.get("username", "")== "admin":
+					request.session['admin']="T"
+			return redirect(showposts)
+	return render_to_response('main/login.html',{'error': error}, context)
 
 #This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
@@ -130,37 +161,6 @@ def seeAllFoFPosts(request):
 	total_posts = reversed(total_posts)
 	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
-#Handles user login. Checks to see if login credentials are valid. Manages user and admin logins
-def login(request):
-	context =RequestContext(request)
-	error =None
-	if request.method=='POST':
-		authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
-		password =request.POST.get("password", "")
-		encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
-		for author in authors:
-			password=author.password
-		if not authors:
-			error='Not a used username'
-		elif encrypted_pass!=password:
-			error='Invalid Password'
-		else:
-			request.session['logged_in']="T"
-			session=request.session['logged_in']
-			string=serializers.serialize("json",Authors.objects.filter(displayname=request.POST.get("username", "")),fields=('guid','host','displayname','url'))
-			string=str(string).replace("fields","author")
-			string=str(string).split("},")[0]
-			string=string + "}}]"
-			request.session['user']=string
-			author=json.loads(string)
-			request.session['user_json']=author[0]['author']
-			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
-			for author in authors:
-				request.session['user_guid']=author.guid
-				if request.POST.get("username", "")== "admin":
-					request.session['admin']="T"
-			return redirect(showposts)
-	return render_to_response('main/login.html',{'error': error}, context)
 
 #logs out a user
 def logout(request):
@@ -171,7 +171,7 @@ def signup(request):
 	context =RequestContext(request)
 	session=request.session['logged_in']
 	error =None
-	host= "http://cs410.cs.ualberta.ca:41034"
+	host= "cmput410project15.herokuapp.com"
 	if request.method=='POST':
 		displayname=request.POST.get("username", "")
 		password=request.POST.get("password", "")
@@ -180,7 +180,7 @@ def signup(request):
 			error='taken username'
 		else:
 			guid = str(uuid.uuid1()).replace("-", "")
-			url = host+"/"+displayname+"/"+str(guid)
+			url = host+"/main/author/"+str(guid)
 			password =request.POST.get("password", "")
 			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
 			author=Authors(displayname=displayname,password=encrypted_pass, host=host, guid= guid, url=url, approved_flag=0)

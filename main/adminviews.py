@@ -5,6 +5,7 @@ from django.template import RequestContext
 from django.shortcuts import redirect
 from django.db.models import Q
 import urllib2
+import uuid
 import json
 from datetime import datetime
 import hashlib
@@ -13,12 +14,16 @@ from main.models import Authors
 from main.models import Comments
 from main.models import Friends
 from main.models import Follows
+from main.models import Nodes
 
 #shows the authors that have been approved by the admin. Displays them on a page accesible by the admin
 def approveAuthor(request):
 	context =RequestContext(request)
 	authors = Authors.objects.filter(approved_flag=0)
 	return render_to_response('main/show_approval_list.html', {'authors': authors}, context)
+def approveHosts(request):
+	context =RequestContext(request)
+	return render_to_response('main/search_hosts.html', context)
 
 #allows the admin to approve a new user/author to the website after they sign up for an account
 def approve(request):
@@ -35,6 +40,10 @@ def manageAuthor(request):
 	authors = Authors.objects.filter()
 	return render_to_response('main/show_authors_list.html', {'authors': authors}, context)
 
+def manageHosts(request):
+	context =RequestContext(request)
+	hosts = Nodes.objects.filter()
+	return render_to_response('main/show_hosts_list.html', {'nodes': hosts}, context)
 #Allows the server admin to delete authors from the website
 def deleteauthor(request):
 	context = RequestContext(request)
@@ -43,6 +52,13 @@ def deleteauthor(request):
 		author =Authors(id=author)
 		author.delete()
 	return redirect(manageAuthor)
+def deletenode(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		node= request.POST.get("ID", "")
+		node =Nodes(id=node)
+		node.delete()
+	return redirect(manageHosts)
 
 #Allows the server admin to edit author information 
 def editauthor(request):
@@ -51,6 +67,12 @@ def editauthor(request):
 		author= request.POST.get("ID", "")
 		author =Authors.objects.filter(id=author)
 	return render_to_response('main/edit_authors.html',{'author': author}, context)
+def editnode(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		node= request.POST.get("ID", "")
+		node =Nodes.objects.filter(id=node)
+	return render_to_response('main/edit_nodes.html',{'nodes': node}, context)
 
 #Allows the server admin to save changes made to the author information
 def saveauthor(request):
@@ -63,3 +85,22 @@ def saveauthor(request):
 	authors.password=encrypted_pass
 	authors.save()
 	return redirect(manageAuthor)
+def savenode(request):
+	context = RequestContext(request)
+	node= request.POST.get("ID", "")
+	nodes = Nodes.objects.get(id=node)
+	host=request.POST.get("host", "")
+	flag=request.POST.get("privacy", "")
+	nodes.host=host
+	nodes.approved_flag=flag
+	nodes.save()
+	return redirect(manageHosts)
+def addHosts(request):
+	approved_flag=1
+	host=request.POST.get("searchUser")
+	guid = str(uuid.uuid1()).replace("-", "")
+	nodes=Nodes(approved_flag=approved_flag,host=host,guid=guid)
+	nodes.save()
+	
+
+	return redirect(approveHosts)
