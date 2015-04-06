@@ -275,10 +275,11 @@ def seeAllSearches(request):
 	context =RequestContext(request)
 	user= request.session['user']
 	searchResult = ""
+	allUsers = Authors.objects.raw("select * from main_authors")
 	if(request.method == 'POST'):
 		username = request.POST.get("searchUser", "")
 		searchResult = Authors.objects.raw("select * from main_authors where displayname='"+username+"';")
-	return render_to_response('main/search.html', {'searchResults': searchResult}, context)	
+	return render_to_response('main/search.html', {'searchResults': searchResult, 'allUsers': allUsers}, context)	
 
 
 
