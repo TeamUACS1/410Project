@@ -321,7 +321,7 @@ def myStream(request):
 
 #Fetches the github activity using the github api
 def getGithubActivity(user):
-	posts = ""
+	posts = []
 	if user.github:
 		
 		activityList = []
