@@ -11,7 +11,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Public Posts</title>
+    <title>Posts Comments</title>
 
     <!-- Bootstrap core CSS -->
     {% block css %}
@@ -92,7 +92,7 @@
       
       <!--------------- MAIN CONTENT ----------------------->
 					<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-        <h1 class="page-header">Welcome!</h1>
+        <h2 class="page-header">Main Post</h2>
 			    {% for posts in posts %}
           <div class="panel panel-default">
   			    <div class="panel-heading">
@@ -103,7 +103,7 @@
             </div>
             <div class="panel-footer">
       				<h5>{{ posts.pubDate }}
-              <a href="/main/seepostdetails/{{ posts.guid}}" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">14</span></a>
+              <a href="/main/seepostdetails/{{ posts.guid}}" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">{{ posts.comments }}</span></a>
               <span class="span6 pull-right">
                 <div class="col-sm-2" style="padding-right: 3em;">
             			<form class="operation_from" action="/main/edit/" method=post style=".form-control {width:auto;}">{% csrf_token %}
@@ -119,8 +119,19 @@
   				    </h5>
   			    </div>
           </div>
+          <h3 class="page-header">Comments</h3>
 					{% for comments in comments %}
-					<h4><span style="font-weight: bold;"> {{comments.comments}}</span></h4>
+					<div class="panel panel-default">
+    		    <div class="panel-heading">
+      				<h4><a href="/main/author/{{comments.author_guid}}/feed">{{comments.author}}</a></span></h4>
+            </div>
+            <div class="panel-body">
+      				<h5>{{ comments.comments }}</h5>
+            </div>
+            <div class="panel-footer">
+      				<h5>{{ comments.pubDate }}</h5>
+  			    </div>
+          </div>
 					{%endfor%}
     		<script>
     			function addname(o) {
