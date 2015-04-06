@@ -12,12 +12,19 @@ class Authors(models.Model):
 
 	def __unicode__(self):
 		return self.guid 
+class Nodes(models.Model):
+	approved_flag=models.IntegerField(max_length=8)
+	host = models.CharField(max_length=32, null=False)
+	guid = models.CharField(max_length=32)
 
+	def __unicode__(self):
+		return self.guid 
 
 class Comments(models.Model):
-	author = models.ManyToManyField(Authors)
+	author_guid = models.CharField(max_length=512)
 	comments = models.CharField(max_length=512)
 	pubDate = models.DateField(max_length=32)
+	post_guid=models.CharField(max_length=32)
 	guid = models.CharField(max_length=32)
 
 	def __unicode__(self):
@@ -32,7 +39,6 @@ class Posts(models.Model):
 	content = models.CharField(max_length=512)
 	author = models.CharField(max_length=512)
 	categories = models.CharField(max_length=32)
-	comments = models.ManyToManyField(Comments)
 	pubDate = models.DateField(max_length=32)
 	visibility = models.CharField(max_length=16)
 	guid = models.CharField(max_length=32)

@@ -91,41 +91,7 @@
       
       
       <!--------------- MAIN CONTENT ----------------------->
-      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-        <h1 class="page-header">Welcome!</h1>
-    		<script>
-    			function addname(o) {
-    				var info = document.getElementById("privacy");
-    				var select = info.options[info.selectedIndex].value;
-    				if (select== "3"){
-    					doc = document.getElementById("private_auth");
-    					doc.setAttribute("type", "text");
-    				}
-    				else {
-    					field = document.getElementById("private_auth");
-    					doc.setAttribute("type", "hidden");
-    				}
-    			}
-    		</script>
-		    <div id="content"  style="width:85%;">
-			    <form id="addForm" method="POST" action="/main/add_post/">{% csrf_token %}
-      			<div class="well well-sm">
-					    <h2>Add a post</h2>
-              <input type="text" name="title" id="title" class="form-control" placeholder="Title"> <br>
-              <input type="text" name="description" id="description" class="form-control" placeholder="Summary"><br>
-              <input type="text" name="content" id="post" class="form-control" placeholder="Content">
-    					<select name="privacy" id = "privacy" onchange = "addname(this)">
-      					<option value="PUBLIC" selected="selected">Public</option>
-    						<option value="PRIVATE">Private</option>
-    						<option value="FRIENDS">Friends</option>
-    						<option value="FOAF">Friend of Friend</option>
-    						<option value="SERVERONLY">Server Only</option>
-    					</select>
-    					<input type=hidden class="text" id="private_auth" name="private_auth" placeholder="Type another username"></p>
-    					<button type="submit" value="Add">Add</button>
-    				</div>
-			    </form>
-			    {% for posts in posts %}
+{% for posts in posts %}
           <div class="panel panel-default">
   			    <div class="panel-heading">
       				<h4><span style="font-weight: bold;">{{ posts.title }}:</span> {{ posts.description }} <span class="span6 pull-right"><a href="/main/author/{{posts.authorGuid}}/feed">{{posts.authorName}}</a></span></h4>
@@ -152,10 +118,7 @@
   			    </div>
           </div>
 		      {% endfor %}
-		    </div>
-	    </div>
-    </div>
-  </div>
+
   <!-- Bootstrap core JavaScript
   ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
