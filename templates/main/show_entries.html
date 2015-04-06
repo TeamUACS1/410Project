@@ -122,7 +122,7 @@
     						<option value="SERVERONLY">Server Only</option>
     					</select>
     					<input type=hidden class="text" id="private_auth" name="private_auth" placeholder="Type another username"></p>
-    					<input type=submit class="btn addBtn" value="Add"></p>
+    					<button type="submit" value="Add">Add</button>
     				</div>
 			    </form>
 			    {% for posts in posts %}
@@ -131,20 +131,24 @@
       				<h4><span style="font-weight: bold;">{{ posts.title }}:</span> {{ posts.description }} <span class="span6 pull-right"><a href="/main/author/{{posts.authorGuid}}/feed">{{posts.authorName}}</a></span></h4>
             </div>
             <div class="panel-body">
-      				<h4>{{ posts.content }}</h4>
+      				<h5>{{ posts.content }}</h5>
             </div>
             <div class="panel-footer">
-      				<h4>{{ posts.pubDate }}</h4>
-      				<h4>
-      				<form class="operation_from" action="/main/delete/" method=post>{% csrf_token %}
-      					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
-      					<input type="submit" value=Delete>
-      				</form>
-      				<form class="operation_from" action="/main/edit/" method=post>{% csrf_token %}
-      					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
-      					<input type="submit" value=Edit>
-      				</form>
-  				    </h4>
+      				<h5>{{ posts.pubDate }}
+              <a href="/main/loggedin" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">14</span></a>
+              <span class="span6 pull-right">
+                <div class="col-sm-2" style="padding-right: 3em;">
+            			<form class="operation_from" action="/main/edit/" method=post style=".form-control {width:auto;}">{% csrf_token %}
+          					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+          					<button type="submit" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></button>
+          				</form>
+                </div>
+          			<form class="operation_from" action="/main/delete/" method=post style=".form-control {width:auto;}">{% csrf_token %}
+        					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+          				<button type="submit" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Delete"></button>
+        				</form>
+              </span>
+  				    </h5>
   			    </div>
           </div>
 		      {% endfor %}
