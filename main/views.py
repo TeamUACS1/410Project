@@ -39,6 +39,7 @@ def showposts(request):
 		author = tempAuthor[0]['author']
 		setattr(post, 'authorName', author['displayname'])
 		setattr(post, 'authorGuid', author['guid'])
+	posts = reversed(posts)
 	return render_to_response('main/show_entries.html', {'posts':posts}, context)
 
 #seeAllPosts shows all the public posts/ posts that the user has the right to view on the website. 
@@ -52,6 +53,7 @@ def seeAllPosts(request):
 		author = tempAuthor[0]['author']
 		setattr(post, 'authorName', author['displayname'])
 		setattr(post, 'authorGuid', author['guid'])
+	posts = reversed(posts)
 	return render_to_response('main/show_all_entries.html', {'posts': posts}, context)
 
 #This function gets all the user's friends' posts and displays them on the window
@@ -87,6 +89,7 @@ def seeAllFriendPosts(request):
 		author = tempAuthor[0]['author']
 		setattr(post, 'authorName', author['displayname'])
 		setattr(post, 'authorGuid', author['guid'])
+	posts = reversed(posts)
 	return render_to_response('main/show_friend_entries.html', {'posts': posts}, context)
 
 #This function gets all the user's friends of friends' posts and displays them on the website
@@ -116,6 +119,7 @@ def seeAllFoFPosts(request):
 		author = tempAuthor[0]['author']
 		setattr(post, 'authorName', author['displayname'])
 		setattr(post, 'authorGuid', author['guid'])
+	total_posts = reversed(total_posts)
 	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
 #Handles user login. Checks to see if login credentials are valid. Manages user and admin logins
