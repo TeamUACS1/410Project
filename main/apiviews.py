@@ -156,7 +156,6 @@ def authorsposts(request,author_guid):
 	string=string + "}}]"
 	friend = Authors.objects.get(guid=author_guid)
 	if 'user_guid' in request.session:
-		print "here!"
 		user = request.session['user_guid']
 		users = request.session['user']
 		f=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(1)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(1))))
@@ -173,9 +172,7 @@ def authorsposts(request,author_guid):
 		else:
 			post=Posts.objects.filter(author=string,visibility="PUBLIC")
 	else:
-		print "or here!!"
 		post=Posts.objects.filter(Q(author=string) & Q(visibility="PUBLIC"))
-		print post
 	lists=[]
 	for post in post:
 		post2 = {}
