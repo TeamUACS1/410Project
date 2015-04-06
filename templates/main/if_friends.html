@@ -106,12 +106,16 @@
     					<button type="submit" value="Check">Check</button>
     				</div>
 			    </form>
-    			<h4>{{friendee}}</h4>
-    			{% for names in posts %}
-    				{% for ids in names %}
-    					<h4>{{ ids }}</h4>						
-    				{% endfor %}
-    			{% endfor %}
+          <div class="panel panel-default" style="width:85%;">
+            <div class="panel-heading">
+        			<h4>{{friendee}}</h4>
+        			{% for names in posts %}
+        				{% for ids in names %}
+        					<h4>{{ ids }}</h4>						
+        				{% endfor %}
+        			{% endfor %}
+            </div>
+          </div>
     		</div>
     	</div>
     </div>

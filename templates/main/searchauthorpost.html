@@ -107,16 +107,19 @@
 			    </form>
     			{{error}}
     			{% for posts in posts %}
-    			<div class="link">
-    				<h4>Content: {{ posts.content }}</h4>
-    				<h4>Description: {{ posts.description}}</h4>
-    				<h4>Guid: {{ posts.guid}}</h4>
-    				<h4>Origin:{{ posts.origin}}</h4>
-    				<h4>Date: {{ posts.pubdate }}</h4>
-    				<h4>Source: {{ posts.source}}</h4>
-    				<h4>Title: {{ posts.title}}</h4>
-    				<h4>Visibility: {{ posts.visibility}}</h4>			
-    			</div>
+    			<div class="panel panel-default" style="width:85%;">
+            <div class="panel-heading">
+      			  <h4><span style="font-weight:bold;">{{posts.title}}:</span>{{posts.description}}<span class="span6 pull-right"><a href="http://{{posts.author.url}}">{{posts.author.displayname}} : {{posts.author.host}}</a></span></h4>	
+            </div>
+            <div class="panel-body">
+              <h5>{{posts.content}}</h5>
+            </div>
+            <div class="panel-footer">
+              <h5>{{posts.pubdate}}
+                <a href="/main/otherServerPost" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comments"><span class="badge">4</span></a>
+              </h5>
+            </div> 
+          </div>
     			{% endfor %}
     		</div>
     	</div>
