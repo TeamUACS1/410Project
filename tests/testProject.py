@@ -40,7 +40,7 @@ class ProjectTestCase(TestCase):
     def test_github_githubUsernam_check(self):
         """This test to make sure that a none-existant github username dosent return anything"""
 	self.user1.github = ""
-        self.assertEqual(getGithubActivity(self.user1), '')
+        self.assertEqual(getGithubActivity(self.user1), [])
 
     def test_github_activity_get(self):
         """
