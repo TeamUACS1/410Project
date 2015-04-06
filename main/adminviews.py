@@ -5,6 +5,7 @@ from django.template import RequestContext
 from django.shortcuts import redirect
 from django.db.models import Q
 import urllib2
+import uuid
 import json
 from datetime import datetime
 import hashlib
@@ -22,7 +23,7 @@ def approveAuthor(request):
 	return render_to_response('main/show_approval_list.html', {'authors': authors}, context)
 def approveHosts(request):
 	context =RequestContext(request)
-	return render_to_response('main/show_approval_host_list.html', context)
+	return render_to_response('main/search_hosts.html', context)
 
 #allows the admin to approve a new user/author to the website after they sign up for an account
 def approve(request):
@@ -71,3 +72,12 @@ def saveauthor(request):
 	authors.password=encrypted_pass
 	authors.save()
 	return redirect(manageAuthor)
+def addHosts(request):
+	approved_flag=1
+	host=request.POST.get("searchUser")
+	guid = str(uuid.uuid1()).replace("-", "")
+	nodes=Nodes(approved_flag=approved_flag,host=host,guid=guid)
+	nodes.save()
+	
+
+	return redirect(approveHosts)

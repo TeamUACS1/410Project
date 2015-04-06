@@ -47,7 +47,7 @@ def showposts(request):
 def seeAllPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
-	posts = Posts.objects.filter(Q(visibility='PUBLIC') | Q(author=user))
+	posts = Posts.objects.filter(Q(visibility='PUBLIC'))
 	for post in posts:
 		tempAuthor = json.loads(post.author)
 		author = tempAuthor[0]['author']
@@ -163,7 +163,7 @@ def signup(request):
 	context =RequestContext(request)
 	session=request.session['logged_in']
 	error =None
-	host= "http://cs410.cs.ualberta.ca:41034"
+	host= "cmput410project15.herokuapp.com"
 	if request.method=='POST':
 		displayname=request.POST.get("username", "")
 		password=request.POST.get("password", "")
@@ -172,7 +172,7 @@ def signup(request):
 			error='taken username'
 		else:
 			guid = str(uuid.uuid1()).replace("-", "")
-			url = host+"/"+displayname+"/"+str(guid)
+			url = host+"/main/author/"+str(guid)
 			password =request.POST.get("password", "")
 			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
 			author=Authors(displayname=displayname,password=encrypted_pass, host=host, guid= guid, url=url, approved_flag=0)
@@ -244,7 +244,7 @@ def addComment(request):
 	if(request.method == 'POST'):
 		comments= request.POST.get("comment", "")
 		author_guid = request.session['user_guid']
-		post_guid=request.POST.get("ID", "")
+		post_guid=request.POST.get("guid", "")
 		guid = str(uuid.uuid1()).replace("-", "")
 		comment = Comments(comments=comments,author_guid=author_guid,post_guid=post_guid, pubDate=pubDate, guid=guid)
 		comment.save()
@@ -393,3 +393,15 @@ def getGithubActivity(user):
 			print("there was an error: %r" % e)
 
 	return posts
+
+def localCrossServerPosts(request):
+	context =RequestContext(request)
+	user = request.session['user']
+	posts = Posts.objects.filter(Q(visibility='SERVERONLY'))
+	for post in posts:
+		tempAuthor = json.loads(post.author)
+		author = tempAuthor[0]['author']
+		setattr(post, 'authorName', author['displayname'])
+		setattr(post, 'authorGuid', author['guid'])
+	posts = reversed(posts)
+	return render_to_response('main/localServerPosts.html', {'posts': posts}, context)
