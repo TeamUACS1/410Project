@@ -18,6 +18,25 @@
 			}
 		</script>
 	</header>	
+  <!-- BEGIN SIDEBAR CODE -->
+  <div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+      <li class="active"><a href="#">Posts<span class="sr-only">(current)</span></a></li>
+      <li><a href="/main/seeAllPosts">Public</a></li>
+      <li><a href="/main/seefriendPosts">Friends</a></li>
+      <li><a href="/main/friendOfFriend">Friend of Friend</a></li>
+      <li><a href="#">Following</a></li>
+      <li><a href="/main/myStream">My Stream</a></li>
+    </ul>
+    <ul class="col-sm-3 col-md-2 sidebar">
+    {% for admin in request.session.admin %}
+  		{% if admin = "T" %}
+			<li><a href="/main/approveAuthors">Approve Authors</a></li>
+			<li><a href="/main/manageAuthors">Manage Authors</a></li>
+    {%endif%}{%endfor%}
+    </ul>
+  </div>
+  <!-- END SIDEBAR CODE -->
 	<div id="main">
 		<div id="sidebar">
 			<ul>
