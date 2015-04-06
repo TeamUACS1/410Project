@@ -109,12 +109,12 @@
 					    <h2>Add a post</h2>
               <input type="text" name="title" id="title" class="form-control" placeholder="Title"> <br>
               <input type="text" name="description" id="description" class="form-control" placeholder="Summary"><br>
-              <input type="text" name="content" id="post" class="form-control" placeholder="Content">
+              <input type="text" name="content" id="post" class="form-control" placeholder="Content"><br>
     					<select name="privacy" id = "privacy" onchange = "addname(this)">
-      					<option value="PUBLIC" selected="selected">Public</option>
+      					<option value="PUBLIC">Public</option>
     						<option value="PRIVATE">Private</option>
     						<option value="FRIENDS">Friends</option>
-    						<option value="FOAF">Friend of Friend</option>
+    						<option value="FOAF" selected="selected">Friend of Friend</option>
     						<option value="SERVERONLY">Server Only</option>
     					</select>
     					<input type=hidden class="text" id="private_auth" name="private_auth" placeholder="Type another username"></p>

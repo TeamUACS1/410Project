@@ -69,7 +69,7 @@
   {% block body %}
   <body>
     <div class="container-fluid">
-      <!-- BEGIN SIDEBAR CODE -->
+      <!-------------------------- BEGIN SIDEBAR CODE -------------------->
       <div class="row">
         <div class="col-sm-3 col-md-2">
           <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
@@ -91,21 +91,19 @@
       		{%endif%}{%endfor%}
           </ul>
         </div>
-        <!-- END SIDEBAR CODE -->
+        <!------------------------- END SIDEBAR CODE --------------------->
         
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
           <h1 class="page-header">Other SocialMedia Authors</h1>		
     			{% for posts in posts %}
-    			<div class="link">
-    				<div>	
-    					<br><br>
-    					<h4>"author":</h4>
-    					<h4>"displayname": {{ posts.displayname }} {{posts.author_details.username}}</h4>
-    					<h4>"host": {{posts.host}}</h4>
-    					<h4>"id": {{posts.id}} {{posts.user}}</h4>
-    					<h4>"url": {{posts.url}} {{posts.author_details.url}}</h4>
-     				</div>
-    			</div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+      			  <h4><span style="font-weight:bold;"><a href="http://{{posts.url}}">{{posts.displayname}}</a></span><span class="span6 pull-right"><a href="http://{{posts.host}}">{{posts.host}}</a></span></h4>	
+            </div>
+            <div class="panel-body">
+              <h5>Author Id : {{posts.id}}</h5>
+            </div>
+          </div>
     			{% endfor %}
     		</div>
     	</div>

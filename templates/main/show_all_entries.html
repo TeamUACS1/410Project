@@ -69,7 +69,7 @@
   {% block body %}
   <body>
     <div class="container-fluid">
-      <!-- BEGIN SIDEBAR CODE -->
+      <!----------------------------- BEGIN SIDEBAR CODE -------------------------------->
       <div class="row">
         <div class="col-sm-3 col-md-2">
           <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
@@ -86,7 +86,7 @@
         		{%endif%}{%endfor%}
           </ul>
         </div>
-        <!-- END SIDEBAR CODE -->
+        <!--------------------------- END SIDEBAR CODE -------------------------------->
         
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
           <h1 class="page-header">Public Posts</h1>
@@ -110,7 +110,7 @@
 					    <h2>Add a post</h2>
               <input type="text" name="title" id="title" class="form-control" placeholder="Title"> <br>
               <input type="text" name="description" id="description" class="form-control" placeholder="Summary"><br>
-              <input type="text" name="content" id="post" class="form-control" placeholder="Content">
+              <input type="text" name="content" id="post" class="form-control" placeholder="Content"><br>
     					<select name="privacy" id = "privacy" onchange = "addname(this)">
       					<option value="PUBLIC" selected="selected">Public</option>
     						<option value="PRIVATE">Private</option>
