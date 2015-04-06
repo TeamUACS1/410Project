@@ -78,13 +78,11 @@
             <li><a href="/main/friendOfFriend" id="friendOfFriend">Friend of Friend</a></li>
             <li><a href="#">Following</a></li>
             <li><a href="/main/myStream">My Stream</a></li>
-          </ul>
-          <ul class="col-sm-3 col-md-2 sidebar">
-          {% for admin in request.session.admin %}
-        		{% if admin = "T" %}
-      			<li><a href="/main/approveAuthors">Approve Authors</a></li>
-      			<li><a href="/main/manageAuthors">Manage Authors</a></li>
-      		{%endif%}{%endfor%}
+            {% for admin in request.session.admin %}
+            {% if admin = "T" %}
+        			<li><a href="/main/approveAuthors">Approve Authors</a></li>
+        			<li><a href="/main/manageAuthors">Manage Authors</a></li>
+        		{%endif%}{%endfor%}
           </ul>
         </div>
         <!-- END SIDEBAR CODE -->

@@ -11,7 +11,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>connect+ Authors</title>
+    <title>Public Posts</title>
 
     <!-- Bootstrap core CSS -->
     {% block css %}
@@ -29,6 +29,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
+  <!-------------------- BEGIN TOP NAVBAR CODE -------------------->
   <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -44,17 +45,16 @@
           <ul class="navbar navbar-nav navbar-right" style="list-style: none;">
             <li style="padding-right:4em; padding-top:1.2em;">
     <a href="/main/otherServerPost" style="font-size:1.4em;">connect+</a>
-            </li> 
+            </li>
             <li style="padding-right:1.2em;">
               <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
             </li>
             <li style="padding-right:1.2em; padding-top:1.2em;">
     <a href="/main/author/{{request.session.user_json.guid}}/feed" style="font-size:1.4em;">{{request.session.user_json.displayname}}</a>
-            </li>         
+            </li>
             <li style="padding-right:1.2em;">
               <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>
             </li>
-            
             <li>
               <a href="/main/logout" class="glyphicon glyphicon-log-out" style="font-size:1.4em;"></a>
             </li>
@@ -65,54 +65,65 @@
   </div>
   <br>
   <br>
+  <!---------------------- END TOP NAVBAR COE ------------------->
   
   {% block body %}
   <body>
-    <div class="container-fluid">
-      <!-------------------------- BEGIN SIDEBAR CODE -------------------->
-      <div class="row">
-        <div class="col-sm-3 col-md-2">
-          <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
-            <li class="active"></li>
-            <li><a href="/main/otherServerPost" id="seeOtherServerPosts">Other SocialMedia Posts</a></li>
-            <li><a href="/main/otherServerAuthors" id="otherServerAuthors">Other SocialMedia Authors</a></li>
-            <li><a href="/main/othernodePostId" id="othernodePostId">Search Other SocialMedia PostId</a></li>
-            <li><a href="/main/specificauthorposts" id="specificauthorposts">Get Specific Author Post</a></li>
-            <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
-            <li><a href="/main/friendcheck" id="friendcheck">Check Authors' Friend Status</a></li>
-            <li><a href="/main/friendreq" id="friendreq">Send Friend Request to Other SocialMedia</a></li>
-            <li><a href="/main/foaf" id="foaf">Get Other SocialMedia FOAF Posts</a></li>
-          </ul>
-          <ul class="col-sm-3 col-md-2 sidebar">
+  <div class="container-fluid">
+    <!------------------- BEGIN SIDEBAR CODE ------------------->
+    <div class="row">
+      <div class="col-sm-3 col-md-2">
+        <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
+          <li class="active"></li>
+          <li><a href="/main/seeAllPosts" id="seeAllPosts">Public</a></li>
+          <li><a href="/main/seefriendPosts" id="seefriendPosts">Friends</a></li>
+          <li><a href="/main/friendOfFriend" id="friendOfFriend">Friend of Friend</a></li>
+          <li><a href="#">Following</a></li>
+          <li><a href="/main/myStream">My Stream</a></li>
           {% for admin in request.session.admin %}
-          	{% if admin = "T" %}
-      			<li><a href="/main/approveAuthors">Approve Authors</a></li>
-      			<li><a href="/main/manageAuthors">Manage Authors</a></li>
-      		{%endif%}{%endfor%}
-          </ul>
-        </div>
-        <!------------------------- END SIDEBAR CODE --------------------->
-        
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-          <h1 class="page-header">Other SocialMedia Authors</h1>		
-    			{% for posts in posts %}
+        	{% if admin = "T" %}
+    			<li><a href="/main/approveAuthors">Approve Authors</a></li>
+    			<li><a href="/main/manageAuthors">Manage Authors</a></li>
+    		  {%endif%}{%endfor%}
+        </ul>
+      </div>
+      <!---------------- END SIDEBAR CODE ------------------>
+      
+      
+      <!--------------- MAIN CONTENT ----------------------->
+{% for posts in posts %}
           <div class="panel panel-default">
-            <div class="panel-heading">
-      			  <h4><span style="font-weight:bold;"><a href="http://{{posts.url}}">{{posts.displayname}}</a></span><span class="span6 pull-right"><a href="http://{{posts.host}}">{{posts.host}}</a></span></h4>	
+  			    <div class="panel-heading">
+      				<h4><span style="font-weight: bold;">{{ posts.title }}:</span> {{ posts.description }} <span class="span6 pull-right"><a href="/main/author/{{posts.authorGuid}}/feed">{{posts.authorName}}</a></span></h4>
             </div>
             <div class="panel-body">
-              <h5>Author Id : {{posts.id}}</h5>
+      				<h5>{{ posts.content }}</h5>
             </div>
+            <div class="panel-footer">
+      				<h5>{{ posts.pubDate }}
+              <a href="/main/seepostdetails/{{ posts.guid}}" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">14</span></a>
+              <span class="span6 pull-right">
+                <div class="col-sm-2" style="padding-right: 3em;">
+            			<form class="operation_from" action="/main/edit/" method=post style=".form-control {width:auto;}">{% csrf_token %}
+          					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+          					<button type="submit" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></button>
+          				</form>
+                </div>
+          			<form class="operation_from" action="/main/delete/" method=post style=".form-control {width:auto;}">{% csrf_token %}
+        					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+          				<button type="submit" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Delete"></button>
+        				</form>
+              </span>
+  				    </h5>
+  			    </div>
           </div>
-    			{% endfor %}
-    		</div>
-    	</div>
-    </div>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src=""{% static 'js/bootstrap.min.js' %}""></script>
+		      {% endfor %}
+
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src=""{% static 'js/bootstrap.min.js' %}""></script>
   </body>
   {%endblock%}
 </html>
