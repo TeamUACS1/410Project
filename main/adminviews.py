@@ -43,7 +43,7 @@ def manageAuthor(request):
 def manageHosts(request):
 	context =RequestContext(request)
 	hosts = Nodes.objects.filter()
-	return render_to_response('main/show_hosts_list.html', {'hosts': hosts}, context)
+	return render_to_response('main/show_hosts_list.html', {'nodes': hosts}, context)
 #Allows the server admin to delete authors from the website
 def deleteauthor(request):
 	context = RequestContext(request)
@@ -52,6 +52,13 @@ def deleteauthor(request):
 		author =Authors(id=author)
 		author.delete()
 	return redirect(manageAuthor)
+def deletenode(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		node= request.POST.get("ID", "")
+		node =Nodes(id=node)
+		node.delete()
+	return redirect(manageHosts)
 
 #Allows the server admin to edit author information 
 def editauthor(request):
@@ -60,6 +67,12 @@ def editauthor(request):
 		author= request.POST.get("ID", "")
 		author =Authors.objects.filter(id=author)
 	return render_to_response('main/edit_authors.html',{'author': author}, context)
+def editnode(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		node= request.POST.get("ID", "")
+		node =Nodes.objects.filter(id=node)
+	return render_to_response('main/edit_nodes.html',{'nodes': node}, context)
 
 #Allows the server admin to save changes made to the author information
 def saveauthor(request):
@@ -72,6 +85,16 @@ def saveauthor(request):
 	authors.password=encrypted_pass
 	authors.save()
 	return redirect(manageAuthor)
+def savenode(request):
+	context = RequestContext(request)
+	node= request.POST.get("ID", "")
+	nodes = Nodes.objects.get(id=node)
+	host=request.POST.get("host", "")
+	flag=request.POST.get("privacy", "")
+	nodes.host=host
+	nodes.approved_flag=flag
+	nodes.save()
+	return redirect(manageHosts)
 def addHosts(request):
 	approved_flag=1
 	host=request.POST.get("searchUser")

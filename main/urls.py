@@ -55,6 +55,7 @@ url(r'^add_comment/',views.addComment,name='addComment'),
 url(r'^approveHosts', adminviews.approveHosts, name='approveHosts'),
 url(r'^manageHosts', adminviews.manageHosts, name='manageHosts'),
 url(r'^addHosts', adminviews.addHosts, name='addHosts'),
-
-
+url(r'^deletenode/$', adminviews.deletenode, name='deletenode'),
+url(r'^editnode/$', adminviews.editnode, name='editnode'),
+url(r'^savenode/$', adminviews.savenode, name='savenode'),
 )
