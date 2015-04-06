@@ -303,8 +303,19 @@ def myStream(request):
 	current_user=request.session['user_guid']
 	user = Authors.objects.get(guid=current_user)
 
-	#posts = Posts.objects.filter(Q(visibility='PUBLIC')| Q(author=user))
-	posts = getGithubActivity(user)
+	userPosts = Posts.objects.filter(Q(visibility='PUBLIC')| Q(author=user))
+	githubPosts = getGithubActivity(user)
+
+	postList = []
+	#get each post title
+        for post in userPosts:
+            element =str(post.pubDate)+ " Posted: " + post.content 
+            #element = post.title + post.description + post.content + str(post.pubDate) + post.author
+            postList.append(element)
+
+        #print(postList)
+	posts =  postList + githubPosts
+        posts.sort(reverse=True)
 
 	return render_to_response('main/myStream.html', {'posts': posts}, context)
 
@@ -321,12 +332,13 @@ def getGithubActivity(user):
 			for element in jsonresp:
 				if element["type"] == "PushEvent":
 					activityelem = ""
-					activityelem += " At: "
+					#activityelem += " At: "
 					#date = ""
 					date = element["created_at"]
 					#TODO this is not working as intended
 					date = date.replace('Z', ' ')
-					date = date.replace('T', ' ')
+                                        date = date.split("T")[0]
+					#date = date.replace('T', ' ')
 					activityelem += date
 					activityelem += " Pushed at repo: "
 					activityelem += element["repo"]["name"]
