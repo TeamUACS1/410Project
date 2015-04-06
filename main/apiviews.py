@@ -323,10 +323,11 @@ def friendrequest(request):
 	else:
 		return HttpResponse("Already friends\n")
 
-def getspecificauthors(request,authorguid1=0):
+def getspecificauthors(request,authorguid1):
 	context = RequestContext(request)
 	lists=[]
-	if (authorguid1 != 0 ):
+	
+	if (authorguid1 != "all" ):
 		authors = Authors.objects.filter(guid=authorguid1)
 	else:
 		authors = Authors.objects.all()
@@ -337,10 +338,8 @@ def getspecificauthors(request,authorguid1=0):
 		author2['host'] = "cmput410project15.herokuapp.com"
 		author2['displayname'] = author.displayname
 		author2['url'] = "cmput410project15.herokuapp.com/main/author/" + str(author.guid)
-		post2['author'] = author2
-		post2['comments'] = []
-		lists.append(post2)
-	return HttpResponse(json.dumps({"posts" : lists}))
+		lists.append(author2)
+	return HttpResponse(json.dumps({"author" : lists}))
 
 
 
