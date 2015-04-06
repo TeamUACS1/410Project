@@ -46,6 +46,8 @@ def getPostsFromServers(request):
 	for key in data["posts"]:
 		posts.append(key)
 	
+	for post in posts:
+		post['numberComments'] = len(post['comments'])
 	return render_to_response('main/show_other_server_posts.html', {'posts': posts}, context)
 
 #Create a get for a specific post ID hosted on group4's database
