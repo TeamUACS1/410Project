@@ -238,6 +238,18 @@ def add_post(request):
 		post.save()
 	return redirect(showposts)
 
+def addComment(request):
+	context = RequestContext(request)
+	pubDate = datetime.now()
+	if(request.method == 'POST'):
+		comments= request.POST.get("comment", "")
+		author_guid = request.session['user_guid']
+		post_guid=request.POST.get("guid", "")
+		guid = str(uuid.uuid1()).replace("-", "")
+		comment = Comments(comments=comments,author_guid=author_guid,post_guid=post_guid, pubDate=pubDate, guid=guid)
+		comment.save()
+	return redirect(showposts)
+
 #Allows a user to add friends after finding another user to add.
 #When this is called the adder becomes the addee's follower 
 def addFriend(request):
@@ -319,6 +331,13 @@ def profileSettings(request):
 			user.save()
 	
 	return render_to_response('main/profileSettings.html', {'error':error}, context)
+def getpostdetails(request, post_guid):
+	context = RequestContext(request)
+	posts = Posts.objects.filter(guid=post_guid)
+	
+	comments=Comments.objects.filter(post_guid=post_guid)
+	return render_to_response('main/posts.html', {'posts':posts,'comments':comments}, context)
+	
 
 #Display the current user's stream, posts and github activity
 def myStream(request):
