@@ -331,11 +331,18 @@ def profileSettings(request):
 			user.save()
 	
 	return render_to_response('main/profileSettings.html', {'error':error}, context)
+
+#This is where you get the details of a post.
 def getpostdetails(request, post_guid):
 	context = RequestContext(request)
 	posts = Posts.objects.filter(guid=post_guid)
-	
 	comments=Comments.objects.filter(post_guid=post_guid)
+	for post in posts:
+		setattr(post, 'comments', str(len(comments)))
+	for comment in comments:
+		users = Authors.objects.get(guid=comment.author_guid)
+		setattr(comment, 'author', users.displayname)
+		print comment.author
 	return render_to_response('main/posts.html', {'posts':posts,'comments':comments}, context)
 	
 

@@ -133,7 +133,7 @@
             </div>
             <div class="panel-footer">
       				<h5>{{ posts.pubDate }}
-              <a href="/main/loggedin" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">14</span></a>
+              <a href="/main/seepostdetails/{{ posts.guid}}" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">14</span></a>
               <span class="span6 pull-right">
                 <div class="col-sm-2" style="padding-right: 3em;">
             			<form class="operation_from" action="/main/edit/" method=post style=".form-control {width:auto;}">{% csrf_token %}
