@@ -267,23 +267,24 @@ def getpost(request,post_guid):
 				lists.append(post2)
 			"""
 
+
+		date = datetime.now()
+		info = json.loads(request.body)
+		title = info["title"]
+		description = info["description"]
+		content = info["content"]
+		visibility = info["visibility"]
+		author = info["author"]["displayname"]
+
+		string=serializers.serialize("json",Authors.objects.filter(displayname=author),fields=('guid','host','displayname','url'))
+		string=str(string).replace("fields","author")
+		string=str(string).split("},")[0]
+		string=string + "}}]"
+
+		guid = str(uuid.uuid1()).replace("-", "")
+		
 		existingpost = Posts.objects.filter(Q(guid=post_guid))
 		if(existingpost):
-
-			date = datetime.now()
-			info = json.loads(request.body)
-			title = info["title"]
-			description = info["description"]
-			content = info["content"]
-			visibility = info["visibility"]
-			author = info["author"]["displayname"]
-
-			string=serializers.serialize("json",Authors.objects.filter(displayname=author),fields=('guid','host','displayname','url'))
-			string=str(string).replace("fields","author")
-			string=str(string).split("},")[0]
-			string=string + "}}]"
-
-			guid = str(uuid.uuid1()).replace("-", "")
 			post = Post.objects.filter(guid=post_guid).update(title=title, description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
 		else:
 			post = Posts(title=title,description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
@@ -321,3 +322,26 @@ def friendrequest(request):
 		return HttpResponse("Added\n")
 	else:
 		return HttpResponse("Already friends\n")
+
+def getspecificauthors(request,authorguid1=0):
+	context = RequestContext(request)
+	lists=[]
+	if (authorguid1 != 0 ):
+		authors = Authors.objects.filter(guid=authorguid1)
+	else:
+		authors = Authors.objects.all()
+
+	for author in authors:
+		author2={}
+		author2['id'] = str(author.guid)
+		author2['host'] = "cmput410project15.herokuapp.com"
+		author2['displayname'] = author.displayname
+		author2['url'] = "cmput410project15.herokuapp.com/main/author/" + str(author.guid)
+		post2['author'] = author2
+		post2['comments'] = []
+		lists.append(post2)
+	return HttpResponse(json.dumps({"posts" : lists}))
+
+
+
+
