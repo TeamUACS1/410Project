@@ -10,9 +10,9 @@ class APITestCases(TestCase):
 	self.username = "user"
 	self.password = "pass"
         #post ID for post "!!!!!!!!!"
-        self.postID = "03d3fa38d1bb11e4b41d4ceb427382e1"
+        self.postID = "eb892734dc7b11e4ba5b4ceb427382e1"
         #account ID for user "ashley"
-	self.authorID = "e76a5a0ed1ba11e4b1774ceb427382e1"
+	self.authorID = "d18d162edc7b11e4a9e84ceb427382e1"
         #account ID for user "boo"
         self.friendID = "9ef25d96d26711e48f434ceb427382e1"
 
@@ -61,6 +61,8 @@ class APITestCases(TestCase):
         in the database.
         """            
         request = urllib2.Request(self.url+"author/" + self.authorID + "/posts/") 
+        print("url: ")
+        print( self.url+"author/" + self.authorID + "/posts/")
         base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
         request.add_header("Authorization", "Basic %s" % base64string)
         resultUrl = urllib2.urlopen(request)
