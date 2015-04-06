@@ -121,6 +121,16 @@ def login(request):
 			string=str(string).split("},")[0]
 			string=string + "}}]"
 			request.session['user']=string
+			author=Authors.objects.filter(displayname=request.POST.get("username", ""))
+			for author in author:
+				author2={}
+				author2['id'] = str(author.guid)
+				author2['host'] = "cmput410project15.herokuapp.com"
+				author2['displayname'] = author.displayname
+				author2['url'] = "cmput410project15.herokuapp.com/main/author/" + str(author.guid)
+				post2['author'] = author2
+				post2['comments'] = []
+				request.session['user_json']=json.dumps({"author" : author})
 			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
 			for author in authors:
 				request.session['user_guid']=author.guid
