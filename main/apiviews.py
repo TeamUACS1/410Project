@@ -323,11 +323,11 @@ def friendrequest(request):
 	else:
 		return HttpResponse("Already friends\n")
 
-def getspecificauthors(request,authorguid1=0):
+def getspecificauthors(request,authorguid1):
 	context = RequestContext(request)
 	lists=[]
-	print authorguid1
-	if (authorguid1 != 0 ):
+	
+	if (authorguid1 != "all" ):
 		authors = Authors.objects.filter(guid=authorguid1)
 	else:
 		authors = Authors.objects.all()
