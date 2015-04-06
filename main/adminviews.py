@@ -13,12 +13,16 @@ from main.models import Authors
 from main.models import Comments
 from main.models import Friends
 from main.models import Follows
+from main.models import Nodes
 
 #shows the authors that have been approved by the admin. Displays them on a page accesible by the admin
 def approveAuthor(request):
 	context =RequestContext(request)
 	authors = Authors.objects.filter(approved_flag=0)
 	return render_to_response('main/show_approval_list.html', {'authors': authors}, context)
+def approveHosts(request):
+	context =RequestContext(request)
+	return render_to_response('main/show_approval_host_list.html', context)
 
 #allows the admin to approve a new user/author to the website after they sign up for an account
 def approve(request):
@@ -35,6 +39,10 @@ def manageAuthor(request):
 	authors = Authors.objects.filter()
 	return render_to_response('main/show_authors_list.html', {'authors': authors}, context)
 
+def manageHosts(request):
+	context =RequestContext(request)
+	hosts = Nodes.objects.filter()
+	return render_to_response('main/show_hosts_list.html', {'hosts': hosts}, context)
 #Allows the server admin to delete authors from the website
 def deleteauthor(request):
 	context = RequestContext(request)
