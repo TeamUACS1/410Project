@@ -13,6 +13,7 @@ url(r'^deletePostUserProfile/$', userProfileViews.deletePostUserProfile, name='d
 url(r'^seeAllPosts/$', views.seeAllPosts, name='seeAllPosts'),
 url(r'^seefriendPosts/$', views.seeAllFriendPosts, name='seefriendPosts'),
 url(r'^friendOfFriend/$', views.seeAllFoFPosts, name='seeAllFoFPosts'),
+url(r'^localCrossServerPosts/$', views.localCrossServerPosts, name='localCrossServerPosts'),
 url(r'^signup', views.signup, name='signup'),
 url(r'^login', views.login, name='login'),
 url(r'^logout', views.logout, name='logout'),
