@@ -54,6 +54,60 @@ class APITestCases(TestCase):
                         return
         self.assertTrue(False, "could not find post with that id")
 
+    def test_getAuthorByID(self):
+        """
+        Tests to see if you can get a author by its ID.
+        Will fail if the ID's we use in this test is no longer
+        in the database.
+        """            
+        request = urllib2.Request(self.url+"author/" + self.authorID) 
+        base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
+        request.add_header("Authorization", "Basic %s" % base64string)
+        resultUrl = urllib2.urlopen(request)
+        result = resultUrl.read()
+	data = json.loads(result)
+	for key,value in data.items():
+            if key == "author":
+                    if value:
+                        self.assertTrue(True)
+                        return
+        self.assertTrue(False, "could not find author with that ID")
+    def test_getallAuthors(self):
+        """
+        Tests to see if you can get all the authors.
+        Will fail if there is no authors in the database.
+        """            
+        request = urllib2.Request(self.url+"author/all") 
+        base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
+        request.add_header("Authorization", "Basic %s" % base64string)
+        resultUrl = urllib2.urlopen(request)
+        result = resultUrl.read()
+	data = json.loads(result)
+	for key,value in data.items():
+            if key == "author":
+                    if value:
+                        self.assertTrue(True)
+                        return
+        self.assertTrue(False, "could not find any authors")
+    def test_getPostByID(self):
+        """
+        Tests to see if you can get a post by its ID.
+        Will fail if the ID's we use in this test is no longer
+        in the database.
+        """            
+        request = urllib2.Request(self.url+"posts/" + self.postID) 
+        base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
+        request.add_header("Authorization", "Basic %s" % base64string)
+        resultUrl = urllib2.urlopen(request)
+        result = resultUrl.read()
+	data = json.loads(result)
+	for key,value in data.items():
+            if key == "posts":
+                    if value:
+                        self.assertTrue(True)
+                        return
+        self.assertTrue(False, "could not find post with that id")
+
     def test_getPostByAuthorID(self):
         """
         Tests to see if you can get a post by Author's ID.
@@ -61,8 +115,6 @@ class APITestCases(TestCase):
         in the database.
         """            
         request = urllib2.Request(self.url+"author/" + self.authorID + "/posts/") 
-        print("url: ")
-        print( self.url+"author/" + self.authorID + "/posts/")
         base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
         request.add_header("Authorization", "Basic %s" % base64string)
         resultUrl = urllib2.urlopen(request)
@@ -96,7 +148,6 @@ class APITestCases(TestCase):
                         return
         self.assertTrue(False, "could not find posts with the current user")
 
-    """ commenting out test until changes are pushed to website
     def test_getFriend(self):
         
         #Tests to see if you can check friendship between authors.
@@ -114,7 +165,6 @@ class APITestCases(TestCase):
                         self.assertTrue(True)
                         return
         self.assertTrue(False, "the two friends are not really friends :(")
-    """
 
     """
     def test_getAuthorFriends(self):
