@@ -95,23 +95,20 @@
         
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
           <h1 class="page-header">Search a PostId on other SocialMedia</h1>
-    			<form id="checkForm" method="POST" action="/main/othernodePostId/">{% csrf_token %}
-    				<div class="winBody">
-    					<p>
-    					<textarea class="text" id="postguid1" name="postguid1" placeholder="Posts's guid"></textarea></p><p>
+          <form id="checkForm" method="POST" action="/main/othernodePostId/">{% csrf_token %}
+        		<div class="well well-sm" style="width:85%;">
+              <input type="text" name="postguid1" id="postguid1" class="form-control" placeholder="Posts' guid"> <br>
     					<select name="hostchoice" id = "hostchoice">
       					<option value="1" selected="selected">Thought Bubble</option>
     						<option value="2">Group 7</option>
-    						
     					</select>
-    					
-    					<input type=submit class="btn addBtn" value="Find"></p>
+    					<button type="submit" value="Add">Find</button>
     				</div>
-    			</form>
+			    </form>
     			{{error}}
     			{% if posts %}
     				{% for posts in posts %}
-    				<div class="link">
+    				<div class="link" style="width:85%;">
     					<h4>{{ posts.content }}</h4>
     					<h4>Description: {{ posts.description}}</h4>
     					<h4>Guid: {{ postguid}}</h4>
@@ -119,7 +116,6 @@
     					<h4>Date: {{ posts.pubdate }}</h4>
     					<h4>Source: {{ posts.source}}</h4>
     					<h4>Title: {{ posts.title}}</h4>
-    					
     				</div>
     				{% endfor %}
     			{%endif%}
