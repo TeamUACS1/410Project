@@ -339,7 +339,7 @@ def getspecificauthors(request,authorguid1=0):
 		author2['displayname'] = author.displayname
 		author2['url'] = "cmput410project15.herokuapp.com/main/author/" + str(author.guid)
 		lists.append(author2)
-	return HttpResponse(json.dumps({"posts" : lists}))
+	return HttpResponse(json.dumps({"author" : lists}))
 
 
 
