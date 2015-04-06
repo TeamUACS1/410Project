@@ -326,6 +326,7 @@ def friendrequest(request):
 def getspecificauthors(request,authorguid1=0):
 	context = RequestContext(request)
 	lists=[]
+	print authorguid1
 	if (authorguid1 != 0 ):
 		authors = Authors.objects.filter(guid=authorguid1)
 	else:
