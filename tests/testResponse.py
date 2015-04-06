@@ -3,7 +3,7 @@
 import urllib2
 import unittest
 
-BASEURL = "http://127.0.0.1:8000"
+BASEURL = "http://cmput410project15.herokuapp.com"
 
 class TestYourWebserver(unittest.TestCase):
     """

@@ -16,6 +16,7 @@ from main.models import Friends
 from main.models import Follows
 from django.core import serializers
 from itertools import chain
+
 #This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
 	context =RequestContext(request)
@@ -33,7 +34,7 @@ def showposts(request):
 	context =RequestContext(request)
 	user = request.session['user']
 	posts = Posts.objects.filter(author=user)
-	return render_to_response('main/show_entries.html', {'posts': posts}, context)
+	return render_to_response('main/show_entries.html', context)
 
 #seeAllPosts shows all the public posts/ posts that the user has the right to view on the website. 
 #Public posts have a flag of 0.
@@ -94,7 +95,7 @@ def seeAllFoFPosts(request):
 				totalf = Friends.objects.raw("select count(*) from main_friends where ((f.authorguid2 = '"+ str(fid.authorguid2) +"' and '" + str(auth.author) + "' = f.authorguid1) or (f.authorguid1 = '"+ str(fid.authorguid2) +"' and '"+ str(auth.author) +"' = f.authorguid2)); ")	
 				looked_up.append(str(auth.author))
 				if (total or totalf):
-					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"'")
+					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"' and p.visibility ='FOAF';")
 	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
 #Handles user login. Checks to see if login credentials are valid. Manages user and admin logins
@@ -119,6 +120,8 @@ def login(request):
 			string=str(string).split("},")[0]
 			string=string + "}}]"
 			request.session['user']=string
+			author=json.loads(string)
+			request.session['user_json']=author[0]['author']
 			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
 			for author in authors:
 				request.session['user_guid']=author.guid
@@ -278,17 +281,17 @@ def profileSettings(request):
 	
 	if request.method=='POST':
 
-		current_user=request.session['user']
+		current_user=request.session['user_guid']
 		password = request.POST.get("newpassword","")
 		githubUser = request.POST.get("githubname","")
-		user = Users.objects.get(username=current_user)
+		user = Authors.objects.get(guid=current_user)
 		if password:
 			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
 			user.password = encrypted_pass
 			user.save()
 		
 		if githubUser:
-			user.githubUsername = githubUser
+			user.github = githubUser
 			user.save()
 	
 	return render_to_response('main/profileSettings.html', {'error':error}, context)
@@ -297,10 +300,10 @@ def profileSettings(request):
 def myStream(request):
 	context = RequestContext(request)
 	error = None
-	posts = Posts.objects.filter(privateFlag=0)
-	current_user=request.session['user']
-	user = Users.objects.get(username=current_user)
+	current_user=request.session['user_guid']
+	user = Authors.objects.get(guid=current_user)
 
+	#posts = Posts.objects.filter(Q(visibility='PUBLIC')| Q(author=user))
 	posts = getGithubActivity(user)
 
 	return render_to_response('main/myStream.html', {'posts': posts}, context)
@@ -308,11 +311,11 @@ def myStream(request):
 #Fetches the github activity using the github api
 def getGithubActivity(user):
 	posts = ""
-	if user.githubUsername:
+	if user.github:
 		
 		activityList = []
 		try:
-			resp = urllib2.urlopen("https://api.github.com/users/"+user.githubUsername+"/events").read()
+			resp = urllib2.urlopen("https://api.github.com/users/"+user.github+"/events").read()
 			jsonresp = json.loads(resp)
 			#good tool for looking at the raw JSON: jsonformatter.curiousconcept.com
 			for element in jsonresp:
@@ -322,8 +325,8 @@ def getGithubActivity(user):
 					#date = ""
 					date = element["created_at"]
 					#TODO this is not working as intended
-					date = date.replace('Z', '')
-					date = date.replace('T', '')
+					date = date.replace('Z', ' ')
+					date = date.replace('T', ' ')
 					activityelem += date
 					activityelem += " Pushed at repo: "
 					activityelem += element["repo"]["name"]

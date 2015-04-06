@@ -16,6 +16,7 @@ from main.models import Friends
 from main.models import Follows
 from django.core import serializers
 from itertools import chain
+
 #This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
 	context =RequestContext(request)
@@ -33,7 +34,7 @@ def showposts(request):
 	context =RequestContext(request)
 	user = request.session['user']
 	posts = Posts.objects.filter(author=user)
-	return render_to_response('main/show_entries.html', {'posts': posts}, context)
+	return render_to_response('main/show_entries.html', {'posts':posts}, context)
 
 #seeAllPosts shows all the public posts/ posts that the user has the right to view on the website. 
 #Public posts have a flag of 0.
@@ -119,6 +120,8 @@ def login(request):
 			string=str(string).split("},")[0]
 			string=string + "}}]"
 			request.session['user']=string
+			author=json.loads(string)
+			request.session['user_json']=author[0]['author']
 			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
 			for author in authors:
 				request.session['user_guid']=author.guid

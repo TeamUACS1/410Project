@@ -42,14 +42,11 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="navbar navbar-nav navbar-right" style="list-style: none;">
-            <li style="padding-right:4em; padding-top:1.2em;">
-    <a href="/main/otherServerPost" style="font-size:1.4em;">connect+</a>
-            </li>
             <li style="padding-right:1.2em;">
               <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
             </li>
             <li style="padding-right:1.2em; padding-top:1.2em;">
-    <a href="/main/author/{{request.session.user_json.guid}}/feed" style="font-size:1.4em;">{{request.session.user_json.displayname}}</a>
+  	<a href="/main/author/{{request.session.user_json.guid}}/feed" style="font-size:1.4em;">{{request.session.user_json.displayname}}</a>
             </li>
             <li style="padding-right:1.2em;">
               <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>
@@ -67,39 +64,46 @@
   
   {% block body %}
   <body>
-    <div class="container-fluid">
-      <!-- BEGIN SIDEBAR CODE -->
-      <div class="row">
-        <div class="col-sm-3 col-md-2">
-          <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
-            <li class="active"></li>
-            <li><a href="/main/seeAllPosts" id="seeAllPosts">Public</a></li>
-            <li><a href="/main/seefriendPosts" id="seefriendPosts">Friends</a></li>
-            <li><a href="/main/friendOfFriend" id="friendOfFriend">Friend of Friend</a></li>
-            <li><a href="#">Following</a></li>
-            <li><a href="/main/myStream">My Stream</a></li>
-          </ul>
-          <ul class="col-sm-3 col-md-2 sidebar">
-          {% for admin in request.session.admin %}
-        		{% if admin = "T" %}
-      			<li><a href="/main/approveAuthors">Approve Authors</a></li>
-      			<li><a href="/main/manageAuthors">Manage Authors</a></li>
-      		{%endif%}{%endfor%}
-          </ul>
-        </div>
-        <!-- END SIDEBAR CODE -->
-        
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-          <h1 class="page-header">My Stream</h1>
-      			{% for posts in posts %}
-      			<div class="link">
-      				<h4>{{ posts }}</a></h4>
-  			    </div>
-  			    {% endfor %}
-  		  </div>
-  	  </div>
+  <div class="container-fluid">
+    <!-- BEGIN SIDEBAR CODE -->
+    <div class="row">
+      <div class="col-sm-3 col-md-2">
+        <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
+          <li class="active"></li>
+          <li><a href="/main/seeAllPosts" id="seeAllPosts">Public</a></li>
+          <li><a href="/main/seefriendPosts" id="seefriendPosts">Friends</a></li>
+          <li><a href="/main/friendOfFriend" id="friendOfFriend">Friend of Friend</a></li>
+          <li><a href="#">Following</a></li>
+          <li><a href="/main/myStream">My Stream</a></li>
+        </ul>
+        <ul class="col-sm-3 col-md-2 sidebar">
+        {% for admin in request.session.admin %}
+      		{% if admin = "T" %}
+    			<li><a href="/main/approveAuthors">Approve Authors</a></li>
+    			<li><a href="/main/manageAuthors">Manage Authors</a></li>
+    		{%endif%}{%endfor%}
+        </ul>
+      </div>
+      <!-- END SIDEBAR CODE -->
+      
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+        <h1 class="page-header">Public Posts</h1>
+
+        {% for posts in posts %}
+  		  <div class="link">
+			    <h4>{{ posts.title }}</h4>
+			    <h4>{{ posts.description }}</h4>
+			    <h4>{{ posts.content }}</h4>
+			    <h4>{{ posts.pubDate }}</h4>
+			    <h4>{{ posts.author}}</h4>
+		  	</div>
+    		{% endfor %}
+      
+      </div>
     </div>
-  
+  </div>
+ 
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
