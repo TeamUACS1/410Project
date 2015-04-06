@@ -35,6 +35,8 @@ def showposts(request):
 	user = request.session['user']
 	posts = Posts.objects.filter(author=user)
 	for post in posts:
+		comments=Comments.objects.filter(post_guid=post.guid)
+		setattr(post, 'comments', str(len(comments)))
 		tempAuthor = json.loads(post.author)
 		author = tempAuthor[0]['author']
 		setattr(post, 'authorName', author['displayname'])
@@ -49,6 +51,8 @@ def seeAllPosts(request):
 	user = request.session['user']
 	posts = Posts.objects.filter(Q(visibility='PUBLIC'))
 	for post in posts:
+		comments=Comments.objects.filter(post_guid=post.guid)
+		setattr(post, 'comments', str(len(comments)))
 		tempAuthor = json.loads(post.author)
 		author = tempAuthor[0]['author']
 		setattr(post, 'authorName', author['displayname'])
@@ -85,6 +89,8 @@ def seeAllFriendPosts(request):
 		posts = posts | newpost
 	
 	for post in posts:
+		comments=Comments.objects.filter(post_guid=post.guid)
+		setattr(post, 'comments', str(len(comments)))
 		tempAuthor = json.loads(post.author)
 		author = tempAuthor[0]['author']
 		setattr(post, 'authorName', author['displayname'])
@@ -115,6 +121,8 @@ def seeAllFoFPosts(request):
 				if (total or totalf):
 					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"' and p.visibility ='FOAF';")
 	for post in total_posts:
+		comments=Comments.objects.filter(post_guid=post.guid)
+		setattr(post, 'comments', str(len(comments)))
 		tempAuthor = json.loads(post.author)
 		author = tempAuthor[0]['author']
 		setattr(post, 'authorName', author['displayname'])
@@ -342,7 +350,6 @@ def getpostdetails(request, post_guid):
 	for comment in comments:
 		users = Authors.objects.get(guid=comment.author_guid)
 		setattr(comment, 'author', users.displayname)
-		print comment.author
 	return render_to_response('main/posts.html', {'posts':posts,'comments':comments}, context)
 	
 
