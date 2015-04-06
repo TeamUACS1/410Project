@@ -76,9 +76,9 @@
             <li class="active"></li>
             <li><a href="/main/otherServerPost" id="seeOtherServerPosts">Other SocialMedia Posts</a></li>
             <li><a href="/main/otherServerAuthors" id="otherServerAuthors">Other SocialMedia Authors</a></li>
+            <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
             <li><a href="/main/othernodePostId" id="othernodePostId">Search Other SocialMedia PostId</a></li>
             <li><a href="/main/specificauthorposts" id="specificauthorposts">Get Specific Author Post</a></li>
-            <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
             <li><a href="/main/friendcheck" id="friendcheck">Check Authors' Friend Status</a></li>
             <li><a href="/main/friendreq" id="friendreq">Send Friend Request to Other SocialMedia</a></li>
             <li><a href="/main/foaf" id="foaf">Get Other SocialMedia FOAF Posts</a></li>
@@ -98,10 +98,10 @@
     			{% for posts in posts %}
           <div class="panel panel-default" style="width:85%;">
             <div class="panel-heading">
-      			  <h4><span style="font-weight:bold;"><a href="http://{{posts.url}}">{{posts.displayname}}</a></span><span class="span6 pull-right"><a href="http://{{posts.host}}">{{posts.host}}</a></span></h4>	
+      			  <h4><span style="font-weight:bold;"><a href="http://{{posts.url}}">{{posts.displayname}}{{posts.author_details.username}}</a></span><span class="span6 pull-right"><a href="http://{{posts.host}}">{{posts.host}}{{posts.author_details.host}}</a></span></h4>	
             </div>
             <div class="panel-body">
-              <h5>Author Id : {{posts.id}}</h5>
+              <h5>Author Id : {{posts.id}}{{posts.user}}</h5>
             </div>
           </div>
     			{% endfor %}
