@@ -46,6 +46,8 @@ def getPostsFromServers(request):
 	for key in data["posts"]:
 		posts.append(key)
 	
+	for post in posts:
+		post['numberComments'] = len(post['comments'])
 	return render_to_response('main/show_other_server_posts.html', {'posts': posts}, context)
 
 #Create a get for a specific post ID hosted on group4's database
@@ -66,10 +68,10 @@ def searchPostId(request):
 		else:
 			url = "http://cs410.cs.ualberta.ca:41074/service/posts/"+ postguid1 + "/"			
 			string = "Basic "+ base64.b64encode("admin:admin")
-			contents = request.get(url, headers={"Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
+			request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
+			contents = urllib2.urlopen(request).read()
 		
-		try:
-			
+		try:	
 			data = json.loads(contents)
 			try:
 				for key in data["posts"]:
