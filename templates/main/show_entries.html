@@ -74,7 +74,6 @@
     <div class="row">
       <div class="col-sm-3 col-md-2">
         <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
-          <li class="active"></li>
           <li><a href="/main/seeAllPosts" id="seeAllPosts">Public</a></li>
           <li><a href="/main/seefriendPosts" id="seefriendPosts">Friends</a></li>
           <li><a href="/main/friendOfFriend" id="friendOfFriend">Friend of Friend</a></li>
@@ -136,7 +135,7 @@
             </div>
             <div class="panel-footer">
       				<h5>{{ posts.pubDate }}
-              <a href="/main/seepostdetails/{{ posts.guid}}" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">14</span></a>
+              <a href="/main/seepostdetails/{{ posts.guid}}" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">{{ posts.comments }}</span></a>
               <span class="span6 pull-right">
                 <div class="col-sm-2" style="padding-right: 3em;">
             			<form class="operation_from" action="/main/edit/" method=post style=".form-control {width:auto;}">{% csrf_token %}
