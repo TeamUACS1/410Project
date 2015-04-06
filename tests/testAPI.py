@@ -1,4 +1,4 @@
-import json,urllib2, base64
+import json, urllib, urllib2, base64
 from django.test import TestCase
 
 
@@ -114,23 +114,31 @@ class APITestCases(TestCase):
         self.assertTrue(False, "the two friends are not really friends :(")
     """
 
+    """
     def test_getAuthorFriends(self):
-        """
-        Will test to see if we can get friends of an author
-        Will fail if the current author has no friends.
-        """            
-        request = urllib2.Request(self.url+"friends/"+self.authorID) 
+        
+        #Will test to see if we can get friends of an author
+        #Will fail if the current author has no friends.
+         
+
+           
+        values ={"query":"getpost","id":"03d3fa38d1bb11e4b41d4ceb427382e1","author":"9ef25d96d26711e48f434ceb427382e1","authors":["9ef25d96d26711e48f434ceb427382e1","e76a5a0ed1ba11e4b1774ceb427382e1"]}
+        urlData = urllib.urlencode(values)
+        request = urllib2.Request(self.url+"friends/"+self.authorID,urlData) 
         base64string = base64.encodestring('%s:%s' % (self.username, self.password)).replace('/n','')
         request.add_header("Authorization", "Basic %s" % base64string)
+
+        #requestWithData = urllib2.Request(request,urlData)  
+
         resultUrl = urllib2.urlopen(request)
         result = resultUrl.read()
 	data = json.loads(result)
-        print(result)
-        """
+        
 	for key,value in data.items():
             if key == "posts":
                     if value:
                         self.assertTrue(True)
                         return
-        """
+        
         self.assertTrue(False, "could not get friends of author ID")
+    """
