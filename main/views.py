@@ -34,6 +34,11 @@ def showposts(request):
 	context =RequestContext(request)
 	user = request.session['user']
 	posts = Posts.objects.filter(author=user)
+	for post in posts:
+		tempAuthor = json.loads(post.author)
+		author = tempAuthor[0]['author']
+		setattr(post, 'authorName', author['displayname'])
+		setattr(post, 'authorGuid', author['guid'])
 	return render_to_response('main/show_entries.html', {'posts':posts}, context)
 
 #seeAllPosts shows all the public posts/ posts that the user has the right to view on the website. 

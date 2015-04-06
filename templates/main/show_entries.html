@@ -128,14 +128,14 @@
 			    {% for posts in posts %}
           <div class="panel panel-default">
   			    <div class="panel-heading">
-      				<h4>{{ posts.title }}: {{ posts.description }}</h4>
+      				<h4><span style="font-weight: bold;">{{ posts.title }}:</span> {{ posts.description }} <span class="span6 pull-right"><a href="/main/author/{{posts.authorGuid}}/feed">{{posts.authorName}}</a></span></h4>
             </div>
             <div class="panel-body">
       				<h4>{{ posts.content }}</h4>
             </div>
             <div class="panel-footer">
       				<h4>{{ posts.pubDate }}</h4>
-      				<h4>{{ posts.author}}
+      				<h4>
       				<form class="operation_from" action="/main/delete/" method=post>{% csrf_token %}
       					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
       					<input type="submit" value=Delete>
