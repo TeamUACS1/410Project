@@ -312,9 +312,16 @@ def getpostifFOAF(request):
 		
 
 		contents = urllib2.urlopen(request).read()
+
 		error = ""
 		try:
 			data = json.loads(contents)
+			if(hostchoice != "1"):
+				posts = []
+				for key in data["posts"]:
+					posts.append(key)
+				data = posts[0]
+			print data
 		except:
 			data = []
 			error = contents
