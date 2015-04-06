@@ -47,7 +47,7 @@ def showposts(request):
 def seeAllPosts(request):
 	context =RequestContext(request)
 	user = request.session['user']
-	posts = Posts.objects.filter(Q(visibility='PUBLIC') | Q(author=user))
+	posts = Posts.objects.filter(Q(visibility='PUBLIC'))
 	for post in posts:
 		tempAuthor = json.loads(post.author)
 		author = tempAuthor[0]['author']
@@ -393,3 +393,15 @@ def getGithubActivity(user):
 			print("there was an error: %r" % e)
 
 	return posts
+
+def localCrossServerPosts(request):
+	context =RequestContext(request)
+	user = request.session['user']
+	posts = Posts.objects.filter(Q(visibility='SERVERONLY'))
+	for post in posts:
+		tempAuthor = json.loads(post.author)
+		author = tempAuthor[0]['author']
+		setattr(post, 'authorName', author['displayname'])
+		setattr(post, 'authorGuid', author['guid'])
+	posts = reversed(posts)
+	return render_to_response('main/localServerPosts.html', {'posts': posts}, context)

@@ -13,6 +13,7 @@ url(r'^deletePostUserProfile/$', userProfileViews.deletePostUserProfile, name='d
 url(r'^seeAllPosts/$', views.seeAllPosts, name='seeAllPosts'),
 url(r'^seefriendPosts/$', views.seeAllFriendPosts, name='seefriendPosts'),
 url(r'^friendOfFriend/$', views.seeAllFoFPosts, name='seeAllFoFPosts'),
+url(r'^localCrossServerPosts/$', views.localCrossServerPosts, name='localCrossServerPosts'),
 url(r'^signup', views.signup, name='signup'),
 url(r'^login', views.login, name='login'),
 url(r'^logout', views.logout, name='logout'),
@@ -50,4 +51,8 @@ url(r'^friends/(?P<authorguid1>\w+)', apiviews.friends, name='friends'),
 url(r'^friendrequest', apiviews.friendrequest, name='friendrequest'),
 url(r'^author/(?P<authorguid1>\w+)', apiviews.getspecificauthors, name='getspecificauthors'),
 url(r'^seepostdetails/(?P<post_guid>\w+)',views.getpostdetails,name='getpostdetails'),
+url(r'^add_comment/',views.addComment,name='addComment'),
+url(r'^approveHosts/$', adminviews.approveHosts, name='approveHosts'),
+url(r'^manageHosts/$', adminviews.manageHosts, name='manageHosts'),
+
 )

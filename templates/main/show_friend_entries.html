@@ -78,6 +78,7 @@
             <li><a href="/main/friendOfFriend" id="friendOfFriend">Friend of Friend</a></li>
             <li><a href="#">Following</a></li>
             <li><a href="/main/myStream">My Stream</a></li>
+            <li><a href="/main/localCrossServerPosts">Local Server Posts</a></li>
             {% for admin in request.session.admin %}
             {% if admin = "T" %}
         			<li><a href="/main/approveAuthors">Approve Authors</a></li>
@@ -87,6 +88,7 @@
         </div>
         <!-- END SIDEBAR CODE -->
         
+        <!-------------- BEGIN MAIN PAGE CODE ---------------------->
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
           <h1 class="page-header">Friend's Posts</h1>
       			<script>
@@ -109,7 +111,7 @@
 					    <h2>Add a post</h2>
               <input type="text" name="title" id="title" class="form-control" placeholder="Title"> <br>
               <input type="text" name="description" id="description" class="form-control" placeholder="Summary"><br>
-              <input type="text" name="content" id="post" class="form-control" placeholder="Content">
+              <input type="text" name="content" id="post" class="form-control" placeholder="Content"><br>
     					<select name="privacy" id = "privacy" onchange = "addname(this)">
       					<option value="PUBLIC">Public</option>
     						<option value="PRIVATE">Private</option>

@@ -80,10 +80,13 @@
           <li><a href="/main/friendOfFriend" id="friendOfFriend">Friend of Friend</a></li>
           <li><a href="#">Following</a></li>
           <li><a href="/main/myStream">My Stream</a></li>
+          <li><a href="/main/localCrossServerPosts">Local Server Posts</a></li>
           {% for admin in request.session.admin %}
         	{% if admin = "T" %}
     			<li><a href="/main/approveAuthors">Approve Authors</a></li>
     			<li><a href="/main/manageAuthors">Manage Authors</a></li>
+			<li><a href="/main/approveHosts">Approve Hosts</a></li>
+    			<li><a href="/main/manageHosts">Manage Hosts</a></li>
     		  {%endif%}{%endfor%}
         </ul>
       </div>
@@ -113,7 +116,7 @@
 					    <h2>Add a post</h2>
               <input type="text" name="title" id="title" class="form-control" placeholder="Title"> <br>
               <input type="text" name="description" id="description" class="form-control" placeholder="Summary"><br>
-              <input type="text" name="content" id="post" class="form-control" placeholder="Content">
+              <input type="text" name="content" id="post" class="form-control" placeholder="Content"><br>
     					<select name="privacy" id = "privacy" onchange = "addname(this)">
       					<option value="PUBLIC" selected="selected">Public</option>
     						<option value="PRIVATE">Private</option>

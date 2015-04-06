@@ -69,7 +69,7 @@
   {% block body %}
   <body>
     <div class="container-fluid">
-      <!-- BEGIN SIDEBAR CODE -->
+      <!--------------------------- BEGIN SIDEBAR CODE ----------------------->
       <div class="row">
         <div class="col-sm-3 col-md-2">
           <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
@@ -91,39 +91,25 @@
       		{%endif%}{%endfor%}
           </ul>
         </div>
-        <!-- END SIDEBAR CODE -->
+        <!------------------------ END SIDEBAR CODE ---------------------->
         
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
           <h1 class="page-header">Other SocialMedia Posts</h1>		
     			{% for posts in posts %}
-    			<div class="link">
-    				<h4>{ <br> "posts": [ </h4>		
-    				<div>	
-    					<h4>{</h4>
-    					<h4>"author": {</h4>
-    					<h4>"displayname": {{ posts.author.displayname }}</h4>
-    					<h4>"host": {{posts.author.host}}</h4>
-    					<h4>"id": {{posts.author.id}}</h4>
-    					<h4>"url": {{posts.author.url}}</h4>
-    					<h4>}</h4>
-     				</div>
-    				<h4>"comments": {{ posts.comments }},</h4>
-    				<h4>"content":  {{ posts.content }},</h4>
-    				<h4>"description": {{ posts.description}},</h4>
-    				<h4>"guid": {{ posts.guid}},</h4>
-    				<h4>"origin": {{ posts.origin}},</h4>
-    				<h4>"pubDate": {{ posts.pubDate }},</h4>
-    				<h4>"source": {{ posts.source}},</h4>
-    				<h4>"title": {{ posts.title}},</h4>
-    				<h4>"visibility": {{ posts.visibility}},</h4>
-    				<h4>},</h4>
-    				<div>
-    					<h4>{</h4>
-    					<h4>"author": {</h4>
-    					<h4>"displayname": {{posts.comments}},</h4>		
-    				</div>		
-    			</div>
-    			{% endfor %}
+    			<div class="panel panel-default" style="width:85%;">
+            <div class="panel-heading">
+    				  <h4><span style="font-weight:bold;">{{posts.title}}:</span>{{posts.description}}<span class="span6 pull-right"><a href="http://{{posts.author.url}}">{{posts.author.displayname}} : {{posts.author.host}}</a></span></h4>	
+            </div>
+            <div class="panel-body">
+              <h5>{{posts.content}}</h5>
+            </div>
+            <div class="panel-footer">
+              <h5>{{posts.pubDate}}
+                <a href="/main/otherServerPost" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comments"><span class="badge">4 Comments {{posts.comments}}</span></a>
+              </h5>
+            </div> 
+          </div>
+    		  {% endfor %}
 		    </div>
 	    </div>
     </div>
