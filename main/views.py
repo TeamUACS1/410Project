@@ -259,16 +259,31 @@ def addComment(request):
 	return redirect(showposts)
 
 #Allows a user to add friends after finding another user to add.
-#When this is called the adder becomes the addee's follower 
+def acceptUser(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		username1 = request.POST.get("ID", "")
+		post_friend = Friends.objects.filter(authorguid1=username1).update(accepted=1)
+		post_friend[0].save()
+	return redirect(showposts)
+
+#Allows a user to add friends after finding another user to add.
 def addFriend(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
-		username2= request.POST.get("ID", "")
+		username2 = request.POST.get("ID", "")
 		post_friend = Friends(authorguid1=request.session['user_guid'],authorguid2=username2, accepted=0)
-		post_follow = Follows(authorguid1=request.session['user_guid'],authorguid2=username2)
 		post_friend.save()
+	return redirect(showposts)
+
+#Allows a user to follow someone after finding them.
+def followUser(request):
+	context = RequestContext(request)
+	if(request.method == 'POST'):
+		username2 = request.POST.get("ID", "")
+		post_follow = Follows(authorguid1=request.session['user_guid'],authorguid2=username2)
 		post_follow.save()
-	return redirect(seeAllSearches)
+	return redirect(showposts)
 
 #Allows the user to search for other users using a specific username
 def seeAllSearches(request):
@@ -294,11 +309,17 @@ def viewfriend(request, author_guid):
 	for pending in pendingRequests:
 		setattr(pending, 'authorName', Authors.objects.filter(guid=pending.authorguid1)[0].displayname)
 
-	#This part of code is for Pending Requests
-	followers = Follows.objects.filter(authorguid1=author_guid)
+	#This part of code is for following
+	followers1 = Follows.objects.filter(authorguid1=author_guid)
 	following = []
-	for follow in followers:
+	for follow in followers1:
 		following.append(Authors.objects.filter(guid=follow.authorguid2)[0])
+
+	#This part of code is for followers
+	following2 = Follows.objects.filter(authorguid2=author_guid)
+	followers = []
+	for follow in following2:
+		followers.append(Authors.objects.filter(guid=follow.authorguid1)[0])
 
 	#This part of code is for getting your friends
 	friendsGuid=Friends.objects.filter((Q(authorguid1=author_guid)&Q(accepted=str(1)))|(Q(authorguid2=author_guid)&Q(accepted=str(1))))
@@ -333,7 +354,7 @@ def viewfriend(request, author_guid):
 				temp.append(post)
 		posts = temp
 
-	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests, "following":following}, context)
+	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests, "following":following, "followers":followers}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db
