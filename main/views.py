@@ -294,6 +294,12 @@ def viewfriend(request, author_guid):
 	for pending in pendingRequests:
 		setattr(pending, 'authorName', Authors.objects.filter(guid=pending.authorguid1)[0].displayname)
 
+	#This part of code is for Pending Requests
+	followers = Follows.objects.filter(authorguid1=author_guid)
+	following = []
+	for follow in followers:
+		following.append(Authors.objects.filter(guid=follow.authorguid2)[0])
+
 	#This part of code is for getting your friends
 	friendsGuid=Friends.objects.filter((Q(authorguid1=author_guid)&Q(accepted=str(1)))|(Q(authorguid2=author_guid)&Q(accepted=str(1))))
 	friends = []
@@ -306,6 +312,13 @@ def viewfriend(request, author_guid):
 	#This part of Code is for getting the Posts
 	if (author_guid == request.session['user_guid']):
 		posts=Posts.objects.filter(author=request.session['user'])
+		for post in posts:
+			comments=Comments.objects.filter(post_guid=post.guid)
+			setattr(post, 'comments', str(len(comments)))
+			author = json.loads(post.author)
+			author = author[0]['author']
+			setattr(post, 'authorName', author['displayname'])
+			setattr(post, 'authorGuid', author['guid'])
 	else:
 		posts=Posts.objects.filter(Q(visibility='PUBLIC'))
 		temp = []
@@ -313,10 +326,14 @@ def viewfriend(request, author_guid):
 			author = json.loads(post.author)
 			author = author[0]['author']
 			if(author['guid'] == author_guid):
+				comments=Comments.objects.filter(post_guid=post.guid)
+				setattr(post, 'comments', str(len(comments)))
+				setattr(post, 'authorName', author['displayname'])
+				setattr(post, 'authorGuid', author['guid'])
 				temp.append(post)
 		posts = temp
 
-	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests}, context)
+	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests, "following":following}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db

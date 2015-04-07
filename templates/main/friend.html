@@ -99,9 +99,8 @@
           <h2>Friends</h2>
           <div class="well well-sm" style="width:85%;">
             {%for friends in friends%}
-            <h4>{{friends.displayname}}</h4>
+            <h4><a href="/main/author/{{friends.guid}}/feed">{{friends.displayname}}</a></h4>
               <!----Code for sending friend requests ---->
-              <h4>{{request.session.user_json.guid}}</h4>
               {% for session in request.session.friend %}
         		  {% if session != "t" %} 
               <h4>{{friends.displayname}}</h4>
@@ -139,6 +138,9 @@
           <!-------Code for following users ------>
           <h2>Following</h2>
           <div class="well well-sm" style="width:85%;">
+          {%for follow in following%}
+          <h4>{{follow.displayname}}</h4>
+          {%endfor%}  
       			{% for session in request.session.follow %}
           		{% if session != "t" %} 
               <form class="operation_from" action="/main/followFriend/" method=post>{% csrf_token %}
