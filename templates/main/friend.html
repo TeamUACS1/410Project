@@ -91,10 +91,10 @@
       </div>
       <!---------------- END SIDEBAR CODE ------------------>
       <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-        {%if request.session.user_json.guid == thisUser%}
+        {%if request.session.user_json.guid == userProfile.guid%}
         <h1 class="page-header">Welcome to your profile!</h1>
         {%else%}
-        <h1 class="page-header">Welcome to {{thisUser}}'s profile!</h1>
+        <h1 class="page-header">Welcome to {{userProfile.displayname}}'s profile!</h1>
         {%endif%}
           <h2>Friends</h2>
           <div class="well well-sm" style="width:85%;">
@@ -130,7 +130,7 @@
           <div class="well well-sm" style="width:85%;">
             {%if pendingRequests%}
             {% for request in pendingRequests%}
-            <h4><a href="/main/author/{{request.authorguid1}}/feed">Request1</a></h4>
+            <h4><a href="/main/author/{{request.authorguid1}}/feed">{{request.authorName}}</a></h4>
             {%endfor%}
             {%else%}<p>No pending requests</p>
             {%endif%}

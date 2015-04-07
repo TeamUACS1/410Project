@@ -16,6 +16,37 @@ from main.models import Friends
 from main.models import Follows
 from django.core import serializers
 from itertools import chain
+#Handles user login. Checks to see if login credentials are valid. Manages user and admin logins
+def login(request):
+	context =RequestContext(request)
+	error =None
+	if request.method=='POST':
+		authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
+		password =request.POST.get("password", "")
+		encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
+		for author in authors:
+			password=author.password
+		if not authors:
+			error='Not a used username'
+		elif encrypted_pass!=password:
+			error='Invalid Password'
+		else:
+			request.session['logged_in']="T"
+			session=request.session['logged_in']
+			string=serializers.serialize("json",Authors.objects.filter(displayname=request.POST.get("username", "")),fields=('guid','host','displayname','url'))
+			string=str(string).replace("fields","author")
+			string=str(string).split("},")[0]
+			string=string + "}}]"
+			request.session['user']=string
+			author=json.loads(string)
+			request.session['user_json']=author[0]['author']
+			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
+			for author in authors:
+				request.session['user_guid']=author.guid
+				if request.POST.get("username", "")== "admin":
+					request.session['admin']="T"
+			return redirect(showposts)
+	return render_to_response('main/login.html',{'error': error}, context)
 
 #This function grabs the intital page after a user logs in. It brings up welcome.html
 def index(request):
@@ -121,7 +152,7 @@ def seeAllFoFPosts(request):
 				if (total or totalf):
 					total_posts += Posts.objects.raw("select p.id from main_posts p where p.author = '"+ str(auth.author) +"' and p.visibility ='FOAF';")
 	for post in total_posts:
-		comments=Comments.objects.filter(post_guid=post_guid)
+		comments=Comments.objects.filter(post_guid=post.guid)
 		setattr(post, 'comments', str(len(comments)))
 		tempAuthor = json.loads(post.author)
 		author = tempAuthor[0]['author']
@@ -130,37 +161,6 @@ def seeAllFoFPosts(request):
 	total_posts = reversed(total_posts)
 	return render_to_response('main/show_friend_of_friend.html', {'posts': total_posts}, context)
 
-#Handles user login. Checks to see if login credentials are valid. Manages user and admin logins
-def login(request):
-	context =RequestContext(request)
-	error =None
-	if request.method=='POST':
-		authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
-		password =request.POST.get("password", "")
-		encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
-		for author in authors:
-			password=author.password
-		if not authors:
-			error='Not a used username'
-		elif encrypted_pass!=password:
-			error='Invalid Password'
-		else:
-			request.session['logged_in']="T"
-			session=request.session['logged_in']
-			string=serializers.serialize("json",Authors.objects.filter(displayname=request.POST.get("username", "")),fields=('guid','host','displayname','url'))
-			string=str(string).replace("fields","author")
-			string=str(string).split("},")[0]
-			string=string + "}}]"
-			request.session['user']=string
-			author=json.loads(string)
-			request.session['user_json']=author[0]['author']
-			authors=Authors.objects.filter(displayname=request.POST.get("username", ""))
-			for author in authors:
-				request.session['user_guid']=author.guid
-				if request.POST.get("username", "")== "admin":
-					request.session['admin']="T"
-			return redirect(showposts)
-	return render_to_response('main/login.html',{'error': error}, context)
 
 #logs out a user
 def logout(request):
@@ -275,47 +275,46 @@ def seeAllSearches(request):
 	context =RequestContext(request)
 	user= request.session['user']
 	searchResult = ""
+	allUsers = Authors.objects.raw("select * from main_authors")
 	if(request.method == 'POST'):
 		username = request.POST.get("searchUser", "")
 		searchResult = Authors.objects.raw("select * from main_authors where displayname='"+username+"';")
-	return render_to_response('main/search.html', {'searchResults': searchResult}, context)	
+	return render_to_response('main/search.html', {'searchResults': searchResult, 'allUsers': allUsers}, context)	
 
 
 
 def viewfriend(request, author_guid):
 	context = RequestContext(request)
-	friends = Authors.objects.filter(guid=author_guid)
-	string=serializers.serialize("json",friends,fields=('guid','host','displayname','url'))
-	string=str(string).replace("fields","author")
-	string=str(string).split("},")[0]
-	string=string + "}}]"
-	friend = Authors.objects.get(guid=author_guid)
-	user= request.session['user_guid']
-	users= request.session['user']
-	f=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(1)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(1))))
-	fr=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(0)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(0))))
-	fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)
-	
-	if string==users:
-		post=Posts.objects.filter(author=string)
+	userProfile = Authors.objects.filter(guid=author_guid)[0]
 
-	elif f:
-		post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
-		request.session['friend']='t'
-	elif fr:
-		post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
-		request.session['friend_request']='t'
-		request.session['follow']='t'
-	elif fo:
-		post=Posts.objects.filter(author=string,visibility="PUBLIC")
-		request.session['friend']='f'
-		request.session['follow']='t'
+	#This part of code is for Pending Requests
+	pendingRequests = Friends.objects.filter(Q(authorguid2=userProfile)&Q(accepted=str(0)))
+	for pending in pendingRequests:
+		setattr(pending, 'authorName', Authors.objects.filter(guid=pending.authorguid1)[0].displayname)
+
+	#This part of code is for getting your friends
+	friendsGuid=Friends.objects.filter((Q(authorguid1=author_guid)&Q(accepted=str(1)))|(Q(authorguid2=author_guid)&Q(accepted=str(1))))
+	friends = []
+	for friend in friendsGuid:
+		if (friend.authorguid1 == author_guid):
+			friends.append(Authors.objects.filter(guid=friend.authorguid2)[0])
+		else:
+			friends.append(Authors.objects.filter(guid=friend.authorguid1)[0])
+
+	#This part of Code is for getting the Posts
+	if (author_guid == request.session['user_guid']):
+		posts=Posts.objects.filter(author=request.session['user'])
 	else:
-		post=Posts.objects.filter(author=string,visibility="PUBLIC")
-		request.session['friend']='f'
-		request.session['follow']='f'
- 	
-	return render_to_response('main/friend.html', {'friends': friends,"posts":post,"fr":fr}, context)
+		posts=Posts.objects.filter(Q(visibility='PUBLIC'))
+		temp = []
+		for post in posts:
+			author = json.loads(post.author)
+			author = author[0]['author']
+			if(author['guid'] == author_guid):
+				temp.append(post)
+		posts = temp
+
+	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db

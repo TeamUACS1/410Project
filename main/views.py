@@ -285,40 +285,38 @@ def seeAllSearches(request):
 
 def viewfriend(request, author_guid):
 	context = RequestContext(request)
-	friends = Authors.objects.filter(guid=author_guid)
-	string=serializers.serialize("json",friends,fields=('guid','host','displayname','url'))
-	string=str(string).replace("fields","author")
-	string=str(string).split("},")[0]
-	string=string + "}}]"
-	friend = Authors.objects.get(guid=author_guid)
-	user= request.session['user_guid']
-	users= request.session['user']
-	pendingRequests = Friends.objects.filter(Q(authorguid2=user)&Q(accepted=str(0)))
-	thisUser = friends.displayname
-	f=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(1)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(1))))
-	fr=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(0)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(0))))
-	fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)
-	
-	if string==users:
-		post=Posts.objects.filter(author=string)
 
-	elif f:
-		post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
-		request.session['friend']='t'
-	elif fr:
-		post=Posts.objects.filter(Q(author=string) &( Q(visibility="PUBLIC")|Q(visibility="FRIENDS")))
-		request.session['friend_request']='t'
-		request.session['follow']='t'
-	elif fo:
-		post=Posts.objects.filter(author=string,visibility="PUBLIC")
-		request.session['friend']='f'
-		request.session['follow']='t'
+	#This part gets you the user object for the profile page you are viewing
+	userProfile = Authors.objects.filter(guid=author_guid)[0]
+
+	#This part of code is for Pending Requests
+	pendingRequests = Friends.objects.filter(Q(authorguid2=userProfile)&Q(accepted=str(0)))
+	for pending in pendingRequests:
+		setattr(pending, 'authorName', Authors.objects.filter(guid=pending.authorguid1)[0].displayname)
+
+	#This part of code is for getting your friends
+	friendsGuid=Friends.objects.filter((Q(authorguid1=author_guid)&Q(accepted=str(1)))|(Q(authorguid2=author_guid)&Q(accepted=str(1))))
+	friends = []
+	for friend in friendsGuid:
+		if (friend.authorguid1 == author_guid):
+			friends.append(Authors.objects.filter(guid=friend.authorguid2)[0])
+		else:
+			friends.append(Authors.objects.filter(guid=friend.authorguid1)[0])
+
+	#This part of Code is for getting the Posts
+	if (author_guid == request.session['user_guid']):
+		posts=Posts.objects.filter(author=request.session['user'])
 	else:
-		post=Posts.objects.filter(author=string,visibility="PUBLIC")
-		request.session['friend']='f'
-		request.session['follow']='f'
- 	
-	return render_to_response('main/friend.html', {'friends': friends,"posts":post,"fr":fr, "pendingRequests": pendingRequests, "thisUser": thisUser}, context)
+		posts=Posts.objects.filter(Q(visibility='PUBLIC'))
+		temp = []
+		for post in posts:
+			author = json.loads(post.author)
+			author = author[0]['author']
+			if(author['guid'] == author_guid):
+				temp.append(post)
+		posts = temp
+
+	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db
