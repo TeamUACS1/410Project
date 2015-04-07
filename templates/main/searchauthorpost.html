@@ -82,13 +82,11 @@
             <li><a href="/main/friendcheck" id="friendcheck">Check Authors' Friend Status</a></li>
             <li><a href="/main/friendreq" id="friendreq">Send Friend Request to Other SocialMedia</a></li>
             <li><a href="/main/foaf" id="foaf">Get Other SocialMedia FOAF Posts</a></li>
-          </ul>
-          <ul class="col-sm-3 col-md-2 sidebar">
-          {% for admin in request.session.admin %}
-          	{% if admin = "T" %}
+            {% for admin in request.session.admin %}
+            {% if admin = "T" %}
       			<li><a href="/main/approveAuthors">Approve Authors</a></li>
       			<li><a href="/main/manageAuthors">Manage Authors</a></li>
-      		{%endif%}{%endfor%}
+      		  {%endif%}{%endfor%}
           </ul>
         </div>
         <!------------------ END SIDEBAR CODE ---------------->

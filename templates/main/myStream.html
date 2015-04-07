@@ -13,12 +13,6 @@
 
     <title>Public Posts</title>
 
-    <script>
-    function update() {
-        location.reload();
-    }
-    setInterval(update, 10000);
-    </script>
     <!-- Bootstrap core CSS -->
     {% block css %}
     <link type="text/css" href="{%static 'css/bootstrap.css' %}" rel="stylesheet" media="all">
@@ -97,10 +91,12 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
           <h1 class="page-header">My Stream</h1>
       			{% for posts in posts %}
-      			<div class="link">
-      				<h4>{{ posts }}</a></h4>
-  			    </div>
-  			    {% endfor %}
+          <div class="panel panel-default" style="width:85%;">
+            <div class="panel-body" style="font-weight: bold;">
+      				<h5>{{ posts }}</h5>
+            </div>
+          </div>
+		      {% endfor %}
   		  </div>
   	  </div>
     </div>
