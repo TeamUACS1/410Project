@@ -300,6 +300,9 @@ def seeAllSearches(request):
 
 def viewfriend(request, author_guid):
 	context = RequestContext(request)
+	friendflag = 0
+	followingflag = 0
+	followerflag = 0
 
 	#This part gets you the user object for the profile page you are viewing
 	userProfile = Authors.objects.filter(guid=author_guid)[0]
@@ -307,18 +310,24 @@ def viewfriend(request, author_guid):
 	#This part of code is for Pending Requests
 	pendingRequests = Friends.objects.filter(Q(authorguid2=userProfile)&Q(accepted=str(0)))
 	for pending in pendingRequests:
+		if (request.session['user_guid'] == pending.authorguid1):
+			friendflag = 1
 		setattr(pending, 'authorName', Authors.objects.filter(guid=pending.authorguid1)[0].displayname)
 
 	#This part of code is for following
-	followers = Follows.objects.filter(authorguid1=author_guid)
+	followers1 = Follows.objects.filter(authorguid1=author_guid)
 	following = []
-	for follow in followers:
+	for follow in followers1:
+		if (follow.authorguid2 == request.session['user_guid']):
+			followingflag = 1
 		following.append(Authors.objects.filter(guid=follow.authorguid2)[0])
 
 	#This part of code is for followers
 	following2 = Follows.objects.filter(authorguid2=author_guid)
 	followers = []
 	for follow in following2:
+		if (follow.authorguid2 == request.session['user_guid']):
+			followerflag = 1
 		followers.append(Authors.objects.filter(guid=follow.authorguid1)[0])
 
 	#This part of code is for getting your friends
@@ -329,7 +338,10 @@ def viewfriend(request, author_guid):
 			friends.append(Authors.objects.filter(guid=friend.authorguid2)[0])
 		else:
 			friends.append(Authors.objects.filter(guid=friend.authorguid1)[0])
-
+	for things in friends:
+		if (things.guid == request.session['user_guid']):
+			friendflag = 1
+	
 	#This part of Code is for getting the Posts
 	if (author_guid == request.session['user_guid']):
 		posts=Posts.objects.filter(author=request.session['user'])
@@ -352,9 +364,9 @@ def viewfriend(request, author_guid):
 				setattr(post, 'authorName', author['displayname'])
 				setattr(post, 'authorGuid', author['guid'])
 				temp.append(post)
-		posts = temp
-
-	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests, "following":following, "followers":followers}, context)
+		posts = temp	
+	
+	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests, "following":following, "followers":followers, "flag": flag}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db

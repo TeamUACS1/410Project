@@ -116,7 +116,7 @@
 					    <h2>Add a post</h2>
               <input type="text" name="title" id="title" class="form-control" placeholder="Title"> <br>
               <input type="text" name="description" id="description" class="form-control" placeholder="Summary"><br>
-              <input type="text" name="content" id="post" class="form-control" placeholder="Content"><br>
+              <input type="text" name="post" id="post" class="form-control" placeholder="Content"><br>
     					<select name="privacy" id = "privacy" onchange = "addname(this)">
       					<option value="PUBLIC" selected="selected">Public</option>
     						<option value="PRIVATE">Private</option>
@@ -139,9 +139,10 @@
             <div class="panel-footer">
       				<h5>{{ posts.pubDate }}
               <a href="/main/seepostdetails/{{ posts.guid}}" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">{{ posts.comments }}</span></a>
+              {%if request.session.user_json.guid == posts.authorGuid%}
               <span class="span6 pull-right">
                 <div class="col-sm-2" style="padding-right: 3em;">
-            			<form class="operation_from" action="/main/edit/" method=post style=".form-control {width:auto;}">{% csrf_token %}
+              		<form class="operation_from" action="/main/edit/" method=post style=".form-control {width:auto;}">{% csrf_token %}
           					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
           					<button type="submit" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></button>
           				</form>
@@ -151,6 +152,7 @@
           				<button type="submit" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Delete"></button>
         				</form>
               </span>
+              {%endif%}
   				    </h5>
   			    </div>
           </div>
