@@ -13,6 +13,12 @@
 
     <title>Public Posts</title>
 
+    <script>
+    function update() {
+        location.reload();
+    }
+    setInterval(update, 10000);
+    </script>
     <!-- Bootstrap core CSS -->
     {% block css %}
     <link type="text/css" href="{%static 'css/bootstrap.css' %}" rel="stylesheet" media="all">
