@@ -293,6 +293,8 @@ def viewfriend(request, author_guid):
 	friend = Authors.objects.get(guid=author_guid)
 	user= request.session['user_guid']
 	users= request.session['user']
+	pendingRequests = Friends.objects.filter(Q(authorguid2=user)&Q(accepted=str(0)))
+	thisUser = friends.displayname
 	f=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(1)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(1))))
 	fr=Friends.objects.filter((Q(authorguid1=user)&Q(authorguid2=friend)&Q(accepted=str(0)))|(Q(authorguid2=user)&Q(authorguid1=friend)&Q(accepted=str(0))))
 	fo=Follows.objects.filter(authorguid1=user,authorguid2=friend.guid)
@@ -316,7 +318,7 @@ def viewfriend(request, author_guid):
 		request.session['friend']='f'
 		request.session['follow']='f'
  	
-	return render_to_response('main/friend.html', {'friends': friends,"posts":post,"fr":fr}, context)
+	return render_to_response('main/friend.html', {'friends': friends,"posts":post,"fr":fr, "pendingRequests": pendingRequests, "thisUser": thisUser}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db
