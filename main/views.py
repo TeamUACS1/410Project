@@ -89,7 +89,27 @@ def seeAllPosts(request):
 		setattr(post, 'authorName', author['displayname'])
 		setattr(post, 'authorGuid', author['guid'])
 	posts = reversed(posts)
+	print posts
 	return render_to_response('main/show_all_entries.html', {'posts': posts}, context)
+
+def seeAllFollowedPosts(request):
+	context =RequestContext(request)
+	user = request.session['user']
+	posts = Posts.objects.filter(Q(visibility='PUBLIC'))
+	followed = Follows.objects.filter(Q(authorguid1=request.session['user_guid']))
+	properPosts = []
+	for post in posts:
+		tempAuthor = json.loads(post.author)
+		author = tempAuthor[0]['author']
+		for follow in followed:
+			if (follow.authorguid2 == author['guid']):
+				comments=Comments.objects.filter(post_guid=post.guid)
+				setattr(post, 'comments', str(len(comments)))
+				setattr(post, 'authorName', author['displayname'])
+				setattr(post, 'authorGuid', author['guid'])
+				properPosts.append(post)
+	properPosts = reversed(properPosts)
+	return render_to_response('main/show_all_followed_posts.html', {'posts': properPosts}, context)
 
 #This function gets all the user's friends' posts and displays them on the window
 def seeAllFriendPosts(request):
