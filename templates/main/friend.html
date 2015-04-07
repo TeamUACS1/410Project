@@ -1,57 +1,174 @@
-{% extends "layout.html" %}
-{% block body %}
-<div id="wrapper">
-	<header>
-		<h1>Welcome</h1>
+<!DOCTYPE html>
+{% load static %}
 
-	</header>	
-{% for friends in friends %}
-	<div id="main">
-		<div id="sidebar">
-			<ul>
-  				<li id="home"><a href="/main/loggedin">My Posts</a></li>
-				<li class="active" ><a href="/main/userProfile" id="userProfile">User Profile</a></li>
-			</ul>
-		</div>
-		<div id="content">
-		<h2>{{friends.displayname}}</h2>
-			{% for session in request.session.friend %}
-    			{% if session != "t" %} <form class="operation_from" action="/main/addfriend/" method=post>{% csrf_token %}
-					<input type="hidden" id="ID" name="ID" value={{friends.guid}}>
-					<input type="submit" value="Send friend request">
-					</form>
-			{% else%} <p> You are friends!! </p>
-			{%endif%}{%endfor%}
-			{% for session in request.session.friend_request %}
-			{% for fr in fr %}
-    			{% if session != "f" %} <form class="operation_from" action="/main/respondToFriendRequest/" method=post>{% csrf_token %}
-					<input type="hidden" id="requestUser" name="requestUser" value={{fr.id}}>
-					<input type="hidden" id="ID" name="ID" value={{friends.guid}}>
-					
-					<input type="submit" value="Accept friend request">
-					</form>
-			{%endif%}{%endfor%}{%endfor%}
-			{% for session in request.session.follow %}
-    			{% if session != "t" %} <form class="operation_from" action="/main/followFriend/" method=post>{% csrf_token %}
-					<input type="hidden" id="ID" name="ID" value={{friends.guid}}>
-					<input type="submit" value="Follow the author">
-					</form>
-			{% else%} <p> You are following!! </p>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
 
-	
-			
+    <title>User Profile</title>
 
-				{%endif%}{%endfor%}
+    <!-- Bootstrap core CSS -->
+    {% block css %}
+    <link type="text/css" href="{%static 'css/bootstrap.css' %}" rel="stylesheet" media="all">
+    <!--<link type="text/css" href="{%static 'css/dashboard.css' %}" rel="stylesheet">-->
+    {% endblock %}
 
-			{% for posts in posts %}
-			<div style="background-color:moccasin; border: 5px solid red;")
-		<p>{{posts.title}}</p
-<p>{{posts.description}}</p>
-<p>{{posts.content}}</p>
-<p>{{posts.pubDate}}</p>
-</div>
-{%endfor%}
-	</div>
-	{%endfor%}
-</div>
-{%endblock%}
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <!-------------------- BEGIN TOP NAVBAR CODE -------------------->
+  <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="font-size:1.8em;" href="/main/loggedin">Social Hub</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="navbar navbar-nav navbar-right" style="list-style: none;">
+            <li style="padding-right:4em; padding-top:1.2em;">
+    <a href="/main/otherServerPost" style="font-size:1.4em;">connect+</a>
+            </li>
+            <li style="padding-right:1.2em;">
+              <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
+            </li>
+            <li style="padding-right:1.2em; padding-top:1.2em;">
+    <a href="/main/author/{{request.session.user_json.guid}}/feed" style="font-size:1.4em;">{{request.session.user_json.displayname}}</a>
+            </li>
+            <li style="padding-right:1.2em;">
+              <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>
+            </li>
+            <li>
+              <a href="/main/logout" class="glyphicon glyphicon-log-out" style="font-size:1.4em;"></a>
+            </li>
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  <!---------------------- END TOP NAVBAR COE ------------------->
+  
+  {% block body %}
+  <body>
+  <div class="container-fluid">
+    <!------------------- BEGIN SIDEBAR CODE ------------------->
+    <div class="row">
+      <div class="col-sm-3 col-md-2">
+        <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
+          <li><a href="/main/seeAllPosts" id="seeAllPosts">Public</a></li>
+          <li><a href="/main/seefriendPosts" id="seefriendPosts">Friends</a></li>
+          <li><a href="/main/friendOfFriend" id="friendOfFriend">Friend of Friend</a></li>
+          <li><a href="#">Following</a></li>
+          <li><a href="/main/myStream">My Stream</a></li>
+          <li><a href="/main/localCrossServerPosts">Local Server Posts</a></li>
+          {% for admin in request.session.admin %}
+          {% if admin = "T" %}
+        	<li><a href="/main/approveAuthors">Approve Authors</a></li>
+    			<li><a href="/main/manageAuthors">Manage Authors</a></li>
+			<li><a href="/main/approveHosts">Approve Hosts</a></li>
+    			<li><a href="/main/manageHosts">Manage Hosts</a></li>
+    		  {%endif%}{%endfor%}
+        </ul>
+      </div>
+      <!---------------- END SIDEBAR CODE ------------------>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+        <h1 class="page-header">Welcome to your Profile!</h1>
+
+          <h2>Friends</h2>
+          <div class="well well-sm" style="width:85%;">
+            {%for friends in friends%}
+              <h4>{{friends.displayname}}</h4>
+              <!----Code for sending friend requests ---->
+              {% for session in request.session.friend %}
+        		  {% if session != "t" %} 
+              <form class="operation_from" action="/main/addfriend/" method=post>{% csrf_token %}
+  					     <input type="hidden" id="ID" name="ID" value={{friends.guid}}>
+  					     <input type="submit" value="Send friend request">
+  					   </form>
+      			   {% else%} 
+                <p> You are friends!! </p>
+      			   {%endif%}{%endfor%}
+            {%endfor%}
+            <!-----Code for accepting friend requests ----->
+            {% for session in request.session.friend_request %}
+        		{% for fr in fr %}
+    			  {% if session != "f" %} 
+            <form class="operation_from" action="/main/respondToFriendRequest/" method=post>{% csrf_token %}
+					    <input type="hidden" id="requestUser" name="requestUser" value={{fr.id}}>
+					    <input type="hidden" id="ID" name="ID" value={{friends.guid}}>
+					    <input type="submit" value="Accept friend request">
+					  </form>
+			      {%endif%}{%endfor%}{%endfor%}
+      		</div>
+          
+          <!-------Code for following users ------>
+          <h2>Following</h2>
+          <div class="well well-sm" style="width:85%;">
+      			{% for session in request.session.follow %}
+          		{% if session != "t" %} 
+              <form class="operation_from" action="/main/followFriend/" method=post>{% csrf_token %}
+      				  <input type="hidden" id="ID" name="ID" value={{friends.guid}}>
+      				  <input type="submit" value="Follow the author">
+      				</form>
+      			  {% else%} <p> You are following!! </p>
+              {%endif%}{%endfor%}
+          </div>
+				  
+          <!------ Code for showing your posts ------>
+          <h2>Posts</h2>
+		      {% for posts in posts %}
+          <div class="panel panel-default" style="width:85%;">
+    		    <div class="panel-heading">
+      				<h4><span style="font-weight: bold;">{{ posts.title }}:</span> {{ posts.description }} <span class="span6 pull-right"><a href="/main/author/{{posts.authorGuid}}/feed">{{posts.authorName}}</a></span></h4>
+            </div>
+            <div class="panel-body">
+      				<h5>{{ posts.content }}</h5>
+            </div>
+            <div class="panel-footer">
+      				<h5>{{ posts.pubDate }}
+              <a href="/main/seepostdetails/{{ posts.guid}}" class="glyphicon glyphicon-envelope" data-toggle="tooltip" title="Comment"><span class="badge">{{ posts.comments }}</span></a>
+              <span class="span6 pull-right">
+                <div class="col-sm-2" style="padding-right: 3em;">
+            			<form class="operation_from" action="/main/edit/" method=post style=".form-control {width:auto;}">{% csrf_token %}
+          					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+          					<button type="submit" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></button>
+          				</form>
+                </div>
+          			<form class="operation_from" action="/main/delete/" method=post style=".form-control {width:auto;}">{% csrf_token %}
+        					<input type="hidden" id="ID" name="ID" value={{posts.id}}>
+          				<button type="submit" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Delete"></button>
+        				</form>
+              </span>
+  				    </h5>
+  			    </div>
+          </div>
+          {%endfor%}
+	    </div>
+    </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=""{% static 'js/bootstrap.min.js' %}""></script>
+  </body>
+  {%endblock%}
+</html>
