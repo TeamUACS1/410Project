@@ -1,55 +1,108 @@
-{% extends "layout.html" %}
-{% block body %}
-<div id="wrapper">
-	<header>
-		<h1>User settings</h1>
-	</header>	
-	<div id="main">
-		<div id="sidebar">
-			<ul>
+<!DOCTYPE html>
+{% load static %}
 
-  				<li id="home"><a href="/main/loggedin">My Posts</a></li>
-				<li class="active" ><a href="/main/seeAllPosts" id="seeAllPosts">Public Posts</a></li>
-			</ul>
-		</div>
-		<div id="content">
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Profile Settings</title>
+
+    <!-- Bootstrap core CSS -->
+    {% block css %}
+    <link type="text/css" href="{%static 'css/bootstrap.css' %}" rel="stylesheet" media="all">
+    <!--<link type="text/css" href="{%static 'css/dashboard.css' %}" rel="stylesheet">-->
+    {% endblock %}
+
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <!-------------------- BEGIN TOP NAVBAR CODE -------------------->
+  <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="font-size:1.8em;" href="/main/loggedin">Social Hub</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="navbar navbar-nav navbar-right" style="list-style: none;">
+            <li style="padding-right:4em; padding-top:1.2em;">
+    <a href="/main/otherServerPost" style="font-size:1.4em;">connect+</a>
+            </li>
+            <li style="padding-right:1.2em;">
+              <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
+            </li>
+            <li style="padding-right:1.2em; padding-top:1.2em;">
+    <a href="/main/author/{{request.session.user_json.guid}}/feed" style="font-size:1.4em;">{{request.session.user_json.displayname}}</a>
+            </li>
+            <li style="padding-right:1.2em;">
+              <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>
+            </li>
+            <li>
+              <a href="/main/logout" class="glyphicon glyphicon-log-out" style="font-size:1.4em;"></a>
+            </li>
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  <!---------------------- END TOP NAVBAR COE ------------------->
 			
-			
-		<form action="/main/profileSettings/" method=post>{% csrf_token%}
-		<dl>
-			<dt>Enter new Password:
-			<input type="button" id = "passbutton" name = "newpass" value = "change password?">
-			<dd><input type=text id=passtextfield name=newpassword disabled >
-			<dt>Enter new Github Username:
-
-			<input type="button" id = "gitbutton" name = "newpass" value = "change Github?">
-			<dd><input type=text id=gittextfield name=githubname disabled>
-			<dd><input type=submit value="Save Changes">
-			<dt>Blank entries do not change values
-
-			<!-- TODO, make toggleable -->
-			<script>
-			var pass = document.getElementById("passtextfield");
-			var git = document.getElementById("gittextfield");
-			
-			var passbutt = document.getElementById("passbutton");
-			var gitbutt = document.getElementById("gitbutton");
-
-			passbutt.addEventListener("click", function(){
-			pass.disabled = false;
-			passbutt.style.visibility = "hidden";
-			});
-
-			gitbutt.addEventListener("click", function(){
-			git.disabled = false;
-
-			gitbutt.style.visibility = "hidden";
-			});
-
-			</script>
-		</dl>
-		</form>
-		</div>
-	</div>
-</div>
+	{% block body %}
+  <body style="padding-left:10em; width:85%;">
+    <h1 class="page-header">User Settings</h1>
+  	<form action="/main/profileSettings/" method=post>{% csrf_token%}
+  	<dl>
+  		<dt>Enter new Password:
+  		<input type="button" id = "passbutton" name = "newpass" value = "change password?">
+  		<dd><input type=text id=passtextfield name=newpassword disabled ></dd><br>
+  		<dt>Enter new Github Username:
+  		<input type="button" id = "gitbutton" name = "newpass" value = "change Github?">
+  		<dd><input type=text id=gittextfield name=githubname disabled></dd><br>
+  		<dd><input type=submit value="Save Changes"></dd><br>
+      
+  		<dt>Blank entries do not change values
+  
+  		<!-- TODO, make toggleable -->
+  		<script>
+  		var pass = document.getElementById("passtextfield");
+  		var git = document.getElementById("gittextfield");
+  		
+  		var passbutt = document.getElementById("passbutton");
+  		var gitbutt = document.getElementById("gitbutton");
+  
+  		passbutt.addEventListener("click", function(){
+  		pass.disabled = false;
+  		passbutt.style.visibility = "hidden";
+  		});
+  
+  		gitbutt.addEventListener("click", function(){
+  		git.disabled = false;
+  
+  		gitbutt.style.visibility = "hidden";
+  		});
+  
+  		</script>
+  	</dl>
+  </body>
 {%endblock%}
+</html>
