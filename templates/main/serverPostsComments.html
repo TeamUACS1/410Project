@@ -11,7 +11,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>connect+ Posts</title>
+    <title>Posts Comments</title>
 
     <!-- Bootstrap core CSS -->
     {% block css %}
@@ -29,6 +29,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
+  <!-------------------- BEGIN TOP NAVBAR CODE -------------------->
   <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -44,17 +45,16 @@
           <ul class="navbar navbar-nav navbar-right" style="list-style: none;">
             <li style="padding-right:4em; padding-top:1.2em;">
     <a href="/main/otherServerPost" style="font-size:1.4em;">connect+</a>
-            </li> 
+            </li>
             <li style="padding-right:1.2em;">
               <a href="/main/search" class="glyphicon glyphicon-plus" style="font-size:1.2em;"><span class="glyphicon glyphicon-user"></span></a>
             </li>
             <li style="padding-right:1.2em; padding-top:1.2em;">
     <a href="/main/author/{{request.session.user_json.guid}}/feed" style="font-size:1.4em;">{{request.session.user_json.displayname}}</a>
-            </li>         
+            </li>
             <li style="padding-right:1.2em;">
               <a href="/main/profileSettings" class="glyphicon glyphicon-cog" style="font-size:1.4em;"></a>
             </li>
-            
             <li>
               <a href="/main/logout" class="glyphicon glyphicon-log-out" style="font-size:1.4em;"></a>
             </li>
@@ -65,15 +65,15 @@
   </div>
   <br>
   <br>
+  <!---------------------- END TOP NAVBAR COE ------------------->
   
   {% block body %}
   <body>
-    <div class="container-fluid">
-      <!--------------------------- BEGIN SIDEBAR CODE ----------------------->
-      <div class="row">
-        <div class="col-sm-3 col-md-2">
-          <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
-            <li class="active"></li>
+  <div class="container-fluid">
+    <!------------------- BEGIN SIDEBAR CODE ------------------->
+    <div class="row">
+      <div class="col-sm-3 col-md-2">
+        <ul class="nav nav-sidebar" style="padding-top: 2%; padding-bottom:2%; left:0; width:15%; background:azure; position: fixed;">
             <li><a href="/main/otherServerPost" id="seeOtherServerPosts">Other SocialMedia Posts</a></li>
             <li><a href="/main/otherServerAuthors" id="otherServerAuthors">Other SocialMedia Authors</a></li>
             <li><a href="/main/currentlyauthuser" id="currentlyauthuser">Authenticated Author Posts</a></li>
@@ -82,21 +82,21 @@
             <li><a href="/main/friendcheck" id="friendcheck">Check Authors' Friend Status</a></li>
             <li><a href="/main/friendreq" id="friendreq">Send Friend Request to Other SocialMedia</a></li>
             <li><a href="/main/foaf" id="foaf">Get Other SocialMedia FOAF Posts</a></li>
-          </ul>
-          <ul class="col-sm-3 col-md-2 sidebar">
           {% for admin in request.session.admin %}
-        		{% if admin = "T" %}
-      			<li><a href="/main/approveAuthors">Approve Authors</a></li>
-      			<li><a href="/main/manageAuthors">Manage Authors</a></li>
-      		{%endif%}{%endfor%}
-          </ul>
-        </div>
-        <!------------------------ END SIDEBAR CODE ---------------------->
-        
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-          <h1 class="page-header">Other SocialMedia Posts</h1>		
-    			{% for posts in posts %}
-    			<div class="panel panel-default" style="width:85%;">
+          {% if admin = "T" %}
+    			<li><a href="/main/approveAuthors">Approve Authors</a></li>
+    			<li><a href="/main/manageAuthors">Manage Authors</a></li>
+    		  {%endif%}{%endfor%}
+        </ul>
+      </div>
+      <!---------------- END SIDEBAR CODE ------------------>
+      
+      
+      <!--------------- MAIN CONTENT ----------------------->
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+        <h2 class="page-header">Main Post</h2>
+		    {% for posts in posts %}
+      		<div class="panel panel-default" style="width:85%;">
             <div class="panel-heading">
     				  <h4><span style="font-weight:bold;">{{posts.title}}:</span>{{posts.description}}<span class="span6 pull-right"><a href="http://{{posts.author.url}}">{{posts.author.displayname}} : {{posts.author.host}}</a></span></h4>	
             </div>
@@ -105,20 +105,33 @@
             </div>
             <div class="panel-footer">
               <h5>{{posts.pubdate}}
-                <a href="/main/otherServerPostsComments/{{posts.guid}}" class="glyphicon glyphicon-envelope" value="{{ posts }}" data-toggle="tooltip" title="Comments"><span class="badge">{{ posts.numberComments }}</span></a>
+                <a href="/main/otherServerPostsComments/{{post.guid}}" class="glyphicon glyphicon-envelope" value="{{ posts }}" data-toggle="tooltip" title="Comments"><span class="badge">{{ posts.numberComments }}</span></a>
               </h5>
             </div> 
           </div>
-    		  {% endfor %}
-		    </div>
+          <h3 class="page-header">Comments</h3>
+  				{% for comments in posts.comments %}
+  				<div class="panel panel-default">
+    		    <div class="panel-heading">
+      				<h4>{{comments.author.displayname}}</h4>
+            </div>
+            <div class="panel-body">
+      				<h5>{{ comments.comment }}</h5>
+            </div>
+            <div class="panel-footer">
+      				<h5>{{ comments.pubDate }}</h5>
+  			    </div>
+          </div>
+          {% endfor %}
+      	{% endfor %}
 	    </div>
     </div>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src=""{% static 'js/bootstrap.min.js' %}""></script>
+  </div>
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src=""{% static 'js/bootstrap.min.js' %}""></script>
   </body>
   {%endblock%}
 </html>

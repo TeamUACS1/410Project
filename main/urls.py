@@ -52,4 +52,5 @@ url(r'^friendrequest', apiviews.friendrequest, name='friendrequest'),
 url(r'^author/(?P<authorguid1>\w+)', apiviews.getspecificauthors, name='getspecificauthors'),
 url(r'^seepostdetails/(?P<post_guid>\w+)',views.getpostdetails,name='getpostdetails'),
 url(r'^add_comment/',views.addComment,name='addComment'),
+url(r'^otherServerPostsComments/(?P<post_guid>[-\w]+)', serverViews.getOtherServerComments,name='getOtherServerComments'),
 )
