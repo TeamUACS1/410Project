@@ -45,3 +45,7 @@ You can replace ``helloworld`` with your desired project name.
 ## Link to Materials for Project part 2:
 
 - [Material](https://github.com/TeamUACS1/410Project/wiki/Part-2-Submission)
+
+## Link to Materials for Prokect part 3;
+
+- [Material](https://github.com/TeamUACS1/410Project/wiki/Part-3-Submission)
