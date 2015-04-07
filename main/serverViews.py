@@ -97,18 +97,20 @@ def searchPostId(request):
 	if(request.method == 'POST'):
 		postguid1 = request.POST.get("postguid1", "")
 		hostchoice = request.POST.get("hostchoice", "")
+		
 		if(hostchoice == "1"):
 			url = 'http://thought-bubble.herokuapp.com/main/api/getapost/?postid='+ postguid1
 			string = "Basic "+ base64.b64encode("dan:cmput410project15.herokuapp.com:dan")
 			request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'thought-bubble.herokuapp.com'})
-			contents = urllib2.urlopen(request).read()
+			#contents = urllib2.urlopen(request).read()
 		else:
 			url = "http://cs410.cs.ualberta.ca:41074/service/posts/"+ postguid1 + "/"			
 			string = "Basic "+ base64.b64encode("admin:admin")
 			request = urllib2.Request(url, headers={"Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
-			contents = urllib2.urlopen(request).read()
 		
-		try:	
+		
+		try:
+			contents = urllib2.urlopen(request).read()	
 			data = json.loads(contents)
 			try:
 				for key in data["posts"]:
@@ -221,9 +223,7 @@ def iffriend(request):
 		
 
 			request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*"})
-			contents = urllib2.urlopen(request).read()
-
-			data = json.loads(contents)
+			
 
 		else:
 			post_req["author"] = authorguid1
@@ -233,22 +233,30 @@ def iffriend(request):
 			url = "http://cs410.cs.ualberta.ca:41074/service/friends/"+authorguid1+"/"
 			string = "Basic "+ base64.b64encode("admin:admin")
 			request = urllib2.Request(url=url, data=data, headers={"Authorization" : string, 'Host': "cs410.cs.ualberta.ca:41074","Content-Type" : "application/json", "Accept": "*/*"})
+		
+		names = []
+		try:
 			contents = urllib2.urlopen(request).read()
-
 			data = json.loads(contents)
 
-		names = []
-		friendee = ""
-		for key,value in data.iteritems():
-			names.append(value)
-		
-		if(len(names) != 1):
-			names.pop(0)
-			friendee = names[1] + " is friends with:"
-			names.pop(1)
-		else:
-			friendee = names[0]
-			del names[:]
+			
+			friendee = ""
+			for key,value in data.iteritems():
+				names.append(value)
+			
+			if(len(names) != 1):
+				names.pop(0)
+				friendee = names[1] + " is friends with:"
+				names.pop(1)
+			else:
+				friendee = names[0]
+				del names[:]
+
+		except urllib2.HTTPError, e:
+			print e.code
+			print e.msg
+			friendee = "Queried author not found"
+
 		return render_to_response('main/if_friends.html', {'posts': names, 'friendee': friendee}, context)
 
 	return render_to_response('main/if_friends.html', context)
@@ -293,9 +301,13 @@ def friendreq(request):
 			url = "http://cs410.cs.ualberta.ca:41074/service/friendrequest/"
 			string = "Basic "+ base64.b64encode("admin:admin")			
 			request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*","Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
-		contents = urllib2.urlopen(request).read()
-		if (contents == "200 OK" or "{}"):
-			contents = "Friend request sent!"
+		try:
+			contents = urllib2.urlopen(request).read()
+			if (contents == "200 OK" or "{}"):
+				contents = "Friend request sent!"
+		
+		except urllib2.HTTPError, e:
+				contents = "Users not in the database!"
 
 		return render_to_response('main/othernodefriendreq.html', {'posts': contents} ,context)
 	return render_to_response('main/othernodefriendreq.html' ,context)
@@ -349,21 +361,30 @@ def getpostifFOAF(request):
 			
 			request = urllib2.Request(url=url, data=data, headers={"Content-Type" : "application/json", "Accept": "*/*","Authorization" : string, 'Host': 'cs410.cs.ualberta.ca:41074'})
 		
-
-		contents = urllib2.urlopen(request).read()
-
 		error = ""
 		try:
-			data = json.loads(contents)
-			if(hostchoice != "1"):
-				posts = []
-				for key in data["posts"]:
-					posts.append(key)
-				data = posts[0]
-			print data
-		except:
+			contents = urllib2.urlopen(request).read()
 			data = []
-			error = contents
+			try:
+				data = json.loads(contents)
+				if(hostchoice != "1"):
+					posts = []
+					for key in data["posts"]:
+						posts.append(key)
+					data = posts[0]
+				print data
+			except:
+				data = []
+				error = contents
+			
+		
+		except urllib2.HTTPError, e:
+				error = "Bad post ID"
+				data = []
+		
+
+		
+
 		
 		return render_to_response('main/foafothernode.html', {'posts': data, 'error': error} ,context)
 	return render_to_response('main/foafothernode.html' ,context)

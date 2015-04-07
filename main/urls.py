@@ -53,4 +53,10 @@ url(r'^author/(?P<authorguid1>\w+)', apiviews.getspecificauthors, name='getspeci
 url(r'^seepostdetails/(?P<post_guid>\w+)',views.getpostdetails,name='getpostdetails'),
 url(r'^add_comment/',views.addComment,name='addComment'),
 url(r'^otherServerPostsComments/(?P<post_guid>[-\w]+)', serverViews.getOtherServerComments,name='getOtherServerComments'),
+url(r'^approveHosts', adminviews.approveHosts, name='approveHosts'),
+url(r'^manageHosts', adminviews.manageHosts, name='manageHosts'),
+url(r'^addHosts', adminviews.addHosts, name='addHosts'),
+url(r'^deletenode/$', adminviews.deletenode, name='deletenode'),
+url(r'^editnode/$', adminviews.editnode, name='editnode'),
+url(r'^savenode/$', adminviews.savenode, name='savenode'),
 )

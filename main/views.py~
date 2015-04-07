@@ -171,7 +171,7 @@ def signup(request):
 	context =RequestContext(request)
 	session=request.session['logged_in']
 	error =None
-	host= "http://cs410.cs.ualberta.ca:41034"
+	host= "cmput410project15.herokuapp.com"
 	if request.method=='POST':
 		displayname=request.POST.get("username", "")
 		password=request.POST.get("password", "")
@@ -180,7 +180,7 @@ def signup(request):
 			error='taken username'
 		else:
 			guid = str(uuid.uuid1()).replace("-", "")
-			url = host+"/"+displayname+"/"+str(guid)
+			url = host+"/main/author/"+str(guid)
 			password =request.POST.get("password", "")
 			encrypted_pass = hashlib.sha1(password.encode('utf-8')).hexdigest()
 			author=Authors(displayname=displayname,password=encrypted_pass, host=host, guid= guid, url=url, approved_flag=0)
