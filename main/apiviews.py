@@ -15,9 +15,10 @@ from main.models import Authors
 from main.models import Comments
 from main.models import Friends
 from main.models import Follows
+from main.models import Nodes
 from functools import wraps
 from django.conf import settings
-
+from django.core.exceptions import ObjectDoesNotExist
 #based on tutorial from http://learningdjango.blogspot.ca/2012/04/basic-http-authentication-in-django.html
 def basic_http_auth(f):
     def wrap(request, *args, **kwargs):
@@ -25,8 +26,14 @@ def basic_http_auth(f):
             authtype, auth = request.META['HTTP_AUTHORIZATION'].split(' ')
             auth = base64.b64decode(auth)
             username, password = auth.split(':')
-            if username == settings.BASICAUTH_USERNAME and password == settings.BASICAUTH_PASSWORD:
-                return f(request, *args, **kwargs)
+            try:
+                node=Nodes.objects.get(host=username, approved_flag=1)
+            except ObjectDoesNotExist:
+                r = HttpResponse("Auth Required", status = 401)
+                r['WWW-Authenticate'] = 'Basic realm="meh"'
+                return r
+            if password == settings.BASICAUTH_PASSWORD:
+									return f(request, *args, **kwargs)
             else:
                 r = HttpResponse("Auth Required", status = 401)
                 r['WWW-Authenticate'] = 'Basic realm="hi"'

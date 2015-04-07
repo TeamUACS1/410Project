@@ -15,9 +15,10 @@ from main.models import Authors
 from main.models import Comments
 from main.models import Friends
 from main.models import Follows
+from main.models import Nodes
 from functools import wraps
 from django.conf import settings
-
+from django.core.exceptions import ObjectDoesNotExist
 #based on tutorial from http://learningdjango.blogspot.ca/2012/04/basic-http-authentication-in-django.html
 def basic_http_auth(f):
     def wrap(request, *args, **kwargs):
@@ -25,8 +26,14 @@ def basic_http_auth(f):
             authtype, auth = request.META['HTTP_AUTHORIZATION'].split(' ')
             auth = base64.b64decode(auth)
             username, password = auth.split(':')
-            if username == settings.BASICAUTH_USERNAME and password == settings.BASICAUTH_PASSWORD:
-                return f(request, *args, **kwargs)
+            try:
+                node=Nodes.objects.get(host=username, approved_flag=2)
+            except ObjectDoesNotExist:
+                r = HttpResponse("Auth Required", status = 401)
+                r['WWW-Authenticate'] = 'Basic realm="meh"'
+                return r
+            if password == settings.BASICAUTH_PASSWORD:
+									return f(request, *args, **kwargs)
             else:
                 r = HttpResponse("Auth Required", status = 401)
                 r['WWW-Authenticate'] = 'Basic realm="hi"'
@@ -267,23 +274,24 @@ def getpost(request,post_guid):
 				lists.append(post2)
 			"""
 
+
+		date = datetime.now()
+		info = json.loads(request.body)
+		title = info["title"]
+		description = info["description"]
+		content = info["content"]
+		visibility = info["visibility"]
+		author = info["author"]["displayname"]
+
+		string=serializers.serialize("json",Authors.objects.filter(displayname=author),fields=('guid','host','displayname','url'))
+		string=str(string).replace("fields","author")
+		string=str(string).split("},")[0]
+		string=string + "}}]"
+
+		guid = str(uuid.uuid1()).replace("-", "")
+		
 		existingpost = Posts.objects.filter(Q(guid=post_guid))
 		if(existingpost):
-
-			date = datetime.now()
-			info = json.loads(request.body)
-			title = info["title"]
-			description = info["description"]
-			content = info["content"]
-			visibility = info["visibility"]
-			author = info["author"]["displayname"]
-
-			string=serializers.serialize("json",Authors.objects.filter(displayname=author),fields=('guid','host','displayname','url'))
-			string=str(string).replace("fields","author")
-			string=str(string).split("},")[0]
-			string=string + "}}]"
-
-			guid = str(uuid.uuid1()).replace("-", "")
 			post = Post.objects.filter(guid=post_guid).update(title=title, description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
 		else:
 			post = Posts(title=title,description=description,content=cont,author=string,visibility=visibility, pubDate=date, guid=guid)
@@ -295,9 +303,10 @@ def getpost(request,post_guid):
 def arefriends(request,authorguid1,authorguid2):
 	f=Friends.objects.filter((Q(authorguid1=authorguid1)&Q(authorguid2=authorguid2)&Q(accepted=str(1)))|(Q(authorguid2=authorguid1)&Q(authorguid1=authorguid2)&Q(accepted=str(1))))
 	if f:
-		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid2+"\"], \"friends\": \"YES\" }:")
+		return HttpResponse("{\"query\": \"friends\", \"authors\": [\""+authorguid1+"\",\""+authorguid2+"\"], \"friends\": \"YES\" }")
 	else:
-		return HttpResponse("{\"query\": \"friends\"\"authors\": [\""+authorguid1+"\",\""+authorguid2+"\"], \"friends\": \"NO\" }:")
+		return HttpResponse("{\"query\": \"friends\",  \"authors\": [\""+authorguid1+"\",\""+authorguid2+"\"], \"friends\": \"NO\" }")
+#return ids in the list that are friends
 def friends(request,authorguid1):
 	lists=[]
 	hi=json.loads(request.body)
@@ -307,6 +316,7 @@ def friends(request,authorguid1):
 		if Friends.objects.filter((Q(authorguid1=author)&Q(authorguid2=author1)&Q(accepted=str(1)))|(Q(authorguid2=author1)&Q(authorguid1=author)&Q(accepted=str(1)))):
 			lists.append(author1)
 	return HttpResponse(json.dumps({"friends":lists,"author":author,"query":"friends"}))
+#send friend request
 def friendrequest(request):
 	hi=json.loads(request.body)
 	author=hi["author"]["id"]
@@ -319,3 +329,25 @@ def friendrequest(request):
 		return HttpResponse("Added\n")
 	else:
 		return HttpResponse("Already friends\n")
+
+def getspecificauthors(request,authorguid1):
+	context = RequestContext(request)
+	lists=[]
+	
+	if (authorguid1 != "all" ):
+		authors = Authors.objects.filter(guid=authorguid1)
+	else:
+		authors = Authors.objects.all()
+
+	for author in authors:
+		author2={}
+		author2['id'] = str(author.guid)
+		author2['host'] = "cmput410project15.herokuapp.com"
+		author2['displayname'] = author.displayname
+		author2['url'] = "cmput410project15.herokuapp.com/main/author/" + str(author.guid)
+		lists.append(author2)
+	return HttpResponse(json.dumps({"author" : lists}))
+
+
+
+
