@@ -264,7 +264,7 @@ def acceptUser(request):
 	if(request.method == 'POST'):
 		username1 = request.POST.get("ID", "")
 		post_friend = Friends.objects.filter(authorguid1=username1).update(accepted=1)
-		post_friend[0].save()
+		#post_friend.save()
 	return redirect(showposts)
 
 #Allows a user to add friends after finding another user to add.
@@ -272,8 +272,12 @@ def addFriend(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		username2 = request.POST.get("ID", "")
-		post_friend = Friends(authorguid1=request.session['user_guid'],authorguid2=username2, accepted=0)
-		post_friend.save()
+		if (request.POST.get("delete", "") == "1"):
+			post_friend = Friends.objects.filter((Q(authorguid1=request.session['user_guid'])&Q(authorguid2=username2))|(Q(authorguid2=request.session['user_guid'])&Q(authorguid1=username2)))
+			post_friend.delete()
+		else:
+			post_friend = Friends(authorguid1=request.session['user_guid'],authorguid2=username2, accepted=0)
+			post_friend.save()
 	return redirect(showposts)
 
 #Allows a user to follow someone after finding them.
@@ -281,8 +285,12 @@ def followUser(request):
 	context = RequestContext(request)
 	if(request.method == 'POST'):
 		username2 = request.POST.get("ID", "")
-		post_follow = Follows(authorguid1=request.session['user_guid'],authorguid2=username2)
-		post_follow.save()
+		if (request.POST.get("delete", "") == "1"):
+			post_follow = Follows.objects.filter((Q(authorguid1=request.session['user_guid'])&Q(authorguid2=username2)))
+			post_follow.delete()
+		else:
+			post_follow = Follows(authorguid1=request.session['user_guid'],authorguid2=username2)
+			post_follow.save()
 	return redirect(showposts)
 
 #Allows the user to search for other users using a specific username
@@ -313,6 +321,10 @@ def viewfriend(request, author_guid):
 		if (request.session['user_guid'] == pending.authorguid1):
 			friendflag = 1
 		setattr(pending, 'authorName', Authors.objects.filter(guid=pending.authorguid1)[0].displayname)
+	pended = Friends.objects.filter(Q(authorguid2=request.session['user_guid'])&Q(accepted=str(0)))
+	for pending in pended:
+		if (author_guid == pending.authorguid1):
+			friendflag = 1
 
 	#This part of code is for following
 	followers1 = Follows.objects.filter(authorguid1=author_guid)
@@ -326,7 +338,7 @@ def viewfriend(request, author_guid):
 	following2 = Follows.objects.filter(authorguid2=author_guid)
 	followers = []
 	for follow in following2:
-		if (follow.authorguid2 == request.session['user_guid']):
+		if (follow.authorguid1 == request.session['user_guid']):
 			followerflag = 1
 		followers.append(Authors.objects.filter(guid=follow.authorguid1)[0])
 
@@ -366,7 +378,7 @@ def viewfriend(request, author_guid):
 				temp.append(post)
 		posts = temp	
 	
-	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests, "following":following, "followers":followers, "flag": flag}, context)
+	return render_to_response('main/friend.html', {'friends': friends,"posts":posts, "userProfile": userProfile, "pendingRequests": pendingRequests, "following":following, "followers":followers, "followerflag": followerflag, "followingflag":followingflag, "friendflag":friendflag}, context)
 
 #This allows the user to change some of his profile settings and re encrypts the password if needed
 #Lets the users change some settings and save them back to the db
