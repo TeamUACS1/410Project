@@ -2,6 +2,8 @@
 
 An utterly fantastic project starter template for Django 1.7.
 
+Project URL: [Social Hub](http://cmput410project15.herokuapp.com/main/)
+
 ## Features
 
 - Production-ready configuration for Static Files, Database Settings, Gunicorn, etc.
